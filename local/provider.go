@@ -11,5 +11,8 @@ func Provider() terraform.ResourceProvider {
 		ResourcesMap: map[string]*schema.Resource{
 			"local_file": resourceLocalFile(),
 		},
+		DataSourcesMap: map[string]*schema.Resource{
+			"local_file": dataSourceLocalFile(),
+		},
 	}
 }
