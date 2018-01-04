@@ -1,4 +1,9 @@
-## 1.0.1 (Unreleased)
+## 1.1.0 (Unreleased)
+
+NEW FEATURES:
+
+* `local_file` data source, for reading files in a way that participates in Terraform's dependency graph, which allows reading of files that are created dynamically during `terraform apply`. [GH-6]
+
 ## 1.0.0 (September 15, 2017)
 
 * No changes from 0.1.0; just adjusting to [the new version numbering scheme](https://www.hashicorp.com/blog/hashicorp-terraform-provider-versioning/).
