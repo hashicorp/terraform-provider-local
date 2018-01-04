@@ -1,8 +1,8 @@
-## 1.1.0 (Unreleased)
+## 1.1.0 (January 04, 2018)
 
 NEW FEATURES:
 
-* `local_file` data source, for reading files in a way that participates in Terraform's dependency graph, which allows reading of files that are created dynamically during `terraform apply`. [GH-6]
+* `local_file` data source, for reading files in a way that participates in Terraform's dependency graph, which allows reading of files that are created dynamically during `terraform apply`. ([#6](https://github.com/terraform-providers/terraform-provider-local/issues/6))
 
 ## 1.0.0 (September 15, 2017)
 
