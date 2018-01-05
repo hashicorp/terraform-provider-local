@@ -22,6 +22,20 @@ func resourceLocalFile() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
+			"mode": {
+				Type:        schema.TypeInt,
+				Description: "File mode of the output file",
+				Optional:    true,
+				ForceNew:    true,
+				Default:     0777,
+			},
+			"dir_mode": {
+				Type:        schema.TypeInt,
+				Description: "File mode for parent directories if they are created",
+				Optional:    true,
+				ForceNew:    true,
+				Default:     0777,
+			},
 			"filename": {
 				Type:        schema.TypeString,
 				Description: "Path to the output file",
@@ -35,7 +49,15 @@ func resourceLocalFile() *schema.Resource {
 func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	// If the output file doesn't exist, mark the resource for creation.
 	outputPath := d.Get("filename").(string)
-	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
+	fi, err := os.Stat(outputPath)
+	if os.IsNotExist(err) {
+		d.SetId("")
+		return nil
+	}
+
+	// Verify that the mode of the destination file mathes the mode we expect.
+	// Otherwise, we must reconcile.
+	if fi.Mode().Perm() != os.FileMode(d.Get("mode").(int)) {
 		d.SetId("")
 		return nil
 	}
@@ -60,15 +82,17 @@ func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
 	content := d.Get("content").(string)
 	destination := d.Get("filename").(string)
+	dir_mode := os.FileMode(d.Get("dir_mode").(int))
+	mode := os.FileMode(d.Get("mode").(int))
 
 	destinationDir := path.Dir(destination)
 	if _, err := os.Stat(destinationDir); err != nil {
-		if err := os.MkdirAll(destinationDir, 0777); err != nil {
+		if err := os.MkdirAll(destinationDir, dir_mode); err != nil {
 			return err
 		}
 	}
 
-	if err := ioutil.WriteFile(destination, []byte(content), 0777); err != nil {
+	if err := ioutil.WriteFile(destination, []byte(content), mode); err != nil {
 		return err
 	}
 
