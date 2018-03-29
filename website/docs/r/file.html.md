@@ -29,7 +29,9 @@ resource "local_file" "foo" {
 
 The following arguments are supported:
 
-* `content` - (Required) The content of file to create.
+* `content` - (Optional) The content of file to create. Either `content` or `sensitive_content` must be set.
+
+* `sensitive_content` - (Optional) The content of file to create. Will not be displayed in diffs. Either `content` or `sensitive_content` must be set.
 
 * `filename` - (Required) The path of the file to create.
 

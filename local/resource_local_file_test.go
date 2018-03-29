@@ -9,6 +9,7 @@ import (
 
 	r "github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"regexp"
 )
 
 func TestLocalFile_Basic(t *testing.T) {
@@ -22,6 +23,14 @@ func TestLocalFile_Basic(t *testing.T) {
 			"This is some content",
 			`resource "local_file" "file" {
          content     = "This is some content"
+         filename    = "local_file"
+      }`,
+		},
+		{
+			"local_file",
+			"This is some sensitive content",
+			`resource "local_file" "file" {
+         sensitive_content     = "This is some sensitive content"
          filename    = "local_file"
       }`,
 		},
@@ -50,6 +59,28 @@ func TestLocalFile_Basic(t *testing.T) {
 					return nil
 				}
 				return errors.New("local_file did not get destroyed")
+			},
+		})
+	}
+}
+
+func TestLocalFile_contentConfigThrowsError(t *testing.T) {
+	configs := []string{`resource "local_file" "file" {
+         content     = "This is some content"
+         sensitive_content     = "This is some sensitive content"
+         filename    = "local_file"
+      }`, `resource "local_file" "file" {
+         filename    = "local_file"
+      }`,
+	}
+	for _, config := range configs {
+		r.UnitTest(t, r.TestCase{
+			Providers: testProviders,
+			Steps: []r.TestStep{
+				{
+					Config:      config,
+					ExpectError: regexp.MustCompile(regexp.QuoteMeta("Exactly one of `content` or `sensitive_content` must be specified")),
+				},
 			},
 		})
 	}
