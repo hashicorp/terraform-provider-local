@@ -7,7 +7,6 @@ import (
 	"os"
 	"path"
 
-	"fmt"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -19,15 +18,17 @@ func resourceLocalFile() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"content": {
-				Type:     schema.TypeString,
-				Optional: true,
-				ForceNew: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"sensitive_content"},
 			},
 			"sensitive_content": {
-				Type:      schema.TypeString,
-				Optional:  true,
-				ForceNew:  true,
-				Sensitive: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				Sensitive:     true,
+				ConflictsWith: []string{"content"},
 			},
 			"filename": {
 				Type:        schema.TypeString,
@@ -64,26 +65,19 @@ func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	return nil
 }
 
-func resourceLocalFileContent(d *schema.ResourceData) (string, string) {
-	content, contentSpecified := d.GetOk("content")
+func resourceLocalFileContent(d *schema.ResourceData) string {
+	content := d.Get("content")
 	sensitiveContent, sensitiveSpecified := d.GetOk("sensitive_content")
-	if (contentSpecified && sensitiveSpecified) || (!contentSpecified && !sensitiveSpecified) {
-		return "", "Exactly one of `content` or `sensitive_content` must be specified"
-	}
 	useContent := content.(string)
 	if sensitiveSpecified {
 		useContent = sensitiveContent.(string)
 	}
 
-	return useContent, ""
+	return useContent
 }
 
 func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
-	content, errMsg := resourceLocalFileContent(d)
-	if errMsg != "" {
-		return fmt.Errorf(errMsg)
-	}
-
+	content := resourceLocalFileContent(d)
 	destination := d.Get("filename").(string)
 
 	destinationDir := path.Dir(destination)
