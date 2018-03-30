@@ -18,9 +18,17 @@ func resourceLocalFile() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"content": {
-				Type:     schema.TypeString,
-				Required: true,
-				ForceNew: true,
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"sensitive_content"},
+			},
+			"sensitive_content": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				Sensitive:     true,
+				ConflictsWith: []string{"content"},
 			},
 			"filename": {
 				Type:        schema.TypeString,
@@ -57,8 +65,19 @@ func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	return nil
 }
 
+func resourceLocalFileContent(d *schema.ResourceData) string {
+	content := d.Get("content")
+	sensitiveContent, sensitiveSpecified := d.GetOk("sensitive_content")
+	useContent := content.(string)
+	if sensitiveSpecified {
+		useContent = sensitiveContent.(string)
+	}
+
+	return useContent
+}
+
 func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
-	content := d.Get("content").(string)
+	content := resourceLocalFileContent(d)
 	destination := d.Get("filename").(string)
 
 	destinationDir := path.Dir(destination)

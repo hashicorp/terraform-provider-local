@@ -25,6 +25,14 @@ func TestLocalFile_Basic(t *testing.T) {
          filename    = "local_file"
       }`,
 		},
+		{
+			"local_file",
+			"This is some sensitive content",
+			`resource "local_file" "file" {
+         sensitive_content     = "This is some sensitive content"
+         filename    = "local_file"
+      }`,
+		},
 	}
 
 	for _, tt := range cases {
