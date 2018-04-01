@@ -11,6 +11,7 @@ func New() *schema.Provider {
 			"local_file": resourceLocalFile(),
 		},
 		DataSourcesMap: map[string]*schema.Resource{
+			"local_exec": dataSourceLocalExec(),
 			"local_file": dataSourceLocalFile(),
 		},
 	}
