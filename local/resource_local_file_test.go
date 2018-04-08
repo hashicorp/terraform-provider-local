@@ -9,6 +9,8 @@ import (
 
 	r "github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
+	"path"
+	"runtime"
 )
 
 func TestLocalFile_Basic(t *testing.T) {
@@ -61,4 +63,67 @@ func TestLocalFile_Basic(t *testing.T) {
 			},
 		})
 	}
+}
+
+func TestLocalFile_Permissions(t *testing.T) {
+	destination := "local_directory/local_file"
+	filePermission := os.FileMode(0600)
+	directoryPermission := os.FileMode(0700)
+	skipDirCheck := false
+	config := `resource "local_file" "file" {
+		content              = "This is some content"
+		filename             = "local_directory/local_file"
+		file_permission      = 0600
+		directory_permission = 0700
+	}`
+
+	r.UnitTest(t, r.TestCase{
+		Providers: testProviders,
+		Steps: []r.TestStep{
+			{
+				Config: config,
+				PreConfig: func() {
+					// if directory already existed prior to check, skip check
+					if _, err := os.Stat(path.Dir(destination)); !os.IsNotExist(err) {
+						skipDirCheck = true
+					}
+				},
+				Check: func(s *terraform.State) error {
+					if runtime.GOOS == "windows" {
+						// skip all checks if windows
+						return nil
+					}
+
+					fileInfo, err := os.Stat(destination)
+					if err != nil {
+						return fmt.Errorf("config:\n%s\ngot:%s\n", config, err)
+					}
+
+					if fileInfo.Mode() != filePermission {
+						return fmt.Errorf(
+							"File permission.\nconfig:\n%s\nexpected:%s\ngot: %s\n",
+							config, filePermission, fileInfo.Mode())
+					}
+
+					if !skipDirCheck {
+						dirInfo, _ := os.Stat(path.Dir(destination))
+						// we have to use FileMode.Perm() here, otherwise directory bit causes issues
+						if dirInfo.Mode().Perm() != directoryPermission.Perm() {
+							return fmt.Errorf(
+								"Directory permission.\nconfig:\n%s\nexpected:%s\ngot: %s\n",
+								config, directoryPermission, dirInfo.Mode().Perm())
+						}
+					}
+
+					return nil
+				},
+			},
+		},
+		CheckDestroy: func(*terraform.State) error {
+			if _, err := os.Stat(destination); os.IsNotExist(err) {
+				return nil
+			}
+			return errors.New("local_file did not get destroyed")
+		},
+	})
 }

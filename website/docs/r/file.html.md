@@ -35,5 +35,11 @@ The following arguments are supported:
 
 * `filename` - (Required) The path of the file to create.
 
+* `file_permission` - (Optional) The permission to set for the created file. Expects an an integer and can be specified
+   as an octal. The default value is `0777`.
+
+* `directory_permission` - (Optional) The permission to set for any directories created. Expects an an integer and can
+  be specified as an octal. The default value is `0777`.
+
 Any required parent directories will be created automatically, and any existing
 file with the given name will be overwritten.

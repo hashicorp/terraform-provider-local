@@ -36,6 +36,20 @@ func resourceLocalFile() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 			},
+			"file_permission": {
+				Type:        schema.TypeInt,
+				Description: "Permissions to set for the output file",
+				Optional:    true,
+				ForceNew:    true,
+				Default:     0777,
+			},
+			"directory_permission": {
+				Type:        schema.TypeInt,
+				Description: "Permissions to set for directories created",
+				Optional:    true,
+				ForceNew:    true,
+				Default:     0777,
+			},
 		},
 	}
 }
@@ -82,12 +96,14 @@ func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
 
 	destinationDir := path.Dir(destination)
 	if _, err := os.Stat(destinationDir); err != nil {
-		if err := os.MkdirAll(destinationDir, 0777); err != nil {
+		perm := d.Get("directory_permission").(int)
+		if err := os.MkdirAll(destinationDir, os.FileMode(perm)); err != nil {
 			return err
 		}
 	}
 
-	if err := ioutil.WriteFile(destination, []byte(content), 0777); err != nil {
+	perm := d.Get("file_permission").(int)
+	if err := ioutil.WriteFile(destination, []byte(content), os.FileMode(perm)); err != nil {
 		return err
 	}
 
