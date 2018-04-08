@@ -37,5 +37,8 @@ The following arguments are supported:
 
 * `filename` - (Required) The path of the file to create.
 
-Any required parent directories will be created automatically, and any existing
-file with the given name will be overwritten.
+* `file_permission` - (Optional) The permission to set for the created file. Expects an a string. The default value is `"0777"`.
+
+* `directory_permission` - (Optional) The permission to set for any directories created. Expects a string. The default value is `"0777"`.
+
+Any required parent directories will be created automatically, and any existing file with the given name will be overwritten.
