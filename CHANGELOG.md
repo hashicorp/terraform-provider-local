@@ -1,13 +1,8 @@
-## 2.0.0 (Unreleased)
-
-IMPROVEMENTS:
-
-* The provider is now compatible with Terraform v0.12, while retaining compatibility with prior versions.
-
 ## 1.2.0 (Unreleased)
 
 NEW FEATURES:
 
+* The provider is now compatible with Terraform v0.12, while retaining compatibility with prior versions.
 * `local_file` resource has optional `sensitive_content` attribute, which can be used instead of `content` in situations where the content contains sensitive information that should not be displayed in a rendered diff. [GH-9]
 
 ## 1.1.0 (January 04, 2018)
