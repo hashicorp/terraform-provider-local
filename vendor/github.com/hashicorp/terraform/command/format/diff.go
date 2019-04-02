@@ -253,6 +253,9 @@ func (p *blockBodyDiffPrinter) writeAttrDiff(name string, attrS *configschema.At
 		switch {
 		case showJustNew:
 			p.writeValue(new, action, indent+2)
+			if p.pathForcesNewResource(path) {
+				p.buf.WriteString(p.color.Color(forcesNewResourceCaption))
+			}
 		default:
 			// We show new even if it is null to emphasize the fact
 			// that it is being unset, since otherwise it is easy to
@@ -1067,7 +1070,7 @@ func ctySequenceDiff(old, new []cty.Value) []*plans.Change {
 	var oldI, newI, lcsI int
 	for oldI < len(old) || newI < len(new) || lcsI < len(lcs) {
 		for oldI < len(old) && (lcsI >= len(lcs) || !old[oldI].RawEquals(lcs[lcsI])) {
-			isObjectDiff := old[oldI].Type().IsObjectType() && new[newI].Type().IsObjectType()
+			isObjectDiff := old[oldI].Type().IsObjectType() && (newI >= len(new) || new[newI].Type().IsObjectType())
 			if isObjectDiff && newI < len(new) {
 				ret = append(ret, &plans.Change{
 					Action: plans.Update,
