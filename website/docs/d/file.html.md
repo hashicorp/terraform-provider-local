@@ -30,6 +30,7 @@ The following argument is required:
 The following attribute is exported:
 
 * `content` - The raw content of the file that was read.
+* `content_base64` - The base64 encoded version of the file content (use this when dealing with binary data).
 
 The content of the file must be valid UTF-8 due to Terraform's assumptions
 about string encoding. Files that do not contain UTF-8 text will have invalid
