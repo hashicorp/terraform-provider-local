@@ -1,6 +1,6 @@
-## 1.3.0 (Unreleased)
+## 1.3.0 (June 26, 2019)
 
-* Add support for base64 encoded content [GH-29]
+* Add support for base64 encoded content ([#29](https://github.com/terraform-providers/terraform-provider-local/issues/29))
 
 ## 1.2.2 (May 01, 2019)
 
