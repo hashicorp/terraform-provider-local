@@ -1,4 +1,7 @@
 ## 1.3.0 (Unreleased)
+
+* Add support for base64 encoded content [GH-29]
+
 ## 1.2.2 (May 01, 2019)
 
 * This releases includes another Terraform SDK upgrade intended to align with that being used for other providers as we prepare for the Core v0.12.0 release. It should have no significant changes in behavior for this provider.
