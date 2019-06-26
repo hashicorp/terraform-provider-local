@@ -29,9 +29,11 @@ resource "local_file" "foo" {
 
 The following arguments are supported:
 
-* `content` - (Optional) The content of file to create. Conflicts with `sensitive_content`.
+* `content` - (Optional) The content of file to create. Conflicts with `sensitive_content` and `content_base64`.
 
-* `sensitive_content` - (Optional) The content of file to create. Will not be displayed in diffs. Conflicts with `content`.
+* `sensitive_content` - (Optional) The content of file to create. Will not be displayed in diffs. Conflicts with `content` and `content_base64`.
+
+* `content_base64` - (Optional) The base64 encoded content of the file to create. Use this when dealing with binary data. Conflicts with `content` and `sensitive_content`.
 
 * `filename` - (Required) The path of the file to create.
 

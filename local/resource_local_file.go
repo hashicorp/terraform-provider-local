@@ -2,6 +2,7 @@ package local
 
 import (
 	"crypto/sha1"
+	"encoding/base64"
 	"encoding/hex"
 	"io/ioutil"
 	"os"
@@ -21,14 +22,20 @@ func resourceLocalFile() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
-				ConflictsWith: []string{"sensitive_content"},
+				ConflictsWith: []string{"sensitive_content", "content_base64"},
 			},
 			"sensitive_content": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
 				Sensitive:     true,
-				ConflictsWith: []string{"content"},
+				ConflictsWith: []string{"content", "content_base64"},
+			},
+			"content_base64": {
+				Type:          schema.TypeString,
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"sensitive_content", "content"},
 			},
 			"filename": {
 				Type:        schema.TypeString,
@@ -65,19 +72,24 @@ func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	return nil
 }
 
-func resourceLocalFileContent(d *schema.ResourceData) string {
-	content := d.Get("content")
-	sensitiveContent, sensitiveSpecified := d.GetOk("sensitive_content")
-	useContent := content.(string)
-	if sensitiveSpecified {
-		useContent = sensitiveContent.(string)
+func resourceLocalFileContent(d *schema.ResourceData) ([]byte, error) {
+	if content, sensitiveSpecified := d.GetOk("sensitive_content"); sensitiveSpecified {
+		return []byte(content.(string)), nil
+	}
+	if b64Content, b64Specified := d.GetOk("content_base64"); b64Specified {
+		return base64.StdEncoding.DecodeString(b64Content.(string))
 	}
 
-	return useContent
+	content := d.Get("content")
+	return []byte(content.(string)), nil
 }
 
 func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
-	content := resourceLocalFileContent(d)
+	content, err := resourceLocalFileContent(d)
+	if err != nil {
+		return err
+	}
+
 	destination := d.Get("filename").(string)
 
 	destinationDir := path.Dir(destination)
