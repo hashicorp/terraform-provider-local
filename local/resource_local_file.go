@@ -94,12 +94,12 @@ func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
 
 	destinationDir := path.Dir(destination)
 	if _, err := os.Stat(destinationDir); err != nil {
-		if err := os.MkdirAll(destinationDir, 0777); err != nil {
+		if err := os.MkdirAll(destinationDir, 0755); err != nil {
 			return err
 		}
 	}
 
-	if err := ioutil.WriteFile(destination, []byte(content), 0777); err != nil {
+	if err := ioutil.WriteFile(destination, []byte(content), 0644)); err != nil {
 		return err
 	}
 
