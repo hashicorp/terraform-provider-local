@@ -1,5 +1,7 @@
 ## 1.4.0 (Unreleased)
 
+NEW FEATURES:
+
 * r/local_file: allow for configurable permissions [GH-30]
 
 ## 1.3.0 (June 26, 2019)
