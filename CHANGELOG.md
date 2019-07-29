@@ -1,4 +1,7 @@
 ## 1.4.0 (Unreleased)
+
+* r/local_file: allow for configurable permissions [GH-30]
+
 ## 1.3.0 (June 26, 2019)
 
 * Add support for base64 encoded content ([#29](https://github.com/terraform-providers/terraform-provider-local/issues/29))
