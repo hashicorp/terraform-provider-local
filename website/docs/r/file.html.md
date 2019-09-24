@@ -20,7 +20,7 @@ applied by many different users or within automation systems.
 
 ```hcl
 resource "local_file" "foo" {
-    content     = "foo!"
+    content  = "foo!"
     filename = "${path.module}/foo.bar"
 }
 ```
