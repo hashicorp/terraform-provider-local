@@ -1,5 +1,9 @@
 ## 1.4.0 (Unreleased)
 
+NOTES:
+
+* The provider has switched to the standalone TF SDK, there should be no noticeable impact on compatibility. [GH-32]
+
 NEW FEATURES:
 
 * r/local_file: allow for configurable permissions [GH-30]
