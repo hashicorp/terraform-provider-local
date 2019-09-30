@@ -1,12 +1,12 @@
-## 1.4.0 (Unreleased)
+## 1.4.0 (September 30, 2019)
 
 NOTES:
 
-* The provider has switched to the standalone TF SDK, there should be no noticeable impact on compatibility. [GH-32]
+* The provider has switched to the standalone TF SDK, there should be no noticeable impact on compatibility. ([#32](https://github.com/terraform-providers/terraform-provider-local/issues/32))
 
 NEW FEATURES:
 
-* r/local_file: allow for configurable permissions [GH-30]
+* r/local_file: allow for configurable permissions ([#30](https://github.com/terraform-providers/terraform-provider-local/issues/30))
 
 ## 1.3.0 (June 26, 2019)
 
