@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"io/ioutil"
 	"os"
+	"os/user"
 	"path"
 	"path/filepath"
 	"strconv"
@@ -15,8 +16,8 @@ import (
 
 func homeDirValidate(s string) string {
 	if s[0] == '~' {
-		usersHomeDir, _ := os.UserHomeDir()
-		return filepath.Join(usersHomeDir, s[1:])
+		u, _ := user.Current()
+		return filepath.Join(u.HomeDir, s[1:])
 	}
 	return s
 }
