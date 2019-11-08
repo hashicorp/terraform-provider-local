@@ -7,10 +7,19 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"path/filepath"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
+
+func homeDirValidate(s string) string {
+	if s[0] == '~' {
+		usersHomeDir, _ := os.UserHomeDir()
+		return filepath.Join(usersHomeDir, s[1:])
+	}
+	return s
+}
 
 func resourceLocalFile() *schema.Resource {
 	return &schema.Resource{
@@ -66,7 +75,7 @@ func resourceLocalFile() *schema.Resource {
 
 func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	// If the output file doesn't exist, mark the resource for creation.
-	outputPath := d.Get("filename").(string)
+	outputPath := homeDirValidate(d.Get("filename").(string))
 	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
 		d.SetId("")
 		return nil
@@ -106,9 +115,7 @@ func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
 	if err != nil {
 		return err
 	}
-
-	destination := d.Get("filename").(string)
-
+	destination := homeDirValidate(d.Get("filename").(string))
 	destinationDir := path.Dir(destination)
 	if _, err := os.Stat(destinationDir); err != nil {
 		dirPerm := d.Get("directory_permission").(string)
@@ -128,11 +135,10 @@ func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
 
 	checksum := sha1.Sum([]byte(content))
 	d.SetId(hex.EncodeToString(checksum[:]))
-
 	return nil
 }
 
 func resourceLocalFileDelete(d *schema.ResourceData, _ interface{}) error {
-	os.Remove(d.Get("filename").(string))
+	os.Remove(homeDirValidate(d.Get("filename").(string)))
 	return nil
 }

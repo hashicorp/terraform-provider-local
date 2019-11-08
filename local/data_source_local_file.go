@@ -33,7 +33,7 @@ func dataSourceLocalFile() *schema.Resource {
 }
 
 func dataSourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
-	path := d.Get("filename").(string)
+	path := homeDirValidate(d.Get("filename").(string))
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
