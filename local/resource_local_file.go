@@ -14,8 +14,8 @@ import (
 
 func resourceLocalFile() *schema.Resource {
 	return &schema.Resource{
+		Read: resourceLocalFileRead,
 		Create: resourceLocalFileCreate,
-		Read:   resourceLocalFileRead,
 		Delete: resourceLocalFileDelete,
 
 		Schema: map[string]*schema.Schema{
@@ -71,19 +71,21 @@ func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 		d.SetId("")
 		return nil
 	}
-
-	// Verify that the content of the destination file matches the content we
-	// expect. Otherwise, the file might have been modified externally and we
-	// must reconcile.
-	outputContent, err := ioutil.ReadFile(outputPath)
+	// Get actual content from file.
+	byteContent, err := ioutil.ReadFile(outputPath)
 	if err != nil {
 		return err
 	}
 
-	outputChecksum := sha1.Sum([]byte(outputContent))
-	if hex.EncodeToString(outputChecksum[:]) != d.Id() {
-		d.SetId("")
-		return nil
+	// Set `content` or `content_base64` to match current value on disk.
+	var setErr error
+	if _, exists := d.GetOkExists("content"); exists {
+		setErr = d.Set("content", string(byteContent))
+	} else if _, exists := d.GetOkExists("content_base64"); exists {
+		setErr = d.Set("content_base64", base64.StdEncoding.EncodeToString(byteContent))
+	}
+	if setErr != nil {
+		return err
 	}
 
 	return nil
