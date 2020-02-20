@@ -4,18 +4,18 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
 	"strconv"
-	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
 )
 
 func resourceLocalFile() *schema.Resource {
 	return &schema.Resource{
-		Read: resourceLocalFileRead,
+		Read:   resourceLocalFileRead,
 		Create: resourceLocalFileCreate,
 		Delete: resourceLocalFileDelete,
 		Update: nil,
