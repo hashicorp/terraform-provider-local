@@ -3,15 +3,15 @@
 
 NOTES:
 
-* The provider has switched to the standalone TF SDK, there should be no noticeable impact on compatibility. ([#32](https://github.com/terraform-providers/terraform-provider-local/issues/32))
+* The provider has switched to the standalone TF SDK, there should be no noticeable impact on compatibility. ([#32](https://github.com/hashicorp/terraform-provider-local/issues/32))
 
 NEW FEATURES:
 
-* r/local_file: allow for configurable permissions ([#30](https://github.com/terraform-providers/terraform-provider-local/issues/30))
+* r/local_file: allow for configurable permissions ([#30](https://github.com/hashicorp/terraform-provider-local/issues/30))
 
 ## 1.3.0 (June 26, 2019)
 
-* Add support for base64 encoded content ([#29](https://github.com/terraform-providers/terraform-provider-local/issues/29))
+* Add support for base64 encoded content ([#29](https://github.com/hashicorp/terraform-provider-local/issues/29))
 
 ## 1.2.2 (May 01, 2019)
 
@@ -26,13 +26,13 @@ NEW FEATURES:
 NEW FEATURES:
 
 * The provider is now compatible with Terraform v0.12, while retaining compatibility with prior versions.
-* `local_file` resource has optional `sensitive_content` attribute, which can be used instead of `content` in situations where the content contains sensitive information that should not be displayed in a rendered diff. ([#9](https://github.com/terraform-providers/terraform-provider-local/issues/9))
+* `local_file` resource has optional `sensitive_content` attribute, which can be used instead of `content` in situations where the content contains sensitive information that should not be displayed in a rendered diff. ([#9](https://github.com/hashicorp/terraform-provider-local/issues/9))
 
 ## 1.1.0 (January 04, 2018)
 
 NEW FEATURES:
 
-* `local_file` data source, for reading files in a way that participates in Terraform's dependency graph, which allows reading of files that are created dynamically during `terraform apply`. ([#6](https://github.com/terraform-providers/terraform-provider-local/issues/6))
+* `local_file` data source, for reading files in a way that participates in Terraform's dependency graph, which allows reading of files that are created dynamically during `terraform apply`. ([#6](https://github.com/hashicorp/terraform-provider-local/issues/6))
 
 ## 1.0.0 (September 15, 2017)
 
