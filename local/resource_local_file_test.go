@@ -5,52 +5,57 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
+	"path/filepath"
+	"runtime"
 	"testing"
 
-	"github.com/hashicorp/terraform-plugin-sdk/helper/acctest"
 	r "github.com/hashicorp/terraform-plugin-sdk/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/terraform"
-	"path"
-	"runtime"
 )
 
 func TestLocalFile_Basic(t *testing.T) {
+	td := testTempDir(t)
+	defer os.RemoveAll(td)
+
+	f := filepath.Join(td, "local_file")
+
 	var cases = []struct {
 		path    string
 		content string
 		config  string
 	}{
 		{
-			"local_file",
-			"This is some content", `
+			f,
+			"This is some content", fmt.Sprintf(`
 resource "local_file" "file" {
   content  = "This is some content"
-  filename = "local_file"
-}`,
+  filename = "%s"
+}`, f),
 		},
 		{
-			"local_file",
-			"This is some sensitive content", `
+			f,
+			"This is some sensitive content", fmt.Sprintf(`
 resource "local_file" "file" {
   sensitive_content = "This is some sensitive content"
-  filename          = "local_file"
-}`,
+  filename = "%s"
+}`, f),
 		},
 		{
-			"local_file",
-			"This is some sensitive content", `
+			f,
+			"This is some sensitive content", fmt.Sprintf(`
 resource "local_file" "file" {
   content_base64 = "VGhpcyBpcyBzb21lIHNlbnNpdGl2ZSBjb250ZW50"
-  filename       = "local_file"
-}`,
+  filename = "%s"
+}`, f),
 		},
 		{
-			"local_file",
-			"This is some sensitive content", `
+			f,
+			"This is some sensitive content", fmt.Sprintf(`
 resource "local_file" "file" {
   content_base64 = base64encode("This is some sensitive content")
-  filename       = "local_file"
-}`,
+  filename = "%s"
+}`, f),
 		},
 	}
 
@@ -131,10 +136,10 @@ resource "local_file" "file" {
 }
 
 func TestLocalFile_Permissions(t *testing.T) {
+	td := testTempDir(t)
+	defer os.RemoveAll(td)
 
-	randomPath := acctest.RandomWithPrefix("test-file-perms")
-
-	destinationDirPath := "../test/" + randomPath
+	destinationDirPath := td
 	destinationFilePath := destinationDirPath + "/local_file"
 	filePermission := os.FileMode(0600)
 	directoryPermission := os.FileMode(0700)
@@ -199,4 +204,12 @@ resource "local_file" "file" {
 
 	defer os.Remove(destinationDirPath)
 
+}
+
+func testTempDir(t *testing.T) string {
+	tmp, err := ioutil.TempDir("", "tf")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return tmp
 }
