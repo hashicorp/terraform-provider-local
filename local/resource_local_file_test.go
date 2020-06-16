@@ -84,6 +84,52 @@ resource "local_file" "file" {
 	}
 }
 
+func TestLocalFile_source(t *testing.T) {
+	tmp, err := ioutil.TempDir("", "local-file-source")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(tmp)
+
+	// create a local file that will be used as the "source" file
+	source_content := "local file content"
+	if err := ioutil.WriteFile("source_file", []byte(source_content), 0644); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove("source_file")
+
+	config := `
+resource "local_file" "file" {
+  source = "source_file"
+  filename = "new_file"
+}`
+
+	r.UnitTest(t, r.TestCase{
+		Providers: testProviders,
+		Steps: []r.TestStep{
+			{
+				Config: config,
+				Check: func(s *terraform.State) error {
+					content, err := ioutil.ReadFile("new_file")
+					if err != nil {
+						return fmt.Errorf("config:\n%s\n,got: %s\n", config, err)
+					}
+					if string(content) != source_content {
+						return fmt.Errorf("config:\n%s\ngot:\n%s\nwant:\n%s\n", config, content, source_content)
+					}
+					return nil
+				},
+			},
+		},
+		CheckDestroy: func(*terraform.State) error {
+			if _, err := os.Stat("new_file"); os.IsNotExist(err) {
+				return nil
+			}
+			return errors.New("local_file did not get destroyed")
+		},
+	})
+}
+
 func TestLocalFile_Permissions(t *testing.T) {
 
 	randomPath := acctest.RandomWithPrefix("test-file-perms")
