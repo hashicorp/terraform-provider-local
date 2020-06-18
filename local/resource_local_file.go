@@ -23,20 +23,20 @@ func resourceLocalFile() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
-				ConflictsWith: []string{"sensitive_content", "content_base64"},
+				ConflictsWith: []string{"sensitive_content", "content_base64", "source"},
 			},
 			"sensitive_content": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
 				Sensitive:     true,
-				ConflictsWith: []string{"content", "content_base64"},
+				ConflictsWith: []string{"content", "content_base64", "source"},
 			},
 			"content_base64": {
 				Type:          schema.TypeString,
 				Optional:      true,
 				ForceNew:      true,
-				ConflictsWith: []string{"sensitive_content", "content"},
+				ConflictsWith: []string{"sensitive_content", "content", "source"},
 			},
 			"filename": {
 				Type:        schema.TypeString,
@@ -59,6 +59,13 @@ func resourceLocalFile() *schema.Resource {
 				ForceNew:     true,
 				Default:      "0777",
 				ValidateFunc: validateMode,
+			},
+			"source": {
+				Type:          schema.TypeString,
+				Description:   "Path to file to use as source for content of output file",
+				Optional:      true,
+				ForceNew:      true,
+				ConflictsWith: []string{"content", "sensitive_content", "content_base64"},
 			},
 		},
 	}
@@ -95,6 +102,11 @@ func resourceLocalFileContent(d *schema.ResourceData) ([]byte, error) {
 	}
 	if b64Content, b64Specified := d.GetOk("content_base64"); b64Specified {
 		return base64.StdEncoding.DecodeString(b64Content.(string))
+	}
+
+	if v, ok := d.GetOk("source"); ok {
+		source := v.(string)
+		return ioutil.ReadFile(source)
 	}
 
 	content := d.Get("content")
