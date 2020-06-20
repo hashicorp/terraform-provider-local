@@ -1,9 +1,7 @@
 package local
 
 import (
-	"crypto/sha1"
 	"encoding/base64"
-	"encoding/hex"
 	"io/ioutil"
 
 	"github.com/hashicorp/terraform-plugin-sdk/helper/schema"
@@ -42,8 +40,7 @@ func dataSourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	d.Set("content", string(content))
 	d.Set("content_base64", base64.StdEncoding.EncodeToString(content))
 
-	checksum := sha1.Sum([]byte(content))
-	d.SetId(hex.EncodeToString(checksum[:]))
+	d.SetId("-")
 
 	return nil
 }
