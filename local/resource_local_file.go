@@ -4,6 +4,7 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/hex"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path"
@@ -14,10 +15,16 @@ import (
 
 func resourceLocalFile() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceLocalFileCreate,
 		Read:   resourceLocalFileRead,
+		Create: resourceLocalFileCreate,
 		Delete: resourceLocalFileDelete,
-
+		Update: nil,
+		Exists: func(d *schema.ResourceData, meta interface{}) (bool, error) {
+			if _, err := os.Stat(d.Get("filename").(string)); os.IsNotExist(err) {
+				return false, nil
+			}
+			return true, nil
+		},
 		Schema: map[string]*schema.Schema{
 			"content": {
 				Type:          schema.TypeString,
@@ -72,25 +79,30 @@ func resourceLocalFile() *schema.Resource {
 }
 
 func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
-	// If the output file doesn't exist, mark the resource for creation.
-	outputPath := d.Get("filename").(string)
-	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
-		d.SetId("")
-		return nil
-	}
-
-	// Verify that the content of the destination file matches the content we
-	// expect. Otherwise, the file might have been modified externally and we
-	// must reconcile.
-	outputContent, err := ioutil.ReadFile(outputPath)
+	// Get actual content from file.
+	filePath := d.Get("filename").(string)
+	byteContent, err := ioutil.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
 
-	outputChecksum := sha1.Sum([]byte(outputContent))
-	if hex.EncodeToString(outputChecksum[:]) != d.Id() {
-		d.SetId("")
-		return nil
+	var setErr error
+
+	// Set file_permission to match what is on disk.
+	stat, _ := os.Stat(filePath)
+	setErr = d.Set("file_permission", fmt.Sprintf("%04o", stat.Mode().Perm()))
+	if setErr != nil {
+		return err
+	}
+
+	// Set `content` or `content_base64` to match current value on disk.
+	if _, exists := d.GetOkExists("content"); exists {
+		setErr = d.Set("content", string(byteContent))
+	} else if _, exists := d.GetOkExists("content_base64"); exists {
+		setErr = d.Set("content_base64", base64.StdEncoding.EncodeToString(byteContent))
+	}
+	if setErr != nil {
+		return err
 	}
 
 	return nil
