@@ -67,6 +67,13 @@ func resourceLocalFile() *schema.Resource {
 				ForceNew:      true,
 				ConflictsWith: []string{"content", "sensitive_content", "content_base64"},
 			},
+			"append": {
+				Type:        schema.TypeBool,
+				Description: "Path to file to use as source for content of output file",
+				Optional:    true,
+				ForceNew:    true,
+				Default:     false,
+			},
 		},
 	}
 }
@@ -91,6 +98,12 @@ func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	if hex.EncodeToString(outputChecksum[:]) != d.Id() {
 		d.SetId("")
 		return nil
+	}
+	if appendData := d.Get("append").(bool); appendData {
+		if hex.EncodeToString(outputChecksum[:]) != d.Id() {
+			d.SetId("")
+			return nil
+		}
 	}
 
 	return nil
@@ -134,11 +147,31 @@ func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
 
 	fileMode, _ := strconv.ParseInt(filePerm, 8, 64)
 
-	if err := ioutil.WriteFile(destination, []byte(content), os.FileMode(fileMode)); err != nil {
-		return err
+
+	appendData := d.Get("append").(bool)
+	if appendData {
+		openFile, err := os.OpenFile(destination, os.O_APPEND|os.O_CREATE|os.O_WRONLY, os.FileMode(fileMode))
+		if err != nil {
+			return err
+		}
+		defer openFile.Close()
+		if _, err := openFile.Write([]byte(content)); err != nil {
+			return err
+		}
+	} else {
+		if err := ioutil.WriteFile(destination, []byte(content), os.FileMode(fileMode)); err != nil {
+			return err
+		}
+	}
+	checksum := sha1.Sum([]byte(content))
+	if appendData {
+		outputContent, err := ioutil.ReadFile(destination)
+		if err != nil {
+			return err
+		}
+		checksum = sha1.Sum([]byte(outputContent))
 	}
 
-	checksum := sha1.Sum([]byte(content))
 	d.SetId(hex.EncodeToString(checksum[:]))
 
 	return nil

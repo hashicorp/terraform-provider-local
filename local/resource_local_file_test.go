@@ -52,6 +52,15 @@ resource "local_file" "file" {
   filename       = "local_file"
 }`,
 		},
+		{
+			"local_file",
+			"This is some sensitive content", `
+resource "local_file" "file" {
+  content = "This is some append content""
+  filename       = "local_file"
+  append  = true
+}`,
+		},
 	}
 
 	for i, tt := range cases {
