@@ -1,4 +1,4 @@
-package local
+package provider
 
 import (
 	"testing"
@@ -7,11 +7,11 @@ import (
 )
 
 var testProviders = map[string]*schema.Provider{
-	"local": Provider(),
+	"local": New(),
 }
 
 func TestProvider(t *testing.T) {
-	if err := Provider().InternalValidate(); err != nil {
+	if err := New().InternalValidate(); err != nil {
 		t.Fatalf("err: %s", err)
 	}
 }
