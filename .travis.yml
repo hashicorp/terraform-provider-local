@@ -4,7 +4,8 @@ services:
 - docker
 language: go
 go:
-  - "1.11.x"
+  - stable
+  - tip
 
 env:
   - GO111MODULE=on GOFLAGS=-mod=vendor
@@ -19,7 +20,7 @@ install:
 script:
 - make test
 - make vet
-- make website-test
+- make testacc
 
 branches:
   only:
