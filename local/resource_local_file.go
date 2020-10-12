@@ -69,7 +69,7 @@ func resourceLocalFile() *schema.Resource {
 			},
 			"append": {
 				Type:        schema.TypeBool,
-				Description: "Path to file to use as source for content of output file",
+				Description: "Option to append data in a file",
 				Optional:    true,
 				ForceNew:    true,
 				Default:     false,
