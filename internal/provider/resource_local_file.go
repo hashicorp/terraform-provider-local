@@ -72,9 +72,10 @@ func resourceLocalFile() *schema.Resource {
 }
 
 func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
-	// If the output file doesn't exist, mark the resource for creation.
+	// If the output file doesn't exist or cannot be read due to permission
+	// issues, mark the resource for creation.
 	outputPath := d.Get("filename").(string)
-	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
+	if _, err := os.Stat(outputPath); os.IsNotExist(err) || os.IsPermission(err) {
 		d.SetId("")
 		return nil
 	}
