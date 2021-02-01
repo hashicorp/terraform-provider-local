@@ -1,0 +1,75 @@
+name: Tests
+on:
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'website/*'
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - 'website/*'
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+
+    - name: Set up Go
+      uses: actions/setup-go@v2.1.3
+      with:
+        go-version: '1.15'
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2.3.3
+
+    - name: Go fmt
+      run: |
+        make fmt
+
+    - name: Go vet
+      run: |
+        make vet
+
+    - name: Build
+      run: |
+        go build -v .
+
+
+# run acceptance tests in a matrix with Terraform core versions
+  test:
+    name: Matrix Test
+    needs: build
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        terraform:
+          - '0.12.30'
+          - '0.13.6'
+          - '0.14.5'
+    steps:
+
+    - name: Set up Go
+      uses: actions/setup-go@v2.1.3
+      with:
+        go-version: '1.15'
+      id: go
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2.3.3
+
+    - name: TF acceptance tests
+      timeout-minutes: 10
+      env:
+        TF_ACC: "1"
+        TF_ACC_TERRAFORM_VERSION: ${{ matrix.terraform }}
+      run: |
+        go test -v -cover ./internal/provider/
