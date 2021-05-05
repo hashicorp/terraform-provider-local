@@ -22,7 +22,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2.1.3
       with:
-        go-version: '1.15'
+        go-version: '1.16'
       id: go
 
     - name: Check out code into the Go module directory
@@ -52,15 +52,16 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
         terraform:
-          - '0.12.30'
-          - '0.13.6'
-          - '0.14.5'
+          - '0.12.31'
+          - '0.13.7'
+          - '0.14.11'
+          - '0.15.1'
     steps:
 
     - name: Set up Go
       uses: actions/setup-go@v2.1.3
       with:
-        go-version: '1.15'
+        go-version: '1.16'
       id: go
 
     - name: Check out code into the Go module directory
