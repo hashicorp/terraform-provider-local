@@ -1,13 +1,3 @@
-behavior "regexp_issue_labeler" "panic_label" {
-    regexp = "panic:"
-    labels = ["crash", "bug"]
-}
-
-behavior "remove_labels_on_reply" "remove_stale" {
-    labels = ["waiting-response", "stale"]
-    only_non_maintainers = true
-}
-
 behavior "pull_request_size_labeler" "size" {
     label_prefix = "size/"
     label_map = {
@@ -37,11 +27,3 @@ behavior "pull_request_size_labeler" "size" {
         }
     }
 }
-
-behavior "pull_request_path_labeler" "cross_provider_labels" {
-    label_map = {
-        "documentation" = ["website/**/*"]
-        "dependencies" = ["vendor/**/*"]
-    }
-}
-
