@@ -8,6 +8,7 @@ import (
 	"path"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"testing"
 
 	r "github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
@@ -19,6 +20,7 @@ func TestLocalFile_Basic(t *testing.T) {
 	defer os.RemoveAll(td)
 
 	f := filepath.Join(td, "local_file")
+	f = strings.ReplaceAll(f, `\`, `\\`)
 
 	var cases = []struct {
 		path    string
@@ -140,7 +142,8 @@ func TestLocalFile_Permissions(t *testing.T) {
 	defer os.RemoveAll(td)
 
 	destinationDirPath := td
-	destinationFilePath := destinationDirPath + "/local_file"
+	destinationFilePath := filepath.Join(destinationDirPath, "local_file")
+	destinationFilePath = strings.ReplaceAll(destinationFilePath, `\`, `\\`)
 	filePermission := os.FileMode(0600)
 	directoryPermission := os.FileMode(0700)
 	skipDirCheck := false
