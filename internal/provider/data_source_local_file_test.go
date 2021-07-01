@@ -10,45 +10,31 @@ import (
 )
 
 func TestLocalFileDataSource(t *testing.T) {
-	var tests = []struct {
-		content string
-		config  string
-	}{
-		{
-			"This is some content",
-			`
-				resource "local_file" "file" {
-					content  = "This is some content"
-					filename = "local_file"
-				}
-				data "local_file" "file" {
-					filename = "${local_file.file.filename}"
-				}
-			`,
-		},
-	}
+	content := "This is some content"
 
-	for i, test := range tests {
-		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
-			resource.UnitTest(t, resource.TestCase{
-				Providers: testProviders,
-				Steps: []resource.TestStep{
-					{
-						Config: test.config,
-						Check: func(s *terraform.State) error {
-							m := s.RootModule()
-							i := m.Resources["data.local_file.file"].Primary
-							if got, want := i.Attributes["content"], test.content; got != want {
-								return fmt.Errorf("wrong content %q; want %q", got, want)
-							}
-							if got, want := i.Attributes["content_base64"], base64.StdEncoding.EncodeToString([]byte(test.content)); got != want {
-								return fmt.Errorf("wrong content_base64 %q; want %q", got, want)
-							}
-							return nil
-						},
-					},
+	config := `
+data "local_file" "file" {
+  filename = "./testdata/local_file"
+}
+`
+
+	resource.UnitTest(t, resource.TestCase{
+		Providers: testProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: config,
+				Check: func(s *terraform.State) error {
+					m := s.RootModule()
+					i := m.Resources["data.local_file.file"].Primary
+					if got, want := i.Attributes["content"], content; got != want {
+						return fmt.Errorf("wrong content %q; want %q", got, want)
+					}
+					if got, want := i.Attributes["content_base64"], base64.StdEncoding.EncodeToString([]byte(content)); got != want {
+						return fmt.Errorf("wrong content_base64 %q; want %q", got, want)
+					}
+					return nil
 				},
-			})
-		})
-	}
+			},
+		},
+	})
 }
