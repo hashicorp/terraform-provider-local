@@ -22,12 +22,13 @@ func dataSourceLocalFile() *schema.Resource {
 			},
 			"sensitive": {
 				Type:        schema.TypeBool,
-				Description: "Treats content as sensitive and will not output it in plan",
+				Description: "If set to true, the output content will be empty and the sensitive_content output will be populated instead.",
 				Optional:    true,
 			},
 			"content": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "The raw content of the file that was read.",
+				Computed:    true,
 			},
 			"sensitive_content": {
 				Type:      schema.TypeString,
@@ -35,8 +36,9 @@ func dataSourceLocalFile() *schema.Resource {
 				Computed:  true,
 			},
 			"content_base64": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "The base64 encoded version of the file content (use this when dealing with binary data).",
+				Computed:    true,
 			},
 		},
 	}
