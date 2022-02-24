@@ -52,8 +52,9 @@ The following arguments are supported:
 The following attribute is exported:
 
 * `content` - The raw content of the file that was read. It will be an empty string if `sensitive` is true.
-* `content_base64` - The base64 encoded version of the file content (use this when dealing with binary data).
+* `content_base64` - The base64 encoded version of the file content (use this when dealing with binary data). It will be an empty string if `sensitive` is true.
 * `sensitive_content` - This will be populated with the raw content of the file  only when the `sensitive` argument is set to `true`. Otherwise it will be an empty string.
+* `sensitive_content_base64` - This will be populated with the base64 encoded version of the file content only when the `sensitive` argument is set to `true`. Otherwise it will be an empty string.
 
 The content of the file must be valid UTF-8 due to Terraform's assumptions
 about string encoding. Files that do not contain UTF-8 text will have invalid
