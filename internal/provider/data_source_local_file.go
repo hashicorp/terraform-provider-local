@@ -20,13 +20,32 @@ func dataSourceLocalFile() *schema.Resource {
 				Required:    true,
 				ForceNew:    true,
 			},
+			"sensitive": {
+				Type:        schema.TypeBool,
+				Description: "If set to true, the output content will be empty and the sensitive_content output will be populated instead.",
+				Optional:    true,
+			},
 			"content": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "The raw content of the file that was read, if sensitive is false. Otherwise an empty string.",
+				Computed:    true,
+			},
+			"sensitive_content": {
+				Type:        schema.TypeString,
+				Description: "The raw content of the file that was read, if sensitive is true. Otherwise an empty string.",
+				Sensitive:   true,
+				Computed:    true,
 			},
 			"content_base64": {
-				Type:     schema.TypeString,
-				Computed: true,
+				Type:        schema.TypeString,
+				Description: "The base64 encoded version of the file content (use this when dealing with binary data), if sensitive is false. Otherwise an empty string.",
+				Computed:    true,
+			},
+			"sensitive_content_base64": {
+				Type:        schema.TypeString,
+				Description: "The base64 encoded version of the file content, if sensitive is true. Otherwise an empty string.",
+				Sensitive:   true,
+				Computed:    true,
 			},
 		},
 	}
@@ -38,9 +57,14 @@ func dataSourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	if err != nil {
 		return err
 	}
-
-	d.Set("content", string(content))
-	d.Set("content_base64", base64.StdEncoding.EncodeToString(content))
+	sensitive := d.Get("sensitive").(bool)
+	if sensitive {
+		d.Set("sensitive_content", string(content))
+		d.Set("sensitive_content_base64", base64.StdEncoding.EncodeToString(content))
+	} else {
+		d.Set("content", string(content))
+		d.Set("content_base64", base64.StdEncoding.EncodeToString(content))
+	}
 
 	checksum := sha1.Sum([]byte(content))
 	d.SetId(hex.EncodeToString(checksum[:]))
