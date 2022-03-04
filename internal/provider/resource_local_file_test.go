@@ -23,12 +23,14 @@ func TestLocalFile_Basic(t *testing.T) {
 	f = strings.ReplaceAll(f, `\`, `\\`)
 
 	var cases = []struct {
-		path    string
-		content string
-		config  string
+		path     string
+		preserve bool
+		content  string
+		config   string
 	}{
 		{
 			f,
+			false,
 			"This is some content", fmt.Sprintf(`
 resource "local_file" "file" {
   content  = "This is some content"
@@ -37,14 +39,27 @@ resource "local_file" "file" {
 		},
 		{
 			f,
-			"This is some sensitive content", fmt.Sprintf(`
+			true,
+			"This is some content", fmt.Sprintf(`
 resource "local_file" "file" {
-  sensitive_content = "This is some sensitive content"
+  content  = "This is some content"
   filename = "%s"
+  preserve_on_destroy = true
 }`, f),
 		},
 		{
 			f,
+			false,
+			"This is some sensitive content", fmt.Sprintf(`
+resource "local_file" "file" {
+  sensitive_content = "This is some sensitive content"
+  filename = "%s"
+    preserve_on_destroy = false
+}`, f),
+		},
+		{
+			f,
+			false,
 			"This is some sensitive content", fmt.Sprintf(`
 resource "local_file" "file" {
   content_base64 = "VGhpcyBpcyBzb21lIHNlbnNpdGl2ZSBjb250ZW50"
@@ -53,6 +68,7 @@ resource "local_file" "file" {
 		},
 		{
 			f,
+			false,
 			"This is some sensitive content", fmt.Sprintf(`
 resource "local_file" "file" {
   content_base64 = base64encode("This is some sensitive content")
@@ -82,6 +98,12 @@ resource "local_file" "file" {
 				},
 				CheckDestroy: func(*terraform.State) error {
 					if _, err := os.Stat(tt.path); os.IsNotExist(err) {
+						if !tt.preserve {
+							return nil
+						}
+						return errors.New("local_file was destroyed when 'preserve_on_destroy' was set to true")
+					} else if tt.preserve {
+						os.Remove(tt.path)
 						return nil
 					}
 					return errors.New("local_file did not get destroyed")

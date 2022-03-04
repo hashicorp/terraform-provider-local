@@ -41,4 +41,6 @@ The following arguments are supported:
 
 * `directory_permission` - (Optional) The permission to set for any directories created. Expects a string. The default value is `"0777"`.
 
+* `preserve_on_destroy` - (Optional) Determines if the file created will be removed when this resource is destroyed in Terraform. Defaults to `false`.
+
 Any required parent directories will be created automatically, and any existing file with the given name will be overwritten.
