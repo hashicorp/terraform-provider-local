@@ -16,7 +16,7 @@ import (
 )
 
 func TestLocalFile_Basic(t *testing.T) {
-	td := testTempDir(t)
+	td := createTestingTempDir(t)
 	defer os.RemoveAll(td)
 
 	f := filepath.Join(td, "local_file")
@@ -30,34 +30,38 @@ func TestLocalFile_Basic(t *testing.T) {
 		{
 			f,
 			"This is some content", fmt.Sprintf(`
-resource "local_file" "file" {
-  content  = "This is some content"
-  filename = "%s"
-}`, f),
+				resource "local_file" "file" {
+				  content  = "This is some content"
+				  filename = "%s"
+				}`, f,
+			),
 		},
 		{
 			f,
 			"This is some sensitive content", fmt.Sprintf(`
-resource "local_file" "file" {
-  sensitive_content = "This is some sensitive content"
-  filename = "%s"
-}`, f),
+				resource "local_file" "file" {
+				  sensitive_content = "This is some sensitive content"
+				  filename = "%s"
+				}`, f,
+			),
 		},
 		{
 			f,
-			"This is some sensitive content", fmt.Sprintf(`
-resource "local_file" "file" {
-  content_base64 = "VGhpcyBpcyBzb21lIHNlbnNpdGl2ZSBjb250ZW50"
-  filename = "%s"
-}`, f),
+			"This is some base64 content", fmt.Sprintf(`
+				resource "local_file" "file" {
+				  content_base64 = "VGhpcyBpcyBzb21lIGJhc2U2NCBjb250ZW50"
+				  filename = "%s"
+				}`, f,
+			),
 		},
 		{
 			f,
-			"This is some sensitive content", fmt.Sprintf(`
-resource "local_file" "file" {
-  content_base64 = base64encode("This is some sensitive content")
-  filename = "%s"
-}`, f),
+			"This is some base64 content", fmt.Sprintf(`
+				resource "local_file" "file" {
+				  content_base64 = base64encode("This is some base64 content")
+				  filename = "%s"
+				}`, f,
+			),
 		},
 	}
 
@@ -106,10 +110,11 @@ func TestLocalFile_source(t *testing.T) {
 	defer os.Remove("source_file")
 
 	config := `
-resource "local_file" "file" {
-  source = "source_file"
-  filename = "new_file"
-}`
+		resource "local_file" "file" {
+		  source = "source_file"
+		  filename = "new_file"
+		}
+	`
 
 	r.UnitTest(t, r.TestCase{
 		Providers: testProviders,
@@ -138,7 +143,7 @@ resource "local_file" "file" {
 }
 
 func TestLocalFile_Permissions(t *testing.T) {
-	td := testTempDir(t)
+	td := createTestingTempDir(t)
 	defer os.RemoveAll(td)
 
 	destinationDirPath := td
@@ -148,12 +153,13 @@ func TestLocalFile_Permissions(t *testing.T) {
 	directoryPermission := os.FileMode(0700)
 	skipDirCheck := false
 	config := fmt.Sprintf(`
-resource "local_file" "file" {
-	content              = "This is some content"
-	filename             = "%s"
-	file_permission      = "0600"
-	directory_permission = "0700"
-}`, destinationFilePath)
+		resource "local_file" "file" {
+			content              = "This is some content"
+			filename             = "%s"
+			file_permission      = "0600"
+			directory_permission = "0700"
+		}`, destinationFilePath,
+	)
 
 	r.UnitTest(t, r.TestCase{
 		Providers: testProviders,
@@ -207,12 +213,4 @@ resource "local_file" "file" {
 
 	defer os.Remove(destinationDirPath)
 
-}
-
-func testTempDir(t *testing.T) string {
-	tmp, err := ioutil.TempDir("", "tf")
-	if err != nil {
-		t.Fatal(err)
-	}
-	return tmp
 }
