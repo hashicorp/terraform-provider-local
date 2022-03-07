@@ -13,7 +13,10 @@
         <a href="#">Data Sources</a>
         <ul class="nav nav-visible">
           <li<%= sidebar_current("docs-local-datasource-file") %>>
-            <a href="/docs/providers/local/d/file.html">file</a>
+            <a href="/docs/providers/local/d/file.html">local_file</a>
+          </li>
+          <li<%= sidebar_current("docs-local-datasource-sensitive_file") %>>
+            <a href="/docs/providers/local/d/sensitive_file.html">local_sensitive_file</a>
           </li>
         </ul>
       </li>
@@ -22,7 +25,10 @@
         <a href="#">Resources</a>
         <ul class="nav nav-visible">
           <li<%= sidebar_current("docs-local-resource-file") %>>
-            <a href="/docs/providers/local/r/file.html">file</a>
+            <a href="/docs/providers/local/r/file.html">local_file</a>
+          </li>
+          <li<%= sidebar_current("docs-local-resource-sensitive_file") %>>
+            <a href="/docs/providers/local/r/sensitive_file.html">local_sensitive_file</a>
           </li>
         </ul>
       </li>
@@ -30,4 +36,4 @@
   <% end %>
 
   <%= yield %>
-  <% end %>
+<% end %>

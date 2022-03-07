@@ -1,14 +1,16 @@
 ---
 layout: "local"
-page_title: "Local: local_file"
-sidebar_current: "docs-local-datasource-file"
+page_title: "Local: local_sensitive_file"
+sidebar_current: "docs-local-datasource-sensitive_file"
 description: |-
-  Reads a file from the local filesystem.
+  Reads a file that contains sensitive data, from the local filesystem.
 ---
 
-# local_file
+# local_sensitive_file
 
-`local_file` reads a file from the local filesystem.
+`local_sensitive_file` reads a file that contains sensitive data, from the local filesystem.
+The attributes exposed by this data source are marked as
+[sensitive](https://learn.hashicorp.com/tutorials/terraform/sensitive-variables).
 
 ~> **Note about UTF-8**
 The content of the file must be valid UTF-8 due to Terraform's assumptions
@@ -19,14 +21,14 @@ When consuming binary files, please use `content_base64` instead.
 ## Example Usage
 
 ```hcl
-data "local_file" "foo" {
+data "local_sensitive_file" "foo" {
     filename = "${path.module}/foo.bar"
 }
 
 resource "aws_s3_bucket_object" "shared_zip" {
   bucket     = "my-bucket"
   key        = "my-key"
-  content     = data.local_file.foo.content
+  content     = data.local_sensitive_file.foo.content
 }
 ```
 
