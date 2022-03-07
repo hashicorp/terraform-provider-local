@@ -34,7 +34,7 @@ func TestLocalSensitiveFile_Basic(t *testing.T) {
 				  content  = "This is some content"
 				  filename = "%s"
 				}`, f,
-		),
+			),
 		},
 		{
 			f,
@@ -43,7 +43,7 @@ func TestLocalSensitiveFile_Basic(t *testing.T) {
 				  sensitive_content = "This is some sensitive content"
 				  filename = "%s"
 				}`, f,
-		),
+			),
 		},
 		{
 			f,
@@ -52,7 +52,7 @@ func TestLocalSensitiveFile_Basic(t *testing.T) {
 				  content_base64 = "VGhpcyBpcyBzb21lIGJhc2U2NCBjb250ZW50"
 				  filename = "%s"
 				}`, f,
-		),
+			),
 		},
 		{
 			f,
@@ -61,7 +61,7 @@ func TestLocalSensitiveFile_Basic(t *testing.T) {
 				  content_base64 = base64encode("This is some base64 content")
 				  filename = "%s"
 				}`, f,
-		),
+			),
 		},
 	}
 
