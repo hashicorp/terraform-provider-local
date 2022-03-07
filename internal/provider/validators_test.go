@@ -46,7 +46,7 @@ func TestValidateNoTrailingSlash(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		_, errs := validateMode(tc.val, "test_property")
+		_, errs := validateModePermission(tc.val, "test_property")
 
 		if len(errs) == 0 && tc.expectedErr == nil {
 			continue
