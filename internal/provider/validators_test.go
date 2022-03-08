@@ -18,19 +18,19 @@ func TestValidateNoTrailingSlash(t *testing.T) {
 		},
 		{
 			val:         "9999",
-			expectedErr: regexp.MustCompile(`bad mode for file - must be three octal digits: 9999`),
+			expectedErr: regexp.MustCompile(`bad mode permission: string must be expressed in octal numeric notation: 9999`),
 		},
 		{
 			val:         "7",
-			expectedErr: regexp.MustCompile(`bad mode for file - string length should be 3 or 4 digits: 7`),
+			expectedErr: regexp.MustCompile(`bad mode permission: string length should be 3 or 4 digits: 7`),
 		},
 		{
 			val:         "00700",
-			expectedErr: regexp.MustCompile(`bad mode for file - string length should be 3 or 4 digits: 00700`),
+			expectedErr: regexp.MustCompile(`bad mode permission: string length should be 3 or 4 digits: 00700`),
 		},
 		{
 			val:         "-1",
-			expectedErr: regexp.MustCompile(`bad mode for file - must be three octal digits: -1`),
+			expectedErr: regexp.MustCompile(`bad mode permission: string length should be 3 or 4 digits: -1`),
 		},
 	}
 
@@ -46,7 +46,7 @@ func TestValidateNoTrailingSlash(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		_, errs := validateMode(tc.val, "test_property")
+		_, errs := validateModePermission(tc.val, "test_property")
 
 		if len(errs) == 0 && tc.expectedErr == nil {
 			continue

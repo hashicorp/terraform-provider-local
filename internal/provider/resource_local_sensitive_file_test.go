@@ -14,8 +14,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/terraform"
 )
 
-func TestLocalFile_Basic(t *testing.T) {
-	f := filepath.Join(t.TempDir(), "local_file")
+func TestLocalSensitiveFile_Basic(t *testing.T) {
+	f := filepath.Join(t.TempDir(), "local_sensitive_file")
 	f = strings.ReplaceAll(f, `\`, `\\`)
 
 	var cases = []struct {
@@ -25,36 +25,27 @@ func TestLocalFile_Basic(t *testing.T) {
 	}{
 		{
 			f,
-			"This is some content", fmt.Sprintf(`
-				resource "local_file" "file" {
-				  content  = "This is some content"
-				  filename = "%s"
-				}`, f,
-			),
-		},
-		{
-			f,
 			"This is some sensitive content", fmt.Sprintf(`
-				resource "local_file" "file" {
-				  sensitive_content = "This is some sensitive content"
+				resource "local_sensitive_file" "file" {
+				  content  = "This is some sensitive content"
 				  filename = "%s"
 				}`, f,
 			),
 		},
 		{
 			f,
-			"This is some base64 content", fmt.Sprintf(`
-				resource "local_file" "file" {
-				  content_base64 = "VGhpcyBpcyBzb21lIGJhc2U2NCBjb250ZW50"
+			"This is some sensitive base64 content", fmt.Sprintf(`
+				resource "local_sensitive_file" "file" {
+				  content_base64 = "VGhpcyBpcyBzb21lIHNlbnNpdGl2ZSBiYXNlNjQgY29udGVudA=="
 				  filename = "%s"
 				}`, f,
 			),
 		},
 		{
 			f,
-			"This is some base64 content", fmt.Sprintf(`
-				resource "local_file" "file" {
-				  content_base64 = base64encode("This is some base64 content")
+			"This is some sensitive base64 content", fmt.Sprintf(`
+				resource "local_sensitive_file" "file" {
+				  content_base64 = base64encode("This is some sensitive base64 content")
 				  filename = "%s"
 				}`, f,
 			),
@@ -86,7 +77,7 @@ func TestLocalFile_Basic(t *testing.T) {
 	}
 }
 
-func TestLocalFile_source(t *testing.T) {
+func TestLocalSensitiveFile_source(t *testing.T) {
 	// create a local file that will be used as the "source" file
 	source_content := "local file content"
 	if err := ioutil.WriteFile("source_file", []byte(source_content), 0644); err != nil {
@@ -95,7 +86,7 @@ func TestLocalFile_source(t *testing.T) {
 	defer os.Remove("source_file")
 
 	config := `
-		resource "local_file" "file" {
+		resource "local_sensitive_file" "file" {
 		  source = "source_file"
 		  filename = "new_file"
 		}
@@ -122,15 +113,15 @@ func TestLocalFile_source(t *testing.T) {
 	})
 }
 
-func TestLocalFile_Permissions(t *testing.T) {
+func TestLocalSensitiveFile_Permissions(t *testing.T) {
 	destinationDirPath := t.TempDir()
-	destinationFilePath := filepath.Join(destinationDirPath, "local_file")
+	destinationFilePath := filepath.Join(destinationDirPath, "local_sensitive_file")
 	destinationFilePath = strings.ReplaceAll(destinationFilePath, `\`, `\\`)
 	filePermission := os.FileMode(0600)
 	directoryPermission := os.FileMode(0700)
 	skipDirCheck := false
 	config := fmt.Sprintf(`
-		resource "local_file" "file" {
+		resource "local_sensitive_file" "file" {
 			content              = "This is some content"
 			filename             = "%s"
 			file_permission      = "0600"

@@ -18,54 +18,64 @@ func resourceLocalFile() *schema.Resource {
 		Read:   resourceLocalFileRead,
 		Delete: resourceLocalFileDelete,
 
+		Description: "Generates a local file with the given content.",
+
 		Schema: map[string]*schema.Schema{
 			"content": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ForceNew:      true,
-				ConflictsWith: []string{"sensitive_content", "content_base64", "source"},
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ExactlyOneOf: []string{"content", "sensitive_content", "content_base64", "source"},
+				Description:  "Content to store in the file, expected to be an UTF-8 encoded string.",
 			},
 			"sensitive_content": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ForceNew:      true,
-				Sensitive:     true,
-				ConflictsWith: []string{"content", "content_base64", "source"},
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				Sensitive:    true,
+				ExactlyOneOf: []string{"content", "sensitive_content", "content_base64", "source"},
+				Description:  "Sensitive content to store in the file, expected to be an UTF-8 encoded string.",
+				Deprecated:   "Use the `local_sensitive_file` resource instead.",
 			},
 			"content_base64": {
-				Type:          schema.TypeString,
-				Optional:      true,
-				ForceNew:      true,
-				ConflictsWith: []string{"sensitive_content", "content", "source"},
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ExactlyOneOf: []string{"content", "sensitive_content", "content_base64", "source"},
+				Description:  "Content to store in the file, expected to be binary encoded as base64 string.",
+			},
+			"source": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ForceNew:     true,
+				ExactlyOneOf: []string{"content", "sensitive_content", "content_base64", "source"},
+				Description:  "Path to file to use as source for the one we are creating.",
 			},
 			"filename": {
-				Type:        schema.TypeString,
-				Description: "Path to the output file",
-				Required:    true,
-				ForceNew:    true,
+				Type:     schema.TypeString,
+				Required: true,
+				ForceNew: true,
+				Description: `
+					The path to the file that will be created.
+					Missing parent directories will be created.
+					If the file already exists, it will be overridden with the given content.
+				`,
 			},
 			"file_permission": {
 				Type:         schema.TypeString,
-				Description:  "Permissions to set for the output file",
 				Optional:     true,
 				ForceNew:     true,
 				Default:      "0777",
-				ValidateFunc: validateMode,
+				ValidateFunc: validateModePermission,
+				Description:  "Permissions to set for the output file (in numeric notation).",
 			},
 			"directory_permission": {
 				Type:         schema.TypeString,
-				Description:  "Permissions to set for directories created",
 				Optional:     true,
 				ForceNew:     true,
 				Default:      "0777",
-				ValidateFunc: validateMode,
-			},
-			"source": {
-				Type:          schema.TypeString,
-				Description:   "Path to file to use as source for content of output file",
-				Optional:      true,
-				ForceNew:      true,
-				ConflictsWith: []string{"content", "sensitive_content", "content_base64"},
+				ValidateFunc: validateModePermission,
+				Description:  "Permissions to set for directories created (in numeric notation).",
 			},
 		},
 	}
@@ -80,14 +90,14 @@ func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	}
 
 	// Verify that the content of the destination file matches the content we
-	// expect. Otherwise, the file might have been modified externally and we
+	// expect. Otherwise, the file might have been modified externally, and we
 	// must reconcile.
 	outputContent, err := ioutil.ReadFile(outputPath)
 	if err != nil {
 		return err
 	}
 
-	outputChecksum := sha1.Sum([]byte(outputContent))
+	outputChecksum := sha1.Sum(outputContent)
 	if hex.EncodeToString(outputChecksum[:]) != d.Id() {
 		d.SetId("")
 		return nil
@@ -97,16 +107,16 @@ func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 }
 
 func resourceLocalFileContent(d *schema.ResourceData) ([]byte, error) {
-	if content, sensitiveSpecified := d.GetOk("sensitive_content"); sensitiveSpecified {
-		return []byte(content.(string)), nil
+	if sensitiveContent, ok := d.GetOk("sensitive_content"); ok {
+		return []byte(sensitiveContent.(string)), nil
 	}
-	if b64Content, b64Specified := d.GetOk("content_base64"); b64Specified {
-		return base64.StdEncoding.DecodeString(b64Content.(string))
+	if contentBase64, ok := d.GetOk("content_base64"); ok {
+		return base64.StdEncoding.DecodeString(contentBase64.(string))
 	}
 
-	if v, ok := d.GetOk("source"); ok {
-		source := v.(string)
-		return ioutil.ReadFile(source)
+	if sourceFile, ok := d.GetOk("source"); ok {
+		sourceFileContent := sourceFile.(string)
+		return ioutil.ReadFile(sourceFileContent)
 	}
 
 	content := d.Get("content")
@@ -134,11 +144,11 @@ func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
 
 	fileMode, _ := strconv.ParseInt(filePerm, 8, 64)
 
-	if err := ioutil.WriteFile(destination, []byte(content), os.FileMode(fileMode)); err != nil {
+	if err := ioutil.WriteFile(destination, content, os.FileMode(fileMode)); err != nil {
 		return err
 	}
 
-	checksum := sha1.Sum([]byte(content))
+	checksum := sha1.Sum(content)
 	d.SetId(hex.EncodeToString(checksum[:]))
 
 	return nil
