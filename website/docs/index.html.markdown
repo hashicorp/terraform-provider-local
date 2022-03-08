@@ -1,7 +1,6 @@
 ---
 layout: "local"
 page_title: "Provider: Local"
-sidebar_current: "docs-local-index"
 description: |-
   The Local provider is used to manage local resources, such as files.
 ---

@@ -35,7 +35,7 @@ func resourceLocalFile() *schema.Resource {
 				Sensitive:    true,
 				ExactlyOneOf: []string{"content", "sensitive_content", "content_base64", "source"},
 				Description:  "Sensitive content to store in the file, expected to be an UTF-8 encoded string.",
-				Deprecated:   "If in need to use _sensitive_ content, please use the `local_sensitive_file` resource instead.",
+				Deprecated:   "Use the `local_sensitive_file` resource instead.",
 			},
 			"content_base64": {
 				Type:         schema.TypeString,

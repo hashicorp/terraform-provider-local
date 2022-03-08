@@ -1,7 +1,6 @@
 ---
 layout: "local"
 page_title: "Local: local_file"
-sidebar_current: "docs-local-datasource-file"
 description: |-
   Reads a file from the local filesystem.
 ---
@@ -9,12 +8,6 @@ description: |-
 # local_file
 
 `local_file` reads a file from the local filesystem.
-
-~> **Note about UTF-8**
-The content of the file must be valid UTF-8 due to Terraform's assumptions
-about string encoding. Files that do not contain UTF-8 text will have invalid
-UTF-8 sequences in `content` replaced with the Unicode replacement character.
-When consuming binary files, please use `content_base64` instead.
 
 ## Example Usage
 
@@ -41,5 +34,9 @@ The following arguments are supported:
 
 The following attribute is exported:
 
-* `content` - Raw content of the file that was read, as UTF-8 encoded string.
-* `content_base64` - Base64 encoded version of the file content (use this when dealing with binary data).
+* `content` - Raw content of the file that was read, assumed by Terraform to be UTF-8 encoded string.
+  Files that do not contain UTF-8 text will have invalid UTF-8 sequences in `content`
+  replaced with the Unicode replacement character.
+
+* `content_base64` - Base64 encoded version of the file content.
+  Use this when dealing with binary data.

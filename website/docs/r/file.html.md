@@ -1,7 +1,6 @@
 ---
 layout: "local"
 page_title: "Local: local_file"
-sidebar_current: "docs-local-resource-file"
 description: |-
   Generates a local file from content.
 ---
@@ -17,10 +16,8 @@ where the file is not present and will generate a diff to re-create it. This
 may cause "noise" in diffs in environments where configurations are routinely
 applied by many different users or within automation systems.
 
-~> **Note about _sensitive_ content**
-We are deprecating the use of this resource for _sensitive_ content.
-If in need to use _sensitive_ content, please use the [`local_sensitive_file`](./sensitive_file.html)
-resource instead.
+-> If the file content is sensitive, use the
+[`local_sensitive_file`](./sensitive_file.html) resource instead.
 
 ## Example Usage
 

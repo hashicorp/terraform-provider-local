@@ -1,7 +1,6 @@
 ---
 layout: "local"
 page_title: "Local: local_sensitive_file"
-sidebar_current: "docs-local-resource-sensitive_file"
 description: |-
   Generates a local file with the given sensitive content.
 ---
