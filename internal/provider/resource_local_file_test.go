@@ -1,7 +1,6 @@
 package provider
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -16,10 +15,7 @@ import (
 )
 
 func TestLocalFile_Basic(t *testing.T) {
-	td := createTestingTempDir(t)
-	defer os.RemoveAll(td)
-
-	f := filepath.Join(td, "local_file")
+	f := filepath.Join(t.TempDir(), "local_file")
 	f = strings.ReplaceAll(f, `\`, `\\`)
 
 	var cases = []struct {
@@ -84,24 +80,13 @@ func TestLocalFile_Basic(t *testing.T) {
 						},
 					},
 				},
-				CheckDestroy: func(*terraform.State) error {
-					if _, err := os.Stat(tt.path); os.IsNotExist(err) {
-						return nil
-					}
-					return errors.New("local_file did not get destroyed")
-				},
+				CheckDestroy: checkFileDeleted(tt.path),
 			})
 		})
 	}
 }
 
 func TestLocalFile_source(t *testing.T) {
-	tmp, err := ioutil.TempDir("", "local-file-source")
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer os.RemoveAll(tmp)
-
 	// create a local file that will be used as the "source" file
 	source_content := "local file content"
 	if err := ioutil.WriteFile("source_file", []byte(source_content), 0644); err != nil {
@@ -133,20 +118,12 @@ func TestLocalFile_source(t *testing.T) {
 				},
 			},
 		},
-		CheckDestroy: func(*terraform.State) error {
-			if _, err := os.Stat("new_file"); os.IsNotExist(err) {
-				return nil
-			}
-			return errors.New("local_file did not get destroyed")
-		},
+		CheckDestroy: checkFileDeleted("new_file"),
 	})
 }
 
 func TestLocalFile_Permissions(t *testing.T) {
-	td := createTestingTempDir(t)
-	defer os.RemoveAll(td)
-
-	destinationDirPath := td
+	destinationDirPath := t.TempDir()
 	destinationFilePath := filepath.Join(destinationDirPath, "local_file")
 	destinationFilePath = strings.ReplaceAll(destinationFilePath, `\`, `\\`)
 	filePermission := os.FileMode(0600)
@@ -203,14 +180,6 @@ func TestLocalFile_Permissions(t *testing.T) {
 				},
 			},
 		},
-		CheckDestroy: func(*terraform.State) error {
-			if _, err := os.Stat(destinationFilePath); os.IsNotExist(err) {
-				return nil
-			}
-			return errors.New("local_file did not get destroyed")
-		},
+		CheckDestroy: checkFileDeleted(destinationFilePath),
 	})
-
-	defer os.Remove(destinationDirPath)
-
 }
