@@ -2,17 +2,16 @@
 
 NOTES:
 
-* resource/local_file: Marking the argument `sensitive_content` as `Deprecated`, nudging new configurations to use
-  the new resource `local_sensitive_file` instead.
+* resource/local_file: Argument `sensitive_content` is `Deprecated`; please use the new resource `local_sensitive_file`.
 
 FEATURES:
 
-* data-source/local_sensitive_file: Useful when consuming files where `content` and `content_base64` should be 
-  handled as _sensitive_, ensuring sensitive data is not propagated to the `output`.
+* **New data-source/local_sensitive_file**: Similar to the data source `local_file`, but `content` and `content_base64` attributes
+  are marked as _sensitive_.
   ([#101](https://github.com/hashicorp/terraform-provider-local/pull/101) and
   [#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
-* resource/local_sensitive_file: Useful when creating new files and the `content` and `content_base64` arguments
-  should be handled as _sensitive_.
+* **New resource/local_sensitive_file**: Similar to the resource `local_file`, but `content` and `content_base64` arguments
+  are marked as _sensitive_.
   ([#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
 
 ## 2.1.0 (February 19, 2021)
