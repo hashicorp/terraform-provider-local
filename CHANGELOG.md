@@ -1,3 +1,9 @@
+## 2.2.1 (March 10, 2022)
+
+NOTES:
+
+* This release is a republishing of the 2.2.0 release to fix release asset checksum errors. It is identical otherwise.
+
 ## 2.2.0 (March 10, 2022)
 
 NOTES:
