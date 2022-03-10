@@ -2,7 +2,9 @@
 
 NOTES:
 
-* resource/local_file: Argument `sensitive_content` is `Deprecated`; please use the new resource `local_sensitive_file`.
+* resource/local_file: Argument `sensitive_content` is `Deprecated`. For creating or accessing files containing sensitive data,
+  please use the new resource and data source `local_sensitive_file`.
+  Both are identical to their `local_file` counterparts, but `content` and `content_base64` attributes are marked as _sensitive_.
 
 FEATURES:
 
