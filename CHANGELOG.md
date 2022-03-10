@@ -6,13 +6,8 @@ NOTES:
 
 FEATURES:
 
-* **New data-source/local_sensitive_file**: Similar to the data source `local_file`, but `content` and `content_base64` attributes
-  are marked as _sensitive_.
-  ([#101](https://github.com/hashicorp/terraform-provider-local/pull/101) and
-  [#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
-* **New resource/local_sensitive_file**: Similar to the resource `local_file`, but `content` and `content_base64` arguments
-  are marked as _sensitive_.
-  ([#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
+* **New Data Source:** `local_sensitive_file` ([#101](https://github.com/hashicorp/terraform-provider-local/pull/101) and [#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
+* **New Resource:** `local_sensitive_file** ([#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
 
 ## 2.1.0 (February 19, 2021)
 
