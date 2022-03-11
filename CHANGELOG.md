@@ -1,3 +1,10 @@
+## 2.2.2 (March 11, 2022)
+
+NOTES:
+
+* resource/local_sensitive_file: Fixed typo in documentation (default permission is `"0700"`, not `"0777"`).
+* No functional changes from 2.2.1.
+
 ## 2.2.1 (March 10, 2022)
 
 NOTES:
@@ -15,7 +22,7 @@ NOTES:
 FEATURES:
 
 * **New Data Source:** `local_sensitive_file` ([#101](https://github.com/hashicorp/terraform-provider-local/pull/101) and [#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
-* **New Resource:** `local_sensitive_file** ([#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
+* **New Resource:** `local_sensitive_file` ([#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
 
 ## 2.1.0 (February 19, 2021)
 
