@@ -46,8 +46,8 @@ The following arguments are supported:
 
 * `file_permission` - (Optional) Permissions to set for the output file, expressed as string in
   [numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).
-  Default value is `"0777"`.
+  Default value is `"0700"`.
 
 * `directory_permission` - (Optional) Permissions to set for directories created, expressed as string in
   [numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).
-  Default value is `"0777"`.
+  Default value is `"0700"`.
