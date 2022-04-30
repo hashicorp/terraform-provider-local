@@ -20,7 +20,7 @@ applied by many different users or within automation systems.
 
 ~> **Note about file content**
 File content must be specified with _exactly_ one of the arguments `content`, 
-`sensitive_content` (Deprecated), `content_base64`, or `source`.
+`content_base64`, or `source`.
 
 ## Example Usage
 
