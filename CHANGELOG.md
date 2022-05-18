@@ -1,3 +1,15 @@
+## 2.2.3 (May 18, 2022)
+
+NOTES:
+
+* resource/local_file: Update docs to prevent confusion that exactly one of the arguments `content`, 
+  `sensitive_content`, `content_base64`, and `source` needs to be specified ([#123](https://github.com/hashicorp/terraform-provider-local/pull/123)).
+
+* resource/local_sensitive_file: Update docs to prevent confusion that exactly one of the arguments `content`, 
+  `content_base64`, and `source` needs to be specified ([#123](https://github.com/hashicorp/terraform-provider-local/pull/123)).
+  
+* No functional changes from 2.2.2.
+
 ## 2.2.2 (March 11, 2022)
 
 NOTES:

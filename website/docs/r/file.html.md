@@ -16,6 +16,10 @@ where the file is not present and will generate a diff to re-create it. This
 may cause "noise" in diffs in environments where configurations are routinely
 applied by many different users or within automation systems.
 
+~> **Note about file content**
+File content must be specified with _exactly_ one of the arguments `content`, 
+`sensitive_content` (Deprecated), `content_base64`, or `source`.
+
 -> If the file content is sensitive, use the
 [`local_sensitive_file`](./sensitive_file.html) resource instead.
 
@@ -37,19 +41,23 @@ The following arguments are supported:
   If the file already exists, it will be overridden with the given content.
 
 * `content` - (Optional) Content to store in the file, expected to be an UTF-8 encoded string.
-  Conflicts with `sensitive_content`, `content_base64` and `source`.
+  Conflicts with `sensitive_content`, `content_base64` and `source`. 
+  Exactly one of these four arguments must be specified.
 
 * `sensitive_content` - (Optional - Deprecated) Sensitive content to store in the file, expected to be an UTF-8 encoded string.
   Will not be displayed in diffs.
   Conflicts with `content`, `content_base64` and `source`.
+  Exactly one of these four arguments must be specified.
   If in need to use _sensitive_ content, please use the [`local_sensitive_file`](./sensitive_file.html)
   resource instead.
 
 * `content_base64` - (Optional) Content to store in the file, expected to be binary encoded as base64 string.
   Conflicts with `content`, `sensitive_content` and `source`.
+  Exactly one of these four arguments must be specified.
 
 * `source` - (Optional) Path to file to use as source for the one we are creating.
   Conflicts with `content`, `sensitive_content` and `content_base64`.
+  Exactly one of these four arguments must be specified.
 
 * `file_permission` - (Optional) Permissions to set for the output file, expressed as string in
   [numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).
