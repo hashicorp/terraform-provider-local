@@ -2,4 +2,4 @@ module github.com/terraform-providers/terraform-provider-local
 
 go 1.15
 
-require github.com/hashicorp/terraform-plugin-sdk/v2 v2.17.0
+require github.com/hashicorp/terraform-plugin-sdk/v2 v2.18.0
