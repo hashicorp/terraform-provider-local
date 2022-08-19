@@ -2,6 +2,11 @@ name: "Pull Request Triage"
 
 on: [pull_request_target]
 
+permissions:
+  # CodelyTV/pr-size-labeler uses issues URL for labeling
+  issues: write
+  pull-requests: write
+
 jobs:
   triage:
     runs-on: ubuntu-latest
@@ -10,8 +15,7 @@ jobs:
       with:
         configuration-path: .github/labeler-pull-request-triage.yml
         repo-token: "${{ secrets.GITHUB_TOKEN }}"
-    # See also: https://github.com/CodelyTV/pr-size-labeler/pull/26
-    - uses: bflad/pr-size-labeler@7df62b12a176513631973abfe151d2b6213c3f12
+    - uses: CodelyTV/pr-size-labeler@v1
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         xs_label: 'size/XS'
@@ -24,3 +28,4 @@ jobs:
         l_max_size: '300'
         xl_label: 'size/XL'
         message_if_xl: ''
+        files_to_ignore: 'go.sum'
