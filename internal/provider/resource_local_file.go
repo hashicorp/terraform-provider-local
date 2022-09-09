@@ -1,7 +1,10 @@
 package provider
 
 import (
+	"crypto/md5"
 	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
 	"encoding/base64"
 	"encoding/hex"
 	"io/ioutil"
@@ -77,6 +80,36 @@ func resourceLocalFile() *schema.Resource {
 				ValidateFunc: validateModePermission,
 				Description:  "Permissions to set for directories created (in numeric notation).",
 			},
+			"content_md5": {
+				Type:        schema.TypeString,
+				Description: "MD5 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha1": {
+				Type:        schema.TypeString,
+				Description: "SHA1 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha256": {
+				Type:        schema.TypeString,
+				Description: "SHA256 checksum of file content.",
+				Computed:    true,
+			},
+			"content_base64sha256": {
+				Type:        schema.TypeString,
+				Description: "Base64 encoded SHA256 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha512": {
+				Type:        schema.TypeString,
+				Description: "SHA512 checksum of file content.",
+				Computed:    true,
+			},
+			"content_base64sha512": {
+				Type:        schema.TypeString,
+				Description: "Base64 encoded SHA512 checksum of file content.",
+				Computed:    true,
+			},
 		},
 	}
 }
@@ -96,6 +129,20 @@ func resourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	if err != nil {
 		return err
 	}
+
+	md5Sum := md5.Sum(outputContent)
+	d.Set("content_md5", hex.EncodeToString(md5Sum[:]))
+
+	sha1Sum := sha1.Sum(outputContent)
+	d.Set("content_sha1", hex.EncodeToString(sha1Sum[:]))
+
+	sha256Sum := sha256.Sum256(outputContent)
+	d.Set("content_sha256", hex.EncodeToString(sha256Sum[:]))
+	d.Set("content_base64sha256", base64.StdEncoding.EncodeToString(sha256Sum[:]))
+
+	sha512Sum := sha512.Sum512(outputContent)
+	d.Set("content_sha512", hex.EncodeToString(sha512Sum[:]))
+	d.Set("content_base64sha512", base64.StdEncoding.EncodeToString(sha512Sum[:]))
 
 	outputChecksum := sha1.Sum(outputContent)
 	if hex.EncodeToString(outputChecksum[:]) != d.Id() {
@@ -147,6 +194,20 @@ func resourceLocalFileCreate(d *schema.ResourceData, _ interface{}) error {
 	if err := ioutil.WriteFile(destination, content, os.FileMode(fileMode)); err != nil {
 		return err
 	}
+
+	md5Sum := md5.Sum(content)
+	d.Set("content_md5", hex.EncodeToString(md5Sum[:]))
+
+	sha1Sum := sha1.Sum(content)
+	d.Set("content_sha1", hex.EncodeToString(sha1Sum[:]))
+
+	sha256Sum := sha256.Sum256(content)
+	d.Set("content_sha256", hex.EncodeToString(sha256Sum[:]))
+	d.Set("content_base64sha256", base64.StdEncoding.EncodeToString(sha256Sum[:]))
+
+	sha512Sum := sha512.Sum512(content)
+	d.Set("content_sha512", hex.EncodeToString(sha512Sum[:]))
+	d.Set("content_base64sha512", base64.StdEncoding.EncodeToString(sha512Sum[:]))
 
 	checksum := sha1.Sum(content)
 	d.SetId(hex.EncodeToString(checksum[:]))

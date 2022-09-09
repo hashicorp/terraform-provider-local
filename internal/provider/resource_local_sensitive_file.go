@@ -62,6 +62,36 @@ func resourceLocalSensitiveFile() *schema.Resource {
 				ValidateFunc: validateModePermission,
 				Description:  "Permissions to set for directories created (in numeric notation).",
 			},
+			"content_md5": {
+				Type:        schema.TypeString,
+				Description: "MD5 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha1": {
+				Type:        schema.TypeString,
+				Description: "SHA1 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha256": {
+				Type:        schema.TypeString,
+				Description: "SHA256 checksum of file content.",
+				Computed:    true,
+			},
+			"content_base64sha256": {
+				Type:        schema.TypeString,
+				Description: "Base64 encoded SHA256 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha512": {
+				Type:        schema.TypeString,
+				Description: "SHA512 checksum of file content.",
+				Computed:    true,
+			},
+			"content_base64sha512": {
+				Type:        schema.TypeString,
+				Description: "Base64 encoded SHA512 checksum of file content.",
+				Computed:    true,
+			},
 		},
 	}
 }
