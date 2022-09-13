@@ -1,12 +1,7 @@
 package provider
 
 import (
-	"crypto/md5"
-	"crypto/sha1"
-	"crypto/sha256"
-	"crypto/sha512"
 	"encoding/base64"
-	"encoding/hex"
 	"io/ioutil"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -81,23 +76,16 @@ func dataSourceLocalFileRead(d *schema.ResourceData, _ interface{}) error {
 	d.Set("content", string(content))
 	d.Set("content_base64", base64.StdEncoding.EncodeToString(content))
 
-	md5Sum := md5.Sum(content)
-	d.Set("content_md5", hex.EncodeToString(md5Sum[:]))
-
-	sha1Sum := sha1.Sum(content)
-	d.Set("content_sha1", hex.EncodeToString(sha1Sum[:]))
-
-	sha256Sum := sha256.Sum256(content)
-	d.Set("content_sha256", hex.EncodeToString(sha256Sum[:]))
-	d.Set("content_base64sha256", base64.StdEncoding.EncodeToString(sha256Sum[:]))
-
-	sha512Sum := sha512.Sum512(content)
-	d.Set("content_sha512", hex.EncodeToString(sha512Sum[:]))
-	d.Set("content_base64sha512", base64.StdEncoding.EncodeToString(sha512Sum[:]))
+	checksums := genFileChecksums(content)
+	d.Set("content_md5", checksums.md5Hex)
+	d.Set("content_sha1", checksums.sha1Hex)
+	d.Set("content_sha256", checksums.sha256Hex)
+	d.Set("content_base64sha256", checksums.sha256Base64)
+	d.Set("content_sha512", checksums.sha512Hex)
+	d.Set("content_base64sha512", checksums.sha512Base64)
 
 	// Use the hexadecimal encoding of the checksum of the file content as ID
-	checksum := sha1.Sum(content)
-	d.SetId(hex.EncodeToString(checksum[:]))
+	d.SetId(checksums.sha1Hex)
 
 	return nil
 }
