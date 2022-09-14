@@ -66,3 +66,19 @@ The following arguments are supported:
 * `directory_permission` - (Optional) Permissions to set for directories created, expressed as string in
   [numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).
   Default value is `"0777"`.
+
+## Attributes Exported
+
+The following attributes are exported:
+
+* `content_md5` - MD5 checksum of file content.
+
+* `content_sha1` - SHA1 checksum of file content.
+
+* `content_sha256` - SHA256 checksum of file content.
+
+* `content_base64sha256` - Base64 encoded SHA256 checksum of file content.
+
+* `content_sha512` - SHA512 checksum of file content.
+
+* `content_base64sha512` - Base64 encoded SHA512 checksum of file content.

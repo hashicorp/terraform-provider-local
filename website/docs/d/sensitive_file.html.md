@@ -34,7 +34,7 @@ The following arguments are supported:
 
 ## Attributes Exported
 
-The following attribute is exported:
+The following attributes are exported:
 
 * `content` - Raw content of the file that was read, assumed by Terraform to be UTF-8 encoded string.
   Files that do not contain UTF-8 text will have invalid UTF-8 sequences in `content`
@@ -42,3 +42,15 @@ The following attribute is exported:
 
 * `content_base64` - Base64 encoded version of the file content.
   Use this when dealing with binary data.
+
+* `content_md5` - MD5 checksum of file content.
+
+* `content_sha1` - SHA1 checksum of file content.
+
+* `content_sha256` - SHA256 checksum of file content.
+
+* `content_base64sha256` - Base64 encoded SHA256 checksum of file content.
+
+* `content_sha512` - SHA512 checksum of file content.
+
+* `content_base64sha512` - Base64 encoded SHA512 checksum of file content.
