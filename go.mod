@@ -2,7 +2,7 @@ module github.com/terraform-providers/terraform-provider-local
 
 go 1.18
 
-require github.com/hashicorp/terraform-plugin-sdk/v2 v2.23.0
+require github.com/hashicorp/terraform-plugin-sdk/v2 v2.24.0
 
 require (
 	github.com/agext/levenshtein v1.2.2 // indirect
@@ -21,7 +21,7 @@ require (
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/hc-install v0.4.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.14.0 // indirect
+	github.com/hashicorp/hcl/v2 v2.14.1 // indirect
 	github.com/hashicorp/logutils v1.0.0 // indirect
 	github.com/hashicorp/terraform-exec v0.17.3 // indirect
 	github.com/hashicorp/terraform-json v0.14.0 // indirect
