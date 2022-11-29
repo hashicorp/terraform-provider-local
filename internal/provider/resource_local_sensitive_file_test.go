@@ -55,7 +55,7 @@ func TestLocalSensitiveFile_Basic(t *testing.T) {
 	for i, tt := range cases {
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
 			r.UnitTest(t, r.TestCase{
-				Providers: testProviders,
+				ProtoV5ProviderFactories: protoV5ProviderFactories(),
 				Steps: []r.TestStep{
 					{
 						Config: tt.config,
@@ -93,7 +93,7 @@ func TestLocalSensitiveFile_source(t *testing.T) {
 	`
 
 	r.UnitTest(t, r.TestCase{
-		Providers: testProviders,
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []r.TestStep{
 			{
 				Config: config,
@@ -130,7 +130,7 @@ func TestLocalSensitiveFile_Permissions(t *testing.T) {
 	)
 
 	r.UnitTest(t, r.TestCase{
-		Providers: testProviders,
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []r.TestStep{
 			{
 				Config: config,

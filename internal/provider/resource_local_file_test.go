@@ -64,7 +64,7 @@ func TestLocalFile_Basic(t *testing.T) {
 	for i, tt := range cases {
 		t.Run(fmt.Sprintf("%d", i), func(t *testing.T) {
 			r.UnitTest(t, r.TestCase{
-				Providers: testProviders,
+				ProtoV5ProviderFactories: protoV5ProviderFactories(),
 				Steps: []r.TestStep{
 					{
 						Config: tt.config,
@@ -102,7 +102,7 @@ func TestLocalFile_source(t *testing.T) {
 	`
 
 	r.UnitTest(t, r.TestCase{
-		Providers: testProviders,
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []r.TestStep{
 			{
 				Config: config,
@@ -139,7 +139,7 @@ func TestLocalFile_Permissions(t *testing.T) {
 	)
 
 	r.UnitTest(t, r.TestCase{
-		Providers: testProviders,
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []r.TestStep{
 			{
 				Config: config,

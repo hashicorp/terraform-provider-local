@@ -1,19 +1,48 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/provider"
+	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
-func New() *schema.Provider {
-	return &schema.Provider{
-		Schema: map[string]*schema.Schema{},
-		ResourcesMap: map[string]*schema.Resource{
-			"local_file":           resourceLocalFile(),
-			"local_sensitive_file": resourceLocalSensitiveFile(),
-		},
-		DataSourcesMap: map[string]*schema.Resource{
-			"local_file":           dataSourceLocalFile(),
-			"local_sensitive_file": dataSourceLocalSensitiveFile(),
-		},
+var (
+	_ provider.Provider             = (*localProvider)(nil)
+	_ provider.ProviderWithSchema   = (*localProvider)(nil)
+	_ provider.ProviderWithMetadata = (*localProvider)(nil)
+)
+
+func New() provider.Provider {
+	return &localProvider{}
+}
+
+type localProvider struct{}
+
+func (p *localProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "local"
+}
+
+func (p *localProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+
+}
+
+func (p *localProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+	return []func() datasource.DataSource{
+		NewLocalFileDataSource,
+		NewLocalSensitiveFileDataSource,
 	}
+}
+
+func (p *localProvider) Resources(ctx context.Context) []func() resource.Resource {
+	return []func() resource.Resource{
+		NewLocalFileResource,
+		NewLocalSensitiveFileResource,
+	}
+}
+
+func (p *localProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+	resp.Schema = schema.Schema{}
 }
