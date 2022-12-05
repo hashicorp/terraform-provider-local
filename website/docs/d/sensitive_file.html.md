@@ -15,13 +15,13 @@ The attributes exposed by this data source are marked as
 
 ```hcl
 data "local_sensitive_file" "foo" {
-    filename = "${path.module}/foo.bar"
+  filename = "${path.module}/foo.bar"
 }
 
 resource "aws_s3_bucket_object" "shared_zip" {
-  bucket     = "my-bucket"
-  key        = "my-key"
-  content     = data.local_sensitive_file.foo.content
+  bucket  = "my-bucket"
+  key     = "my-key"
+  content = data.local_sensitive_file.foo.content
 }
 ```
 

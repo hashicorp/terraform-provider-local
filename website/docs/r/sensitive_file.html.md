@@ -26,8 +26,8 @@ File content must be specified with _exactly_ one of the arguments `content`,
 
 ```hcl
 resource "local_sensitive_file" "foo" {
-    content  = "foo!"
-    filename = "${path.module}/foo.bar"
+  content  = "foo!"
+  filename = "${path.module}/foo.bar"
 }
 ```
 
