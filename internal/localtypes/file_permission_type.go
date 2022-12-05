@@ -20,10 +20,6 @@ type FilePermissionType struct {
 	types.StringTypable
 }
 
-func (f FilePermissionType) FromTerraform5Value(value tftypes.Value) error {
-	return nil
-}
-
 // Validate checks that the given input string is a valid file permission string,
 // expressed in numeric notation.
 // See: https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation
