@@ -90,7 +90,7 @@ func (n *localFileResource) Schema(ctx context.Context, req resource.SchemaReque
 				},
 			},
 			"file_permission": schema.StringAttribute{
-				CustomType:  localtypes.FilePermissionType{StringTypable: types.StringType},
+				CustomType:  localtypes.NewFilePermissionType(),
 				Description: "Permissions to set for the output file (in numeric notation).",
 				Optional:    true,
 				Computed:    true,
@@ -100,7 +100,7 @@ func (n *localFileResource) Schema(ctx context.Context, req resource.SchemaReque
 				},
 			},
 			"directory_permission": schema.StringAttribute{
-				CustomType:  localtypes.FilePermissionType{StringTypable: types.StringType},
+				CustomType:  localtypes.NewFilePermissionType(),
 				Description: "Permissions to set for directories created (in numeric notation).",
 				Optional:    true,
 				Computed:    true,

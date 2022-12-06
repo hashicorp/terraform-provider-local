@@ -20,6 +20,10 @@ type FilePermissionType struct {
 	types.StringTypable
 }
 
+func NewFilePermissionType() FilePermissionType {
+	return FilePermissionType{StringTypable: types.StringType}
+}
+
 // Validate checks that the given input string is a valid file permission string,
 // expressed in numeric notation.
 // See: https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation
@@ -65,8 +69,8 @@ func (f FilePermissionType) Validate(ctx context.Context, value tftypes.Value, p
 		return diag.Diagnostics{
 			diag.NewAttributeErrorDiagnostic(path,
 				"Invalid File Permission String Value",
-				"string must be expressed in octal numeric notation: "+fp),
+				"bad mode permission: string must be expressed in octal numeric notation: "+fp),
 		}
 	}
-	return diag.Diagnostics{}
+	return nil
 }

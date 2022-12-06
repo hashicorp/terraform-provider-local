@@ -10,7 +10,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/terraform-providers/terraform-provider-local/internal/localtypes"
 	"github.com/terraform-providers/terraform-provider-local/internal/modifiers/stringmodifier"
@@ -84,7 +83,7 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 			"file_permission": schema.StringAttribute{
-				CustomType:  localtypes.FilePermissionType{StringTypable: types.StringType},
+				CustomType:  localtypes.NewFilePermissionType(),
 				Description: "Permissions to set for the output file (in numeric notation).",
 				Optional:    true,
 				Computed:    true,
@@ -94,7 +93,7 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 			"directory_permission": schema.StringAttribute{
-				CustomType:  localtypes.FilePermissionType{StringTypable: types.StringType},
+				CustomType:  localtypes.NewFilePermissionType(),
 				Description: "Permissions to set for directories created (in numeric notation).",
 				Optional:    true,
 				Computed:    true,
