@@ -50,7 +50,6 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 				},
 				Validators: []validator.String{
 					stringvalidator.ExactlyOneOf(
-						path.MatchRoot("sensitive_content"),
 						path.MatchRoot("content_base64"),
 						path.MatchRoot("source")),
 				},
@@ -65,7 +64,6 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 				Validators: []validator.String{
 					stringvalidator.ExactlyOneOf(
 						path.MatchRoot("content"),
-						path.MatchRoot("sensitive_content"),
 						path.MatchRoot("source")),
 				},
 			},
@@ -78,7 +76,6 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 				Validators: []validator.String{
 					stringvalidator.ExactlyOneOf(
 						path.MatchRoot("content"),
-						path.MatchRoot("sensitive_content"),
 						path.MatchRoot("content_base64")),
 				},
 			},
@@ -105,21 +102,6 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 			"id": schema.StringAttribute{
 				Description: "The hexadecimal encoding of the checksum of the file content",
 				Computed:    true,
-			},
-			"sensitive_content": schema.StringAttribute{
-				DeprecationMessage: "Use the `local_sensitive_file` resource instead",
-				Description:        "Sensitive content to store in the file, expected to be an UTF-8 encoded string.",
-				Sensitive:          true,
-				Optional:           true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
-				Validators: []validator.String{
-					stringvalidator.ExactlyOneOf(
-						path.MatchRoot("content"),
-						path.MatchRoot("content_base64"),
-						path.MatchRoot("source")),
-				},
 			},
 		},
 	}
