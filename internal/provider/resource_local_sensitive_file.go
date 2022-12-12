@@ -2,6 +2,14 @@ package provider
 
 import (
 	"context"
+	"crypto/sha1"
+	"encoding/base64"
+	"encoding/hex"
+	"fmt"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -10,6 +18,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
+	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/terraform-providers/terraform-provider-local/internal/localtypes"
 	"github.com/terraform-providers/terraform-provider-local/internal/modifiers/stringmodifier"
@@ -112,17 +121,136 @@ func (n *localSensitiveFileResource) Metadata(ctx context.Context, req resource.
 }
 
 func (n *localSensitiveFileResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	NewLocalFileResource().Create(ctx, req, resp)
+	var plan localSensitiveFileResourceModelV0
+
+	var filePerm, dirPerm string
+
+	diags := req.Plan.Get(ctx, &plan)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	content, err := parseLocalSensitiveFileContent(plan)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Create local sensitive file error",
+			"An unexpected error occurred while parsing local file content\n\n+"+
+				fmt.Sprintf("Original Error: %s", err),
+		)
+		return
+	}
+
+	destination := plan.Filename.ValueString()
+
+	destinationDir := filepath.Dir(destination)
+	if _, err := os.Stat(destinationDir); err != nil {
+		dirPerm = plan.DirectoryPermission.ValueString()
+		dirMode, _ := strconv.ParseInt(dirPerm, 8, 64)
+		if err := os.MkdirAll(destinationDir, os.FileMode(dirMode)); err != nil {
+			resp.Diagnostics.AddError(
+				"Create local sensitive file error",
+				"An unexpected error occurred while creating file directory\n\n+"+
+					fmt.Sprintf("Original Error: %s", err),
+			)
+			return
+		}
+	}
+
+	filePerm = plan.FilePermission.ValueString()
+
+	fileMode, _ := strconv.ParseInt(filePerm, 8, 64)
+
+	if err := ioutil.WriteFile(destination, content, os.FileMode(fileMode)); err != nil {
+		resp.Diagnostics.AddError(
+			"Create local sensitive file error",
+			"An unexpected error occurred while writing the file\n\n+"+
+				fmt.Sprintf("Original Error: %s", err),
+		)
+		return
+	}
+
+	checksum := sha1.Sum(content)
+
+	plan.ID = types.StringValue(hex.EncodeToString(checksum[:]))
+	diags = resp.State.Set(ctx, &plan)
+	resp.Diagnostics.Append(diags...)
 }
 
 func (n *localSensitiveFileResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	NewLocalFileResource().Read(ctx, req, resp)
+	var state localSensitiveFileResourceModelV0
+
+	diags := req.State.Get(ctx, &state)
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// If the output file doesn't exist, mark the resource for creation.
+	outputPath := state.Filename.ValueString()
+	if _, err := os.Stat(outputPath); os.IsNotExist(err) {
+		resp.State.RemoveResource(ctx)
+		return
+	}
+
+	// Verify that the content of the destination file matches the content we
+	// expect. Otherwise, the file might have been modified externally, and we
+	// must reconcile.
+	outputContent, err := ioutil.ReadFile(outputPath)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Read local sensitive file error",
+			"An unexpected error occurred while reading the file\n\n+"+
+				fmt.Sprintf("Original Error: %s", err),
+		)
+		return
+	}
+
+	outputChecksum := sha1.Sum(outputContent)
+	if hex.EncodeToString(outputChecksum[:]) != state.ID.ValueString() {
+		resp.State.RemoveResource(ctx)
+		return
+	}
 }
 
 func (n *localSensitiveFileResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	NewLocalFileResource().Update(ctx, req, resp)
+	var plan localSensitiveFileResourceModelV0
+
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.Set(ctx, &plan)...)
 }
 
 func (n *localSensitiveFileResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	NewLocalFileResource().Delete(ctx, req, resp)
+	var filename string
+	req.State.GetAttribute(ctx, path.Root("filename"), &filename)
+	os.Remove(filename)
+}
+
+func parseLocalSensitiveFileContent(plan localSensitiveFileResourceModelV0) ([]byte, error) {
+	if !plan.ContentBase64.IsNull() && !plan.ContentBase64.IsUnknown() {
+		return base64.StdEncoding.DecodeString(plan.ContentBase64.ValueString())
+	}
+
+	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
+		sourceFileContent := plan.Source.ValueString()
+		return ioutil.ReadFile(sourceFileContent)
+	}
+
+	content := plan.Content.ValueString()
+	return []byte(content), nil
+}
+
+type localSensitiveFileResourceModelV0 struct {
+	Filename            types.String `tfsdk:"filename"`
+	Content             types.String `tfsdk:"content"`
+	ContentBase64       types.String `tfsdk:"content_base64"`
+	Source              types.String `tfsdk:"source"`
+	FilePermission      types.String `tfsdk:"file_permission"`
+	DirectoryPermission types.String `tfsdk:"directory_permission"`
+	ID                  types.String `tfsdk:"id"`
 }

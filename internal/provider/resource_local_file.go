@@ -146,7 +146,7 @@ func (n *localFileResource) Create(ctx context.Context, req resource.CreateReque
 		return
 	}
 
-	content, err := resourceLocalFileContent(plan)
+	content, err := parseLocalFileContent(plan)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Create local file error",
@@ -246,7 +246,7 @@ func (n *localFileResource) Delete(ctx context.Context, req resource.DeleteReque
 	os.Remove(filename)
 }
 
-func resourceLocalFileContent(plan localFileResourceModelV0) ([]byte, error) {
+func parseLocalFileContent(plan localFileResourceModelV0) ([]byte, error) {
 	if !plan.SensitiveContent.IsNull() && !plan.SensitiveContent.IsUnknown() {
 		return []byte(plan.SensitiveContent.ValueString()), nil
 	}
