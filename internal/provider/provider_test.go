@@ -19,6 +19,15 @@ func protoV5ProviderFactories() map[string]func() (tfprotov5.ProviderServer, err
 	}
 }
 
+func providerVersion233() map[string]resource.ExternalProvider {
+	return map[string]resource.ExternalProvider{
+		"local": {
+			VersionConstraint: "2.2.3",
+			Source:            "hashicorp/local",
+		},
+	}
+}
+
 func checkFileDeleted(shouldNotExistFile string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		if _, err := os.Stat(shouldNotExistFile); os.IsNotExist(err) {

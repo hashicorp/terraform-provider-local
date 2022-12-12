@@ -2,6 +2,7 @@ package provider
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -38,7 +39,7 @@ func TestLocalFile_Basic(t *testing.T) {
 	})
 }
 
-func TestLocalFile_source(t *testing.T) {
+func TestLocalFile_Source(t *testing.T) {
 	// create a local file that will be used as the "source" file
 	if err := createSourceFile("local file content"); err != nil {
 		t.Fatal(err)
@@ -123,6 +124,139 @@ func TestLocalFile_Validators(t *testing.T) {
 				ExpectError: regexp.MustCompile(`.*Error: Invalid Attribute Combination`),
 			},
 		},
+	})
+}
+
+func TestLocalFile_Upgrade(t *testing.T) {
+	f := filepath.Join(t.TempDir(), "local_file")
+
+	r.Test(t, r.TestCase{
+		Steps: []r.TestStep{
+			{
+				ExternalProviders: providerVersion233(),
+				Config:            testAccConfigLocalFileContent("This is some content", f),
+				Check:             checkFileCreation("local_file_resource.test", f),
+			},
+			{
+				ProtoV5ProviderFactories: protoV5ProviderFactories(),
+				Config:                   testAccConfigLocalFileContent("This is some content", f),
+				PlanOnly:                 true,
+			},
+			{
+				ExternalProviders: providerVersion233(),
+				Config:            testAccConfigLocalFileSensitiveContent("This is some sensitive content", f),
+				Check:             checkFileCreation("local_file_resource.test", f),
+			},
+			{
+				ProtoV5ProviderFactories: protoV5ProviderFactories(),
+				Config:                   testAccConfigLocalFileSensitiveContent("This is some sensitive content", f),
+				PlanOnly:                 true,
+			},
+			{
+				ExternalProviders: providerVersion233(),
+				Config:            testAccConfigLocalFileEncodedBase64Content("VGhpcyBpcyBzb21lIGJhc2U2NCBjb250ZW50", f),
+				Check:             checkFileCreation("local_file_resource.test", f),
+			},
+			{
+				ProtoV5ProviderFactories: protoV5ProviderFactories(),
+				Config:                   testAccConfigLocalFileEncodedBase64Content("VGhpcyBpcyBzb21lIGJhc2U2NCBjb250ZW50", f),
+				PlanOnly:                 true,
+			},
+			{
+				ExternalProviders: providerVersion233(),
+				Config:            testAccConfigLocalFileDecodedBase64Content("This is some base64 content", f),
+				Check:             checkFileCreation("local_file_resource.test", f),
+			},
+			{
+				ProtoV5ProviderFactories: protoV5ProviderFactories(),
+				Config:                   testAccConfigLocalFileDecodedBase64Content("This is some base64 content", f),
+				PlanOnly:                 true,
+			},
+		},
+		CheckDestroy: checkFileDeleted(f),
+	})
+}
+
+func TestLocalFile_Source_Upgrade(t *testing.T) {
+	// create a local file that will be used as the "source" file
+	if err := ioutil.WriteFile("./testdata/source_file", []byte("sourceContent"), 0644); err != nil {
+		t.Fatal(err)
+	}
+	defer os.Remove("./testdata/source_file")
+
+	r.Test(t, r.TestCase{
+		Steps: []r.TestStep{
+			{
+				ExternalProviders: providerVersion233(),
+				Config: `
+					resource "local_file" "file" {
+					  source = "./testdata/source_file"
+					  filename = "./testdata/new_file"
+					}
+				`,
+				Check: checkFileCreation("local_file_resource.test", "./testdata/new_file"),
+			},
+			{
+				ProtoV5ProviderFactories: protoV5ProviderFactories(),
+				Config: `
+					resource "local_file" "file" {
+					  source = "./testdata/source_file"
+					  filename = "./testdata/new_file"
+					}
+				`,
+				PlanOnly: true,
+			},
+		},
+		CheckDestroy: checkFileDeleted("new_file"),
+	})
+}
+
+func TestLocalFile_Permissions_Upgrade(t *testing.T) {
+	destinationDirPath := t.TempDir()
+	destinationFilePath := filepath.Join(destinationDirPath, "local_file")
+	destinationFilePath = strings.ReplaceAll(destinationFilePath, `\`, `\\`)
+	filePermission := os.FileMode(0600)
+	directoryPermission := os.FileMode(0700)
+	isDirExist := false
+
+	r.Test(t, r.TestCase{
+		Steps: []r.TestStep{
+			{
+				ExternalProviders: providerVersion233(),
+				PreConfig:         checkDirExists(destinationDirPath, &isDirExist),
+				SkipFunc:          skipTestsWindows(),
+				Config: fmt.Sprintf(`
+					resource "local_file" "file" {
+						content              = "This is some content"
+						filename             = "%s"
+						file_permission      = "0600"
+						directory_permission = "0700"
+					}`, destinationFilePath,
+				),
+				Check: r.ComposeTestCheckFunc(
+					checkFilePermissions(destinationFilePath, filePermission),
+					checkDirectoryPermissions(destinationFilePath, directoryPermission)),
+			},
+			{
+				ProtoV5ProviderFactories: protoV5ProviderFactories(),
+				Config: fmt.Sprintf(`
+					resource "local_file" "file" {
+						content              = "This is some content"
+						filename             = "%s"
+						file_permission      = "0600"
+						directory_permission = "0700"
+					}`, destinationFilePath,
+				),
+				PlanOnly: true,
+			},
+		},
+		ErrorCheck: func(err error) error {
+			if match, _ := regexp.MatchString("Directory permission.", err.Error()); match && isDirExist {
+				return nil
+			}
+			return err
+		},
+		CheckDestroy: checkFileDeleted(destinationFilePath),
 	})
 }
 
