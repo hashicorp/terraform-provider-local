@@ -1,29 +1,29 @@
-## 2.2.3 (May 18, 2022)
+## v2.2.3 (May 18, 2022)
 
 NOTES:
 
-* resource/local_file: Update docs to prevent confusion that exactly one of the arguments `content`, 
+* resource/local_file: Update docs to prevent confusion that exactly one of the arguments `content`,
   `sensitive_content`, `content_base64`, and `source` needs to be specified ([#123](https://github.com/hashicorp/terraform-provider-local/pull/123)).
 
-* resource/local_sensitive_file: Update docs to prevent confusion that exactly one of the arguments `content`, 
+* resource/local_sensitive_file: Update docs to prevent confusion that exactly one of the arguments `content`,
   `content_base64`, and `source` needs to be specified ([#123](https://github.com/hashicorp/terraform-provider-local/pull/123)).
-  
+
 * No functional changes from 2.2.2.
 
-## 2.2.2 (March 11, 2022)
+## v2.2.2 (March 11, 2022)
 
 NOTES:
 
 * resource/local_sensitive_file: Fixed typo in documentation (default permission is `"0700"`, not `"0777"`).
 * No functional changes from 2.2.1.
 
-## 2.2.1 (March 10, 2022)
+## v2.2.1 (March 10, 2022)
 
 NOTES:
 
 * This release is a republishing of the 2.2.0 release to fix release asset checksum errors. It is identical otherwise.
 
-## 2.2.0 (March 10, 2022)
+## v2.2.0 (March 10, 2022)
 
 NOTES:
 
@@ -36,14 +36,14 @@ FEATURES:
 * **New Data Source:** `local_sensitive_file` ([#101](https://github.com/hashicorp/terraform-provider-local/pull/101) and [#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
 * **New Resource:** `local_sensitive_file` ([#106](https://github.com/hashicorp/terraform-provider-local/pull/106))
 
-## 2.1.0 (February 19, 2021)
+## v2.1.0 (February 19, 2021)
 
 NOTES:
 
 * Binary releases of this provider now include the` darwin-arm64` platform.
 * This version contains no further changes.
 
-## 2.0.0 (October 14, 2020)
+## v2.0.0 (October 14, 2020)
 
 NOTES:
 
@@ -61,7 +61,7 @@ FEATURES:
   for the `local_file` resource.
   ([#44](https://github.com/terraform-providers/terraform-provider-local/issues/44))
 
-## 1.4.0 (September 30, 2019)
+## v1.4.0 (September 30, 2019)
 
 NOTES:
 
@@ -73,7 +73,7 @@ FEATURES:
 * resource/local_file: Added support for configurable permissions
   ([#30](https://github.com/terraform-providers/terraform-provider-local/issues/30))
 
-## 1.3.0 (June 26, 2019)
+## v1.3.0 (June 26, 2019)
 
 FEATURES:
 
@@ -82,21 +82,21 @@ FEATURES:
 * data-source/local_file: Added support for base64 encoded content
   ([#29](https://github.com/terraform-providers/terraform-provider-local/issues/29))
 
-## 1.2.2 (May 01, 2019)
+## v1.2.2 (May 01, 2019)
 
 NOTES:
 
 * This releases includes another Terraform SDK upgrade intended to align with that being used for other providers
   as we prepare for the Core `v0.12.0` release. It should have no significant changes in behavior for this provider.
 
-## 1.2.1 (April 11, 2019)
+## v1.2.1 (April 11, 2019)
 
 NOTES:
 
 * This releases includes only a Terraform SDK upgrade intended to align with that being used for other providers
   as we prepare for the Core `v0.12.0` release. It should have no significant changes in behavior for this provider.
 
-## 1.2.0 (March 20, 2019)
+## v1.2.0 (March 20, 2019)
 
 FEATURES:
 
@@ -105,7 +105,7 @@ FEATURES:
   in situations where the content contains sensitive information that should not be displayed in a rendered diff.
   ([#9](https://github.com/terraform-providers/terraform-provider-local/issues/9))
 
-## 1.1.0 (January 04, 2018)
+## v1.1.0 (January 04, 2018)
 
 FEATURES:
 
@@ -113,16 +113,18 @@ FEATURES:
   which allows reading of files that are created dynamically during `terraform apply`.
   ([#6](https://github.com/terraform-providers/terraform-provider-local/issues/6))
 
-## 1.0.0 (September 15, 2017)
+## v1.0.0 (September 15, 2017)
 
 NOTES:
 
 * No changes from 0.1.0; just adjusting to
   [the new version numbering scheme](https://www.hashicorp.com/blog/hashicorp-terraform-provider-versioning/).
 
-## 0.1.0 (June 21, 2017)
+## v0.1.0 (June 21, 2017)
 
 NOTES:
 
 * Same functionality as that of Terraform 0.9.8.
   Repacked as part of [Provider Splitout](https://www.hashicorp.com/blog/upcoming-provider-changes-in-terraform-0-10/)
+
+
