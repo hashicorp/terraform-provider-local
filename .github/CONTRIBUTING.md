@@ -87,14 +87,26 @@ and to gauge the risk of an upgrade.
 We follow Terraform Plugin
 [changelog specifications](https://www.terraform.io/plugin/sdkv2/best-practices/versioning#changelog-specification).
 
+#### Changie Automation Tool
+This provider uses the [Changie](https://changie.dev/) automation tool for changelog automation. 
+To add a new entry to the `CHANGELOG` install Changie using the following [instructions](https://changie.dev/guide/installation/)
+and run 
+```bash
+changie new
+```
+then choose a `kind` of change corresponding to the Terraform Plugin [changelog categories](https://developer.hashicorp.com/terraform/plugin/sdkv2/best-practices/versioning#categorization)
+and then fill out the body following the entry format. Changie will then prompt for a Github issue number.
+Repeat this process for any additional changes. The `.yaml` files created in the `.changes/unreleased` folder 
+should be pushed the repository along with any code changes.
+
 #### Entry format
 
 Entries that are specific to _resources_ or _data sources_, they should look like:
 
 ```markdown
-* resource/RESOURCE_NAME: ENTRY DESCRIPTION ([#PR_NUMBER](PR_URL)).
+* resource/RESOURCE_NAME: ENTRY DESCRIPTION 
 
-* data-source/DATA-SOURCE_NAME: ENTRY DESCRIPTION ([#PR_NUMBER](PR_URL)).
+* data-source/DATA-SOURCE_NAME: ENTRY DESCRIPTION
 ```
 
 #### Pull Request Types to `CHANGELOG`

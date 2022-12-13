@@ -1,9 +1,12 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*'
+  workflow_dispatch:
+    inputs:
+      versionNumber:
+        description: 'Release version number'
+        type: string
+        required: true
 
 permissions:
   contents: write
@@ -17,22 +20,69 @@ jobs:
       - uses: actions/checkout@v3
       - id: go-version
         run: echo "::set-output name=version::$(cat ./.go-version)"
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Batch changes
+        uses: miniscruff/changie-action@v0
+        with:
+          version: latest
+          args: batch ${{ inputs.versionNumber }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Merge changes
+        uses: miniscruff/changie-action@v0
+        with:
+          version: latest
+          args: merge
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Git push changelog
+        run: |
+          git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+          git config --global user.email "${{ env.CI_COMMIT_EMAIL }}"
+          git add .
+          git commit -a -m "Update changelog"
+          git push
+  release-tag:
+    needs: changelog
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Git push release tag
+        run: |
+          git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+          git config --global user.email "${{ env.CI_COMMIT_EMAIL }}"
+          git pull
+          git tag "v${{ inputs.versionNumber }}"
+          git push origin "v${{ inputs.versionNumber }}"
   release-notes:
+    needs: [ changelog, release-tag ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
+          ref: v${{ inputs.versionNumber }}
           fetch-depth: 0
       - name: Generate Release Notes
-        run: sed -n -e "1{/# /d;}" -e "2{/^$/d;}" -e "/# $(git describe --abbrev=0 --exclude="$(git describe --abbrev=0 --match='v*.*.*' --tags)" --match='v*.*.*' --tags | tr -d v)/q;p" CHANGELOG.md > release-notes.txt
+        run: |
+          cd .changes
+          sed -e "1{/# /d;}" -e "2{/^$/d;}" ${{ inputs.versionNumber }}.md > release-notes.txt
       - uses: actions/upload-artifact@v3
         with:
           name: release-notes
-          path: release-notes.txt
+          path: ./.changes/release-notes.txt
           retention-days: 1
   terraform-provider-release:
     name: 'Terraform Provider Release'
-    needs: [go-version, release-notes]
+    needs: [ go-version, release-notes ]
     uses: hashicorp/ghaction-terraform-provider-release/.github/workflows/hashicorp.yml@v2
     secrets:
       hc-releases-key-prod: '${{ secrets.HC_RELEASES_KEY_PROD }}'
@@ -47,5 +97,5 @@ jobs:
     with:
       release-notes: true
       setup-go-version: '${{ needs.go-version.outputs.version }}'
-      # Product Version (e.g. v1.2.3 or github.ref_name)
-      product-version: '${{ github.ref_name }}'
+      # Product Version (e.g. v1.2.3 or "v" + input.versionNumber)
+      product-version: 'v${{ input.versionNumber }}'
