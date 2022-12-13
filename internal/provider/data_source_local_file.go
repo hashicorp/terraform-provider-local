@@ -33,15 +33,16 @@ func (n *localFileDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Required:    true,
 			},
 			"content": schema.StringAttribute{
-				Description: "Raw content of the file that was read, as UTF-8 encoded string.",
-				Computed:    true,
+				Description: "Raw content of the file that was read, as UTF-8 encoded string. " +
+					"Files that do not contain UTF-8 text will have invalid UTF-8 sequences in `content`\n  replaced with the Unicode replacement character. ",
+				Computed: true,
 			},
 			"content_base64": schema.StringAttribute{
 				Description: "Base64 encoded version of the file content (use this when dealing with binary data).",
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "The hexadecimal encoding of the checksum of the file content",
+				Description: "The hexadecimal encoding of the checksum of the file content.",
 				Computed:    true,
 			},
 		},

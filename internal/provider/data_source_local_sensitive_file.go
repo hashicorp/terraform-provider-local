@@ -28,16 +28,17 @@ func (n *localSensitiveFileDataSource) Metadata(ctx context.Context, req datasou
 
 func (n *localSensitiveFileDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "Reads a file from the local filesystem.",
+		Description: "Reads a file that contains sensitive data, from the local filesystem.",
 		Attributes: map[string]schema.Attribute{
 			"filename": schema.StringAttribute{
 				Description: "Path to the file that will be read. The data source will return an error if the file does not exist.",
 				Required:    true,
 			},
 			"content": schema.StringAttribute{
-				Description: "Raw content of the file that was read, as UTF-8 encoded string.",
-				Sensitive:   true,
-				Computed:    true,
+				Description: "Raw content of the file that was read, as UTF-8 encoded string. " +
+					"Files that do not contain UTF-8 text will have invalid UTF-8 sequences in `content`\n  replaced with the Unicode replacement character.",
+				Sensitive: true,
+				Computed:  true,
 			},
 			"content_base64": schema.StringAttribute{
 				Description: "Base64 encoded version of the file content (use this when dealing with binary data).",

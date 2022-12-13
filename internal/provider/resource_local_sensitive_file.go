@@ -40,20 +40,20 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 		Description: "Generates a local file with the given sensitive content.",
 		Attributes: map[string]schema.Attribute{
 			"filename": schema.StringAttribute{
-				Description: `
-					The path to the file that will be created.
-					Missing parent directories will be created.
-					If the file already exists, it will be overridden with the given content.
-				`,
+				Description: "The path to the file that will be created.\n " +
+					"Missing parent directories will be created.\n " +
+					"If the file already exists, it will be overridden with the given content.",
 				Required: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"content": schema.StringAttribute{
-				Description: "Sensitive content to store in the file, expected to be an UTF-8 encoded string.",
-				Sensitive:   true,
-				Optional:    true,
+				Description: "Sensitive Content to store in the file, expected to be a UTF-8 encoded string.\n " +
+					"Conflicts with `content_base64` and `source`.\n " +
+					"Exactly one of these three arguments must be specified.",
+				Sensitive: true,
+				Optional:  true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -64,9 +64,11 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 			"content_base64": schema.StringAttribute{
-				Description: "Sensitive content to store in the file, expected to be binary encoded as base64 string.",
-				Sensitive:   true,
-				Optional:    true,
+				Description: "Sensitive Content to store in the file, expected to be binary encoded as base64 string.\n " +
+					"Conflicts with `content` and `source`.\n " +
+					"Exactly one of these three arguments must be specified.",
+				Sensitive: true,
+				Optional:  true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -77,8 +79,10 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 			"source": schema.StringAttribute{
-				Description: "Path to file to use as source for the one we are creating.",
-				Optional:    true,
+				Description: "Path to file to use as source for the one we are creating.\n " +
+					"Conflicts with `content` and `content_base64`.\n " +
+					"Exactly one of these three arguments must be specified.",
+				Optional: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -89,23 +93,27 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 			"file_permission": schema.StringAttribute{
-				CustomType:  localtypes.NewFilePermissionType(),
-				Description: "Permissions to set for the output file (in numeric notation).",
-				Optional:    true,
-				Computed:    true,
+				CustomType: localtypes.NewFilePermissionType(),
+				Description: "Permissions to set for the output file (before umask), expressed as string in\n " +
+					"[numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).\n " +
+					"Default value is `\"0700\"`.",
+				Optional: true,
+				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
-					stringmodifier.StringDefault("0777"),
+					stringmodifier.StringDefault("0700"),
 				},
 			},
 			"directory_permission": schema.StringAttribute{
-				CustomType:  localtypes.NewFilePermissionType(),
-				Description: "Permissions to set for directories created (in numeric notation).",
-				Optional:    true,
-				Computed:    true,
+				CustomType: localtypes.NewFilePermissionType(),
+				Description: "Permissions to set for directories created (before umask), expressed as string in\n " +
+					"[numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).\n " +
+					"Default value is `\"0700\"`.",
+				Optional: true,
+				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
-					stringmodifier.StringDefault("0777"),
+					stringmodifier.StringDefault("0700"),
 				},
 			},
 			"id": schema.StringAttribute{

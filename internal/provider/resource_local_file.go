@@ -40,19 +40,19 @@ func (n *localFileResource) Schema(ctx context.Context, req resource.SchemaReque
 		Description: "Generates a local file with the given content.",
 		Attributes: map[string]schema.Attribute{
 			"filename": schema.StringAttribute{
-				Description: `
-					The path to the file that will be created.
-					Missing parent directories will be created.
-					If the file already exists, it will be overridden with the given content.
-				`,
+				Description: "The path to the file that will be created.\n " +
+					"Missing parent directories will be created.\n " +
+					"If the file already exists, it will be overridden with the given content.",
 				Required: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
 			},
 			"content": schema.StringAttribute{
-				Description: "Content to store in the file, expected to be an UTF-8 encoded string.",
-				Optional:    true,
+				Description: "Content to store in the file, expected to be a UTF-8 encoded string.\n " +
+					"Conflicts with `sensitive_content`, `content_base64` and `source`.\n " +
+					"Exactly one of these four arguments must be specified.",
+				Optional: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -64,8 +64,10 @@ func (n *localFileResource) Schema(ctx context.Context, req resource.SchemaReque
 				},
 			},
 			"content_base64": schema.StringAttribute{
-				Description: "Content to store in the file, expected to be binary encoded as base64 string.",
-				Optional:    true,
+				Description: "Content to store in the file, expected to be binary encoded as base64 string.\n " +
+					"Conflicts with `content`, `sensitive_content` and `source`.\n " +
+					"Exactly one of these four arguments must be specified.",
+				Optional: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -77,8 +79,10 @@ func (n *localFileResource) Schema(ctx context.Context, req resource.SchemaReque
 				},
 			},
 			"source": schema.StringAttribute{
-				Description: "Path to file to use as source for the one we are creating.",
-				Optional:    true,
+				Description: "Path to file to use as source for the one we are creating.\n " +
+					"Conflicts with `content`, `sensitive_content` and `content_base64`.\n " +
+					"Exactly one of these four arguments must be specified.",
+				Optional: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
@@ -90,20 +94,24 @@ func (n *localFileResource) Schema(ctx context.Context, req resource.SchemaReque
 				},
 			},
 			"file_permission": schema.StringAttribute{
-				CustomType:  localtypes.NewFilePermissionType(),
-				Description: "Permissions to set for the output file (in numeric notation).",
-				Optional:    true,
-				Computed:    true,
+				CustomType: localtypes.NewFilePermissionType(),
+				Description: "Permissions to set for the output file (before umask), expressed as string in\n " +
+					"[numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).\n " +
+					"Default value is `\"0777\"`.",
+				Optional: true,
+				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 					stringmodifier.StringDefault("0777"),
 				},
 			},
 			"directory_permission": schema.StringAttribute{
-				CustomType:  localtypes.NewFilePermissionType(),
-				Description: "Permissions to set for directories created (in numeric notation).",
-				Optional:    true,
-				Computed:    true,
+				CustomType: localtypes.NewFilePermissionType(),
+				Description: "Permissions to set for directories created (before umask), expressed as string in\n " +
+					"[numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).\n " +
+					"Default value is `\"0777\"`.",
+				Optional: true,
+				Computed: true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 					stringmodifier.StringDefault("0777"),
@@ -115,9 +123,14 @@ func (n *localFileResource) Schema(ctx context.Context, req resource.SchemaReque
 			},
 			"sensitive_content": schema.StringAttribute{
 				DeprecationMessage: "Use the `local_sensitive_file` resource instead",
-				Description:        "Sensitive content to store in the file, expected to be an UTF-8 encoded string.",
-				Sensitive:          true,
-				Optional:           true,
+				Description: "Sensitive content to store in the file, expected to be an UTF-8 encoded string.\n " +
+					"Will not be displayed in diffs.\n " +
+					"Conflicts with `content`, `content_base64` and `source`.\n " +
+					"Exactly one of these four arguments must be specified.\n " +
+					"If in need to use _sensitive_ content, please use the [`local_sensitive_file`](./sensitive_file.html)\n " +
+					"resource instead.",
+				Sensitive: true,
+				Optional:  true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
 				},
