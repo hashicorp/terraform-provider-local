@@ -97,6 +97,7 @@ func TestLocalSensitiveFile_Permissions(t *testing.T) {
 
 func TestLocalSensitiveFile_Validators(t *testing.T) {
 	f := filepath.Join(t.TempDir(), "local_file")
+	f = strings.ReplaceAll(f, `\`, `\\`)
 
 	r.UnitTest(t, r.TestCase{
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
@@ -124,6 +125,7 @@ func TestLocalSensitiveFile_Validators(t *testing.T) {
 
 func TestLocalSensitiveFile_Upgrade(t *testing.T) {
 	f := filepath.Join(t.TempDir(), "local_sensitive_file")
+	f = strings.ReplaceAll(f, `\`, `\\`)
 
 	r.Test(t, r.TestCase{
 		Steps: []r.TestStep{

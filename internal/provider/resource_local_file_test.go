@@ -13,6 +13,7 @@ import (
 
 func TestLocalFile_Basic(t *testing.T) {
 	f := filepath.Join(t.TempDir(), "local_file")
+	f = strings.ReplaceAll(f, `\`, `\\`)
 
 	r.UnitTest(t, r.TestCase{
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
@@ -100,6 +101,7 @@ func TestLocalFile_Permissions(t *testing.T) {
 
 func TestLocalFile_Validators(t *testing.T) {
 	f := filepath.Join(t.TempDir(), "local_file")
+	f = strings.ReplaceAll(f, `\`, `\\`)
 
 	r.UnitTest(t, r.TestCase{
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
@@ -127,6 +129,7 @@ func TestLocalFile_Validators(t *testing.T) {
 
 func TestLocalFile_Upgrade(t *testing.T) {
 	f := filepath.Join(t.TempDir(), "local_file")
+	f = strings.ReplaceAll(f, `\`, `\\`)
 
 	r.Test(t, r.TestCase{
 		Steps: []r.TestStep{
