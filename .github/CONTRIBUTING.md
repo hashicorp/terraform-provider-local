@@ -1,71 +1,123 @@
-# Contributing to `terraform-provider-local`
+# Contributing
 
-**First:** if you're unsure or afraid of _anything_, just ask or submit the issue describing the problem you're aiming to solve.
+Thank you for investing your time and energy by contributing to our project: please ensure you are familiar
+with the [HashiCorp Code of Conduct](https://github.com/hashicorp/.github/blob/master/CODE_OF_CONDUCT.md).
 
-The `local` provider is a HashiCorp *standard library* provider, which means we consider it part of the core Terraform experience. Our priority is stability and correctness, and any bug fix or feature has to be considered in the context of this provider's many users and the wider Terraform ecosystem.
-This is great as your contribution can have a big positive impact, but we have to assess potential negative impact too.
+This provider is a HashiCorp **utility provider**, which means any bug fix and feature
+has to be considered in the context of the thousands/millions of configurations in which this provider is used.
+This is great as your contribution can have a big positive impact, but we have to assess potential negative impact too
+(e.g. breaking existing configurations). _Stability over features_.
 
-To provide some safety to the Terraform ecosystem, we strictly follow [semantic versioning](https://semver.org/) and any changes that could be considered as breaking will only be released as part of a major release.
+To provide some safety to the wider provider ecosystem, we strictly follow
+[semantic versioning](https://semver.org/) and HashiCorp's own
+[versioning specification](https://www.terraform.io/plugin/sdkv2/best-practices/versioning#versioning-specification).
+Any changes that could be considered as breaking will only be included as part of a major release.
+In case multiple breaking changes need to happen, we will group them in the next upcoming major release.
 
-## Table of Contents
+## Asking Questions
 
- - [I just have a question](#i-just-have-a-question)
- - [I want to report a vulnerability](#i-want-to-report-a-vulnerability)
- - [New Issue](#new-issue)
- - [New Pull Request](#new-pull-request)
+For questions, curiosity, or if still unsure what you are dealing with,
+please see the HashiCorp [Terraform Providers Discuss](https://discuss.hashicorp.com/c/terraform-providers/31)
+forum.
 
-## I just have a question
+## Reporting Vulnerabilities
 
-> **Note:** We use GitHub for tracking bugs and feature requests only.
+Please disclose security vulnerabilities responsibly by following the
+[HashiCorp Vulnerability Reporting guidelines](https://www.hashicorp.com/security#vulnerability-reporting).
 
-For questions, please see relevant channels at https://www.terraform.io/community.html
+## Raising Issues
 
-## I want to report a vulnerability
-
-Please disclose security vulnerabilities responsibly by following the procedure
-described at https://www.hashicorp.com/security#vulnerability-reporting
-
-## New Issue
-
-We welcome issues of all kinds including feature requests, bug reports or documentation suggestions. Below are guidelines for well-formed issues of each type.
+We welcome issues of all kinds including feature requests, bug reports or documentation suggestions.
+Below are guidelines for well-formed issues of each type.
 
 ### Bug Reports
 
- - **Test against latest release**: Make sure you test against the latest avaiable version of both Terraform and the provider.
-It is possible we already fixed the bug you're experiencing.
-
- - **Search for duplicates**: It's helpful to keep bug reports consolidated to one thread, so do a quick search on existing bug reports to check if anybody else has reported the same thing. You can scope searches by the label `bug` to help narrow things down.
-
- - **Include steps to reproduce**: Provide steps to reproduce the issue, along with code examples (both HCL and Go, where applicable) and/or real code, so we can try to reproduce it. Without this, it makes it much harder (sometimes impossible) to fix the issue.
+* [ ] **Test against latest release**: Make sure you test against the latest available version of Terraform and the provider.
+  It is possible we may have already fixed the bug you're experiencing.
+* [ ] **Search for duplicates**: It's helpful to keep bug reports consolidated to one thread, so do a quick search
+  on existing bug reports to check if anybody else has reported the same thing.
+  You can scope searches by the label `bug` to help narrow things down.
+* [ ] **Include steps to reproduce**: Provide steps to reproduce the issue, along with code examples and/or real code,
+  so we can try to reproduce it. Without this, it makes it much harder (sometimes impossible) to fix the issue.
 
 ### Feature Requests
 
- - **Search for possible duplicate requests**: It's helpful to keep requests consolidated to one thread, so do a quick search on existing requests to check if anybody else has reported the same thing. You can scope searches by the label `enhancement` to help narrow things down.
-
- - **Include a use case description**: In addition to describing the behavior of the feature you'd like to see added, it's helpful to also lay out the reason why the feature would be important and how it would benefit the wider Terraform ecosystem. Use case in context of 1 provider is good, wider context of more providers is better.
+* [ ] **Search for possible duplicate requests**: It's helpful to keep requests consolidated to one thread,
+  so do a quick search on existing requests to check if anybody else has reported the same thing.
+  You can scope searches by the label `enhancement` to help narrow things down.
+* [ ] **Include a use case description**: In addition to describing the behavior of the feature you'd like to see added,
+  it's helpful to also make a case for why the feature would be important and how it would benefit
+  the provider and, potentially, the wider Terraform ecosystem.
 
 ## New Pull Request
 
 Thank you for contributing!
 
-We are happy to review pull requests without associated issues, but we highly recommend starting by describing and discussing your problem or feature and attaching use cases to an issue first before raising a pull request.
+We are happy to review pull requests without associated issues,
+but we **highly recommend** starting by describing and discussing
+your problem or feature and attaching use cases to an issue first
+before raising a pull request.
 
-- **Early validation of idea and implementation plan**: Terraform's SDK is complicated enough that there are often several ways to implement something, each of which has different implications and tradeoffs. Working through a plan of attack with the team before you dive into implementation will help ensure that you're working in the right direction.
+* [ ] **Early validation of idea and implementation plan**: provider development is complicated enough that there
+  are often several ways to implement something, each of which has different implications and tradeoffs.
+  Working through a plan of attack with the team before you dive into implementation will help ensure that you're
+  working in the right direction.
+* [ ] **Tests**: It may go without saying, but every new patch should be covered by tests wherever possible.
+  For bug-fixes, tests to prove the fix is valid. For features, tests to exercise the new code paths.
+* [ ] **Go Modules**: We use [Go Modules](https://github.com/golang/go/wiki/Modules) to manage and version our dependencies.
+  Please make sure that you reflect dependency changes in your pull requests appropriately
+  (e.g. `go get`, `go mod tidy` or other commands).
+  Refer to the [dependency updates](#dependency-updates) section for more information about how
+  this project maintains existing dependencies.
+* [ ] **Changelog**: Refer to the [changelog](#changelog) section for more information about how to create changelog entries.
 
-- **Acceptance Tests**: It may go without saying, but every new patch should be covered by tests wherever possible.
+### Dependency Updates
 
-- **Go Modules**: We use [Go Modules](https://github.com/golang/go/wiki/Modules) to manage and version all our dependencies. Please make sure that you reflect dependency changes in your pull requests appropriately (e.g. `go get`, `go mod tidy` or other commands). Where possible it is better to raise a separate pull request with just dependency changes as it's easier to review such PR(s).
+Dependency management is performed by [Dependabot](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates).
+Where possible, dependency updates should occur through that system to ensure all Go module files are appropriately
+updated and to prevent duplicated effort of concurrent update submissions.
+Once available, updates are expected to be verified and merged to prevent latent technical debt.
 
-### Cosmetic changes, code formatting, and typos
+### Changelog
 
-In general we do not accept PRs containing only the following changes:
+HashiCorp’s open-source projects have always maintained user-friendly, readable `CHANGELOG`s that allow
+practitioners and developers to tell at a glance whether a release should have any effect on them,
+and to gauge the risk of an upgrade.
 
- - Correcting spelling or typos
- - Code formatting, including whitespace
- - Other cosmetic changes that do not affect functionality
- 
-While we appreciate the effort that goes into preparing PRs, there is always a tradeoff between benefit and cost. The costs involved in accepting such contributions include the time taken for thorough review, the noise created in the git history, and the increased number of GitHub notifications that maintainers must attend to.
+We follow Terraform Plugin
+[changelog specifications](https://www.terraform.io/plugin/sdkv2/best-practices/versioning#changelog-specification).
 
-#### Exceptions
+#### Entry format
 
-We belive that one should "leave the campsite cleaner than you found it", so you are welcome to clean up cosmetic issues in the neighbourhood when submitting a patch that makes functional changes or fixes.
+Entries that are specific to _resources_ or _data sources_, they should look like:
+
+```markdown
+* resource/RESOURCE_NAME: ENTRY DESCRIPTION ([#PR_NUMBER](PR_URL)).
+
+* data-source/DATA-SOURCE_NAME: ENTRY DESCRIPTION ([#PR_NUMBER](PR_URL)).
+```
+
+#### Pull Request Types to `CHANGELOG`
+
+The `CHANGELOG` is intended to show developer-impacting changes to the codebase for a particular version.
+If every change or commit to the code resulted in an entry, the `CHANGELOG` would become less useful for developers.
+The lists below are general guidelines to decide whether a change should have an entry.
+
+##### Changes that should not have a `CHANGELOG` entry
+
+* Documentation updates
+* Testing updates
+* Code refactoring
+
+##### Changes that may have a `CHANGELOG` entry
+
+* Dependency updates: If the update contains relevant bug fixes or enhancements that affect developers,
+  those should be called out.
+
+##### Changes that should have a `CHANGELOG` entry
+
+* Major features
+* Bug fixes
+* Enhancements
+* Deprecations
+* Breaking changes and removals
