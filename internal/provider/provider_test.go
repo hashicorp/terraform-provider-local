@@ -41,7 +41,7 @@ func checkFileCreation(resourceName, path string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		resultContent, err := ioutil.ReadFile(path)
 		if err != nil {
-			return fmt.Errorf("Error occured while reading file at path: %s\n, error: %s\n", path, err)
+			return fmt.Errorf("Error occurred while reading file at path: %s\n, error: %s\n", path, err)
 		}
 
 		resource.TestCheckResourceAttr(resourceName, "content", string(resultContent))
@@ -50,16 +50,12 @@ func checkFileCreation(resourceName, path string) resource.TestCheckFunc {
 	}
 }
 
-func checkFilePermissions(destinationFilePath string, filePermission os.FileMode) resource.TestCheckFunc {
+func checkFilePermissions(destinationFilePath string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if runtime.GOOS == "windows" {
-			// skip all checks if windows
-			return nil
-		}
-
+		filePermission := os.FileMode(0600)
 		fileInfo, err := os.Stat(destinationFilePath)
 		if err != nil {
-			return fmt.Errorf("Error occured while retrieving file info at path: %s\n, error: %s\n",
+			return fmt.Errorf("Error occurred while retrieving file info at path: %s\n, error: %s\n",
 				destinationFilePath, err)
 		}
 
@@ -73,8 +69,9 @@ func checkFilePermissions(destinationFilePath string, filePermission os.FileMode
 	}
 }
 
-func checkDirectoryPermissions(destinationFilePath string, directoryPermission os.FileMode) resource.TestCheckFunc {
+func checkDirectoryPermissions(destinationFilePath string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
+		directoryPermission := os.FileMode(0700)
 		dirInfo, _ := os.Stat(path.Dir(destinationFilePath))
 		// we have to use FileMode.Perm() here, otherwise directory bit causes issues
 		if dirInfo.Mode().Perm() != directoryPermission.Perm() {

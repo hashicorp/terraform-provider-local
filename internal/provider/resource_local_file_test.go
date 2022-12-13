@@ -67,8 +67,6 @@ func TestLocalFile_Permissions(t *testing.T) {
 	destinationDirPath := t.TempDir()
 	destinationFilePath := filepath.Join(destinationDirPath, "local_file")
 	destinationFilePath = strings.ReplaceAll(destinationFilePath, `\`, `\\`)
-	filePermission := os.FileMode(0600)
-	directoryPermission := os.FileMode(0700)
 	isDirExist := false
 
 	r.UnitTest(t, r.TestCase{
@@ -86,8 +84,9 @@ func TestLocalFile_Permissions(t *testing.T) {
 					}`, destinationFilePath,
 				),
 				Check: r.ComposeTestCheckFunc(
-					checkFilePermissions(destinationFilePath, filePermission),
-					checkDirectoryPermissions(destinationFilePath, directoryPermission)),
+					checkFilePermissions(destinationFilePath),
+					checkDirectoryPermissions(destinationFilePath),
+				),
 			},
 		},
 		ErrorCheck: func(err error) error {
@@ -215,8 +214,6 @@ func TestLocalFile_Permissions_Upgrade(t *testing.T) {
 	destinationDirPath := t.TempDir()
 	destinationFilePath := filepath.Join(destinationDirPath, "local_file")
 	destinationFilePath = strings.ReplaceAll(destinationFilePath, `\`, `\\`)
-	filePermission := os.FileMode(0600)
-	directoryPermission := os.FileMode(0700)
 	isDirExist := false
 
 	r.Test(t, r.TestCase{
@@ -234,8 +231,8 @@ func TestLocalFile_Permissions_Upgrade(t *testing.T) {
 					}`, destinationFilePath,
 				),
 				Check: r.ComposeTestCheckFunc(
-					checkFilePermissions(destinationFilePath, filePermission),
-					checkDirectoryPermissions(destinationFilePath, directoryPermission)),
+					checkFilePermissions(destinationFilePath),
+					checkDirectoryPermissions(destinationFilePath)),
 			},
 			{
 				ProtoV5ProviderFactories: protoV5ProviderFactories(),
