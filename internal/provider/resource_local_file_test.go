@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -178,7 +177,7 @@ func TestLocalFile_Upgrade(t *testing.T) {
 
 func TestLocalFile_Source_Upgrade(t *testing.T) {
 	// create a local file that will be used as the "source" file
-	if err := ioutil.WriteFile("./testdata/source_file", []byte("sourceContent"), 0644); err != nil {
+	if err := os.WriteFile("./testdata/source_file", []byte("sourceContent"), 0644); err != nil {
 		t.Fatal(err)
 	}
 	defer os.Remove("./testdata/source_file")

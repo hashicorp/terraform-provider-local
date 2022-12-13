@@ -2,7 +2,6 @@ package provider
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
 	"runtime"
@@ -39,7 +38,7 @@ func checkFileDeleted(shouldNotExistFile string) resource.TestCheckFunc {
 
 func checkFileCreation(resourceName, path string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		resultContent, err := ioutil.ReadFile(path)
+		resultContent, err := os.ReadFile(path)
 		if err != nil {
 			return fmt.Errorf("Error occurred while reading file at path: %s\n, error: %s\n", path, err)
 		}
@@ -85,7 +84,7 @@ func checkDirectoryPermissions(destinationFilePath string) resource.TestCheckFun
 }
 
 func createSourceFile(sourceContent string) error {
-	return ioutil.WriteFile("source_file", []byte(sourceContent), 0644)
+	return os.WriteFile("source_file", []byte(sourceContent), 0644)
 }
 
 func checkDirExists(destinationFilePath string, isDirExist *bool) func() {

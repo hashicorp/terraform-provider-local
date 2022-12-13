@@ -6,7 +6,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
@@ -65,7 +65,7 @@ func (n *localFileDataSource) Read(ctx context.Context, req datasource.ReadReque
 
 	// Read the entire file content
 	filepath := config.Filename.ValueString()
-	content, err := ioutil.ReadFile(filepath)
+	content, err := os.ReadFile(filepath)
 
 	if err != nil {
 		resp.Diagnostics.AddError(

@@ -6,7 +6,6 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -189,7 +188,7 @@ func (n *localFileResource) Create(ctx context.Context, req resource.CreateReque
 
 	fileMode, _ := strconv.ParseInt(filePerm, 8, 64)
 
-	if err := ioutil.WriteFile(destination, content, os.FileMode(fileMode)); err != nil {
+	if err := os.WriteFile(destination, content, os.FileMode(fileMode)); err != nil {
 		resp.Diagnostics.AddError(
 			"Create local file error",
 			"An unexpected error occurred while writing the file\n\n+"+
@@ -224,7 +223,7 @@ func (n *localFileResource) Read(ctx context.Context, req resource.ReadRequest, 
 	// Verify that the content of the destination file matches the content we
 	// expect. Otherwise, the file might have been modified externally, and we
 	// must reconcile.
-	outputContent, err := ioutil.ReadFile(outputPath)
+	outputContent, err := os.ReadFile(outputPath)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Read local file error",
@@ -269,7 +268,7 @@ func parseLocalFileContent(plan localFileResourceModelV0) ([]byte, error) {
 
 	if !plan.Source.IsNull() && !plan.Source.IsUnknown() {
 		sourceFileContent := plan.Source.ValueString()
-		return ioutil.ReadFile(sourceFileContent)
+		return os.ReadFile(sourceFileContent)
 	}
 
 	content := plan.Content.ValueString()
