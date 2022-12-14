@@ -222,6 +222,7 @@ func TestLocalFile_Permissions_Upgrade(t *testing.T) {
 		Steps: []r.TestStep{
 			{
 				ExternalProviders: providerVersion233(),
+				SkipFunc:          skipTestsWindows(),
 				PreConfig:         checkDirExists(destinationDirPath, &isDirExist),
 				Config: fmt.Sprintf(`
 					resource "local_file" "file" {
@@ -237,6 +238,7 @@ func TestLocalFile_Permissions_Upgrade(t *testing.T) {
 			},
 			{
 				ProtoV5ProviderFactories: protoV5ProviderFactories(),
+				SkipFunc:                 skipTestsWindows(),
 				Config: fmt.Sprintf(`
 					resource "local_file" "file" {
 						content              = "This is some content"
