@@ -209,7 +209,6 @@ func TestLocalSensitiveFile_Permissions_Upgrade(t *testing.T) {
 			{
 				ExternalProviders: providerVersion233(),
 				PreConfig:         checkDirExists(destinationDirPath, &isDirExist),
-				SkipFunc:          skipTestsWindows(),
 				Config: fmt.Sprintf(`
 					resource "local_sensitive_file" "file" {
 						content              = "This is some content"
