@@ -14,8 +14,7 @@ import (
 )
 
 var (
-	_ datasource.DataSource           = (*localFileDataSource)(nil)
-	_ datasource.DataSourceWithSchema = (*localFileDataSource)(nil)
+	_ datasource.DataSource = (*localFileDataSource)(nil)
 )
 
 func NewLocalFileDataSource() datasource.DataSource {

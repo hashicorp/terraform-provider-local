@@ -8,11 +8,10 @@ import (
 )
 
 var (
-	_ datasource.DataSource           = (*localSensitiveFileDataSource)(nil)
-	_ datasource.DataSourceWithSchema = (*localSensitiveFileDataSource)(nil)
+	_ datasource.DataSource = (*localSensitiveFileDataSource)(nil)
 )
 
-func NewLocalSensitiveFileDataSourceWithSchema() datasource.DataSourceWithSchema {
+func NewLocalSensitiveFileDataSourceWithSchema() datasource.DataSource {
 	return &localSensitiveFileDataSource{}
 }
 

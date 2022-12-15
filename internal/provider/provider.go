@@ -10,9 +10,7 @@ import (
 )
 
 var (
-	_ provider.Provider             = (*localProvider)(nil)
-	_ provider.ProviderWithSchema   = (*localProvider)(nil)
-	_ provider.ProviderWithMetadata = (*localProvider)(nil)
+	_ provider.Provider = (*localProvider)(nil)
 )
 
 func New() provider.Provider {

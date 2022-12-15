@@ -24,8 +24,7 @@ import (
 )
 
 var (
-	_ resource.Resource           = (*localFileResource)(nil)
-	_ resource.ResourceWithSchema = (*localFileResource)(nil)
+	_ resource.Resource = (*localFileResource)(nil)
 )
 
 func NewLocalFileResource() resource.Resource {

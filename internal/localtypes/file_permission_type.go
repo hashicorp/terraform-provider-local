@@ -8,20 +8,21 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
 var (
-	_ types.StringTypable    = FilePermissionType{}
-	_ xattr.TypeWithValidate = FilePermissionType{}
+	_ basetypes.StringTypable = FilePermissionType{}
+	_ xattr.TypeWithValidate  = FilePermissionType{}
 )
 
 type FilePermissionType struct {
-	types.StringTypable
+	basetypes.StringType
 }
 
 func NewFilePermissionType() FilePermissionType {
-	return FilePermissionType{StringTypable: types.StringType}
+	return FilePermissionType{StringType: types.StringType}
 }
 
 // Validate checks that the given input string is a valid file permission string,

@@ -24,8 +24,7 @@ import (
 )
 
 var (
-	_ resource.Resource           = (*localSensitiveFileResource)(nil)
-	_ resource.ResourceWithSchema = (*localSensitiveFileResource)(nil)
+	_ resource.Resource = (*localSensitiveFileResource)(nil)
 )
 
 func NewLocalSensitiveFileResource() resource.Resource {
