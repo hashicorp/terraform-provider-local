@@ -12,6 +12,13 @@ permissions:
   contents: write
 
 jobs:
+  changelog-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.changelog-version.outputs.version }}
+    steps:
+      - id: changelog-version
+        run: echo "version=$(echo ${{ inputs.versionNumber }} | cut -c 2-)" >> $GITHUB_OUTPUT
   go-version:
     runs-on: ubuntu-latest
     outputs:
@@ -19,8 +26,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: go-version
-        run: echo "::set-output name=version::$(cat ./.go-version)"
+        run: echo "version=$(cat ./.go-version)" >> $GITHUB_OUTPUT
   changelog:
+    needs: changelog-version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,7 +39,7 @@ jobs:
         uses: miniscruff/changie-action@v0
         with:
           version: latest
-          args: batch ${{ inputs.versionNumber }}
+          args: batch ${{ needs.changelog-version.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge changes
@@ -61,20 +69,20 @@ jobs:
           git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
           git config --global user.email "${{ env.CI_COMMIT_EMAIL }}"
           git pull
-          git tag "v${{ inputs.versionNumber }}"
-          git push origin "v${{ inputs.versionNumber }}"
+          git tag "${{ inputs.versionNumber }}"
+          git push origin "${{ inputs.versionNumber }}"
   release-notes:
-    needs: [ changelog, release-tag ]
+    needs: [ changelog-version, changelog, release-tag ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: v${{ inputs.versionNumber }}
+          ref: ${{ inputs.versionNumber }}
           fetch-depth: 0
       - name: Generate Release Notes
         run: |
           cd .changes
-          sed -e "1{/# /d;}" -e "2{/^$/d;}" ${{ inputs.versionNumber }}.md > release-notes.txt
+          sed -e "1{/# /d;}" -e "2{/^$/d;}" ${{ needs.changelog-version.outputs.version }}.md > release-notes.txt
       - uses: actions/upload-artifact@v3
         with:
           name: release-notes
@@ -97,5 +105,5 @@ jobs:
     with:
       release-notes: true
       setup-go-version: '${{ needs.go-version.outputs.version }}'
-      # Product Version (e.g. v1.2.3 or "v" + input.versionNumber)
-      product-version: 'v${{ input.versionNumber }}'
+      # Product Version (e.g. v1.2.3)
+      product-version: '${{ inputs.versionNumber }}'
