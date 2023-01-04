@@ -83,8 +83,8 @@ func checkDirectoryPermissions(destinationFilePath string) resource.TestCheckFun
 	}
 }
 
-func createSourceFile(sourceContent string) error {
-	return os.WriteFile("source_file", []byte(sourceContent), 0644)
+func createSourceFile(sourceFilePath, sourceContent string) error {
+	return os.WriteFile(sourceFilePath, []byte(sourceContent), 0644)
 }
 
 func checkDirExists(destinationFilePath string, isDirExist *bool) func() {

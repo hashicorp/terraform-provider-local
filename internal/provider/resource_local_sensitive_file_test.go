@@ -36,26 +36,27 @@ func TestLocalSensitiveFile_Basic(t *testing.T) {
 }
 
 func TestLocalSensitiveFile_source(t *testing.T) {
+	sourceDirPath := t.TempDir()
+	sourceFilePath := filepath.Join(sourceDirPath, "source_file")
+	sourceFilePath = strings.ReplaceAll(sourceFilePath, `\`, `\\`)
 	// create a local file that will be used as the "source" file
-	if err := createSourceFile("local file content"); err != nil {
+	if err := createSourceFile(sourceFilePath, "local file content"); err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove("source_file")
+
+	destinationDirPath := t.TempDir()
+	destinationFilePath := filepath.Join(destinationDirPath, "new_file")
+	destinationFilePath = strings.ReplaceAll(destinationFilePath, `\`, `\\`)
 
 	r.UnitTest(t, r.TestCase{
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []r.TestStep{
 			{
-				Config: `
-					resource "local_sensitive_file" "file" {
-					  source = "source_file"
-					  filename = "new_file"
-					}
-				`,
-				Check: checkFileCreation("local_sensitive_file_resource.test", "new_file"),
+				Config: testAccConfigLocalSensitiveSourceFile(sourceFilePath, destinationFilePath),
+				Check:  checkFileCreation("local_sensitive_file_resource.test", destinationFilePath),
 			},
 		},
-		CheckDestroy: checkFileDeleted("new_file"),
+		CheckDestroy: checkFileDeleted(destinationFilePath),
 	})
 }
 
@@ -245,6 +246,14 @@ func TestLocalSensitiveFile_Permissions_Upgrade(t *testing.T) {
 		},
 		CheckDestroy: checkFileDeleted(destinationFilePath),
 	})
+}
+
+func testAccConfigLocalSensitiveSourceFile(source, filename string) string {
+	return fmt.Sprintf(`
+				resource "local_sensitive_file" "file" {
+				  source  = %[1]q
+				  filename = %[2]q
+				}`, source, filename)
 }
 
 func testAccConfigLocalSensitiveFileContent(content, filename string) string {
