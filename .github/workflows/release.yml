@@ -8,6 +8,10 @@ on:
         type: string
         required: true
 
+env:
+  CI_COMMIT_AUTHOR: hc-github-team-tf-provider-devex
+  CI_COMMIT_EMAIL: github-team-tf-provider-devex@hashicorp.com
+
 permissions:
   contents: write
 
