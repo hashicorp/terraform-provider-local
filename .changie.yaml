@@ -6,7 +6,8 @@ versionFormat: '## {{.Version}} ({{.Time.Format "January 02, 2006"}})'
 kindFormat: '{{.Kind}}:'
 changeFormat: '* {{.Body}} ([#{{.Custom.Issue}}](https://github.com/hashicorp/terraform-provider-local/issues/{{.Custom.Issue}}))'
 custom:
-  - key: Issue/PR Number
+  - key: Issue
+    label: Issue/PR Number
     type: int
     minInt: 1
 kinds:
