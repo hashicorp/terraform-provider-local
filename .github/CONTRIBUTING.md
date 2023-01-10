@@ -95,7 +95,7 @@ and run
 changie new
 ```
 then choose a `kind` of change corresponding to the Terraform Plugin [changelog categories](https://developer.hashicorp.com/terraform/plugin/sdkv2/best-practices/versioning#categorization)
-and then fill out the body following the entry format. Changie will then prompt for a Github issue number.
+and then fill out the body following the entry format. Changie will then prompt for a Github issue or pull request number.
 Repeat this process for any additional changes. The `.yaml` files created in the `.changes/unreleased` folder 
 should be pushed the repository along with any code changes.
 
