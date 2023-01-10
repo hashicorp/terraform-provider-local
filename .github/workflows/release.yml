@@ -22,7 +22,7 @@ jobs:
       version: ${{ steps.changelog-version.outputs.version }}
     steps:
       - id: changelog-version
-        run: echo "version=$(echo ${{ inputs.versionNumber }} | cut -c 2-)" >> $GITHUB_OUTPUT
+        run: echo "version=$(echo "${{ inputs.versionNumber }}" | cut -c 2-)" >> "$GITHUB_OUTPUT"
   go-version:
     runs-on: ubuntu-latest
     outputs:
@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - id: go-version
-        run: echo "version=$(cat ./.go-version)" >> $GITHUB_OUTPUT
+        run: echo "version=$(cat ./.go-version)" >> "$GITHUB_OUTPUT"
   changelog:
     needs: changelog-version
     runs-on: ubuntu-latest
