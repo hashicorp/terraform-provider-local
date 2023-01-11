@@ -1,11 +1,18 @@
-package provider
+package localtypes
 
 import (
+	"context"
 	"regexp"
 	"testing"
+
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 )
 
-func TestValidateNoTrailingSlash(t *testing.T) {
+func TestFilePermissionTypeValidator(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		val         string
 		expectedErr *regexp.Regexp
@@ -34,10 +41,10 @@ func TestValidateNoTrailingSlash(t *testing.T) {
 		},
 	}
 
-	matchErr := func(errs []error, r *regexp.Regexp) bool {
+	matchErr := func(diags diag.Diagnostics, r *regexp.Regexp) bool {
 		// err must match one provided
-		for _, err := range errs {
-			if r.MatchString(err.Error()) {
+		for _, err := range diags {
+			if r.MatchString(err.Detail()) {
 				return true
 			}
 		}
@@ -46,18 +53,18 @@ func TestValidateNoTrailingSlash(t *testing.T) {
 	}
 
 	for i, tc := range testCases {
-		_, errs := validateModePermission(tc.val, "test_property")
+		diags := NewFilePermissionType().Validate(context.Background(), tftypes.NewValue(tftypes.String, tc.val), path.Empty())
 
-		if len(errs) == 0 && tc.expectedErr == nil {
+		if !diags.HasError() && tc.expectedErr == nil {
 			continue
 		}
 
-		if len(errs) != 0 && tc.expectedErr == nil {
-			t.Fatalf("expected test case %d to produce no errors, got %v", i, errs)
+		if diags.HasError() && tc.expectedErr == nil {
+			t.Fatalf("expected test case %d to produce no errors, got %v", i, diags.Errors())
 		}
 
-		if !matchErr(errs, tc.expectedErr) {
-			t.Fatalf("expected test case %d to produce error matching \"%s\", got %v", i, tc.expectedErr, errs)
+		if !matchErr(diags, tc.expectedErr) {
+			t.Fatalf("expected test case %d to produce error matching \"%s\", got %v", i, tc.expectedErr, diags.Errors())
 		}
 	}
 }

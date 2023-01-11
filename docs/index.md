@@ -1,5 +1,4 @@
 ---
-layout: "local"
 page_title: "Provider: Local"
 description: |-
   The Local provider is used to manage local resources, such as files.

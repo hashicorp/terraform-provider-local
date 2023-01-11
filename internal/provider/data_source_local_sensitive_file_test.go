@@ -1,9 +1,11 @@
 package provider
 
 import (
+	"context"
 	"encoding/base64"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 )
 
@@ -17,7 +19,7 @@ func TestLocalFileSensitiveDataSource(t *testing.T) {
 	`
 
 	resource.UnitTest(t, resource.TestCase{
-		Providers: testProviders,
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
@@ -31,13 +33,15 @@ func TestLocalFileSensitiveDataSource(t *testing.T) {
 }
 
 func TestLocalFileSensitiveDataSourceCheckSensitiveAttributes(t *testing.T) {
-	dsSchema := dataSourceLocalSensitiveFile()
+	dataSource := NewLocalSensitiveFileDataSourceWithSchema()
+	schemaResponse := datasource.SchemaResponse{}
 
-	if !dsSchema.Schema["content"].Sensitive {
+	dataSource.Schema(context.Background(), datasource.SchemaRequest{}, &schemaResponse)
+	if !schemaResponse.Schema.Attributes["content"].IsSensitive() {
 		t.Errorf("attribute 'content' should be marked as 'Sensitive'")
 	}
 
-	if !dsSchema.Schema["content_base64"].Sensitive {
+	if !schemaResponse.Schema.Attributes["content_base64"].IsSensitive() {
 		t.Errorf("attribute 'content_base64' should be marked as 'Sensitive'")
 	}
 }

@@ -1,42 +1,61 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 )
 
-func dataSourceLocalSensitiveFile() *schema.Resource {
-	return &schema.Resource{
-		Read: dataSourceLocalSensitiveFileRead,
+var (
+	_ datasource.DataSource = (*localSensitiveFileDataSource)(nil)
+)
 
+func NewLocalSensitiveFileDataSourceWithSchema() datasource.DataSource {
+	return &localSensitiveFileDataSource{}
+}
+
+func NewLocalSensitiveFileDataSource() datasource.DataSource {
+	return &localSensitiveFileDataSource{}
+}
+
+type localSensitiveFileDataSource struct{}
+
+func (n *localSensitiveFileDataSource) Metadata(ctx context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_sensitive_file"
+}
+
+func (n *localSensitiveFileDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	resp.Schema = schema.Schema{
 		Description: "Reads a file that contains sensitive data, from the local filesystem.",
-
-		Schema: map[string]*schema.Schema{
-			"filename": {
-				Type:        schema.TypeString,
+		Attributes: map[string]schema.Attribute{
+			"filename": schema.StringAttribute{
 				Description: "Path to the file that will be read. The data source will return an error if the file does not exist.",
 				Required:    true,
-				ForceNew:    true,
 			},
-			"content": {
-				Type:        schema.TypeString,
-				Description: "Raw content of the file that was read, as UTF-8 encoded string.",
+			"content": schema.StringAttribute{
+				Description: "Raw content of the file that was read, as UTF-8 encoded string. " +
+					"Files that do not contain UTF-8 text will have invalid UTF-8 sequences in `content`\n  replaced with the Unicode replacement character.",
+				Sensitive: true,
+				Computed:  true,
+			},
+			"content_base64": schema.StringAttribute{
+				Description: "Base64 encoded version of the file content (use this when dealing with binary data).",
 				Sensitive:   true,
 				Computed:    true,
 			},
-			"content_base64": {
-				Type:        schema.TypeString,
-				Description: "Base64 encoded version of the file raw content (use this when dealing with binary data).",
-				Sensitive:   true,
+			"id": schema.StringAttribute{
+				Description: "The hexadecimal encoding of the checksum of the file content",
 				Computed:    true,
 			},
 		},
 	}
 }
 
-func dataSourceLocalSensitiveFileRead(d *schema.ResourceData, m interface{}) error {
+func (n *localSensitiveFileDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	// NOTE: We can use the read-method for the data source `local_file` as-is, because
 	// all this data source does, is adding "Sensitive: true" to the schema of the property.
 	//
 	// The values and the property names are meant to be kept the same between data sources.
-	return dataSourceLocalFileRead(d, m)
+	NewLocalFileDataSource().Read(ctx, req, resp)
 }

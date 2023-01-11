@@ -1,5 +1,6 @@
 # Support
 
-Terraform is a mature project with a growing community. There are active, dedicated people willing to help you through various mediums.
-
-Take a look at those mediums listed at https://www.terraform.io/community.html
+* Project [README](../README.md)
+* Official [Documentation](https://registry.terraform.io/providers/hashicorp/local/latest/docs)
+* Providers [Discuss forums](https://discuss.hashicorp.com/c/terraform-providers/31)
+* Terraform [Community](https://www.terraform.io/community.html) page

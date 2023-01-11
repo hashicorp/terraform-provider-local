@@ -17,7 +17,7 @@ func TestLocalFileDataSource(t *testing.T) {
 	`
 
 	resource.UnitTest(t, resource.TestCase{
-		Providers: testProviders,
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
 				Config: config,
