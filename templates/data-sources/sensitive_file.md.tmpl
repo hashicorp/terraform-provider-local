@@ -1,0 +1,19 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+The attributes exposed by this data source are marked as
+[sensitive](https://learn.hashicorp.com/tutorials/terraform/sensitive-variables).
+
+## Example Usage
+
+{{ tffile "examples/data-sources/data-source-sensitive-file.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
