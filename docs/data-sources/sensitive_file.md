@@ -38,4 +38,10 @@ resource "aws_s3_object" "shared_zip" {
 - `content` (String, Sensitive) Raw content of the file that was read, as UTF-8 encoded string. Files that do not contain UTF-8 text will have invalid UTF-8 sequences in `content`
   replaced with the Unicode replacement character.
 - `content_base64` (String, Sensitive) Base64 encoded version of the file content (use this when dealing with binary data).
+- `content_base64sha256` (String) Base64 encoded SHA256 checksum of file content.
+- `content_base64sha512` (String) Base64 encoded SHA512 checksum of file content.
+- `content_md5` (String) MD5 checksum of file content.
+- `content_sha1` (String) SHA1 checksum of file content.
+- `content_sha256` (String) SHA256 checksum of file content.
+- `content_sha512` (String) SHA512 checksum of file content.
 - `id` (String) The hexadecimal encoding of the checksum of the file content
