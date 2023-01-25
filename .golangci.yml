@@ -1,21 +1,25 @@
-linters:
-  # Default linters enabled
-  # See: https://golangci-lint.run/usage/linters/#enabled-by-default-linters
+issues:
+  max-per-linter: 0
+  max-same-issues: 0
 
-  # Additional linters enabled
+linters:
+  disable-all: true
   enable:
     - durationcheck
+    - errcheck
     - exportloopref
+    - forcetypeassert
     - godot
     - gofmt
+    - gosimple
+    - ineffassign
     - makezero
     - misspell
     - nilerr
     - predeclared
+    - staticcheck
     - tenv
     - unconvert
     - unparam
-
-issues:
-  max-issues-per-linter: 0
-  max-same-issues: 0
+    - unused
+    - vet
