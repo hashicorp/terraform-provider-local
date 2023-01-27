@@ -45,7 +45,7 @@ func (n *localSensitiveFileDataSource) Schema(ctx context.Context, req datasourc
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "The hexadecimal encoding of the SHA1 checksum of the file content",
+				Description: "The hexadecimal encoding of the SHA1 checksum of the file content.",
 				Computed:    true,
 			},
 			"content_md5": schema.StringAttribute{
