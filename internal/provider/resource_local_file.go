@@ -2,7 +2,9 @@ package provider
 
 import (
 	"context"
+	"crypto/sha1"
 	"encoding/base64"
+	"encoding/hex"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -260,15 +262,8 @@ func (n *localFileResource) Read(ctx context.Context, req resource.ReadRequest, 
 		return
 	}
 
-	checksums := genFileChecksums(outputContent)
-	state.ContentMd5 = types.StringValue(checksums.md5Hex)
-	state.ContentSha1 = types.StringValue(checksums.sha1Hex)
-	state.ContentSha256 = types.StringValue(checksums.sha256Hex)
-	state.ContentBase64sha256 = types.StringValue(checksums.sha256Base64)
-	state.ContentSha512 = types.StringValue(checksums.sha512Hex)
-	state.ContentBase64sha512 = types.StringValue(checksums.sha512Base64)
-
-	if checksums.sha1Hex != state.ID.ValueString() {
+	outputChecksum := sha1.Sum(outputContent)
+	if hex.EncodeToString(outputChecksum[:]) != state.ID.ValueString() {
 		resp.State.RemoveResource(ctx)
 		return
 	}
