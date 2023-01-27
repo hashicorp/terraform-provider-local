@@ -61,7 +61,7 @@ type fileChecksums struct {
 }
 
 func genFileChecksums(data []byte) fileChecksums {
-	checksums := fileChecksums{}
+	var checksums fileChecksums
 
 	md5Sum := md5.Sum(data)
 	checksums.md5Hex = hex.EncodeToString(md5Sum[:])
