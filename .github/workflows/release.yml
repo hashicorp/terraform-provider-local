@@ -32,14 +32,14 @@ jobs:
         with:
           fetch-depth: 0
       - name: Batch changes
-        uses: miniscruff/changie-action@v0
+        uses: miniscruff/changie-action@v1
         with:
           version: latest
           args: batch ${{ needs.changelog-version.outputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Merge changes
-        uses: miniscruff/changie-action@v0
+        uses: miniscruff/changie-action@v1
         with:
           version: latest
           args: merge
