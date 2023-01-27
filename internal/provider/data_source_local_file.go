@@ -39,7 +39,7 @@ func (n *localFileDataSource) Schema(ctx context.Context, req datasource.SchemaR
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "The hexadecimal encoding of the checksum of the file content.",
+				Description: "The hexadecimal encoding of the SHA1 checksum of the file content.",
 				Computed:    true,
 			},
 			"content_md5": schema.StringAttribute{
