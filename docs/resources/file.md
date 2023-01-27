@@ -73,4 +73,4 @@ resource "local_file" "foo" {
 - `content_sha1` (String) SHA1 checksum of file content.
 - `content_sha256` (String) SHA256 checksum of file content.
 - `content_sha512` (String) SHA512 checksum of file content.
-- `id` (String) The hexadecimal encoding of the checksum of the file content
+- `id` (String) The hexadecimal encoding of the SHA1 checksum of the file content.
