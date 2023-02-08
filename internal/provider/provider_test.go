@@ -42,7 +42,7 @@ func checkFileCreation(resourceName, path string) resource.TestCheckFunc {
 		if err != nil {
 			return fmt.Errorf("Error occurred while reading file at path: %s\n, error: %s\n", path, err)
 		}
-		checkSums := genFileChecksums([]byte(resultContent))
+		checkSums := genFileChecksums(resultContent)
 
 		resource.TestCheckResourceAttr(resourceName, "content", string(resultContent))
 		resource.TestCheckResourceAttr(resourceName, "content_md5", checkSums.md5Hex)
