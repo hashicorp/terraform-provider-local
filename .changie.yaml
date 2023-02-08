@@ -14,7 +14,7 @@ kinds:
   - label: BREAKING CHANGES
   - label: NOTES
   - label: FEATURES
-  - label: IMPROVEMENTS
+  - label: ENHANCEMENTS
   - label: BUG FIXES
 newlines:
   afterKind: 1
