@@ -115,7 +115,31 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 				},
 			},
 			"id": schema.StringAttribute{
-				Description: "The hexadecimal encoding of the checksum of the file content",
+				Description: "The hexadecimal encoding of the SHA1 checksum of the file content.",
+				Computed:    true,
+			},
+			"content_md5": schema.StringAttribute{
+				Description: "MD5 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha1": schema.StringAttribute{
+				Description: "SHA1 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha256": schema.StringAttribute{
+				Description: "SHA256 checksum of file content.",
+				Computed:    true,
+			},
+			"content_base64sha256": schema.StringAttribute{
+				Description: "Base64 encoded SHA256 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha512": schema.StringAttribute{
+				Description: "SHA512 checksum of file content.",
+				Computed:    true,
+			},
+			"content_base64sha512": schema.StringAttribute{
+				Description: "Base64 encoded SHA512 checksum of file content.",
 				Computed:    true,
 			},
 		},
@@ -176,9 +200,15 @@ func (n *localSensitiveFileResource) Create(ctx context.Context, req resource.Cr
 		return
 	}
 
-	checksum := sha1.Sum(content)
+	checksums := genFileChecksums(content)
+	plan.ContentMd5 = types.StringValue(checksums.md5Hex)
+	plan.ContentSha1 = types.StringValue(checksums.sha1Hex)
+	plan.ContentSha256 = types.StringValue(checksums.sha256Hex)
+	plan.ContentBase64sha256 = types.StringValue(checksums.sha256Base64)
+	plan.ContentSha512 = types.StringValue(checksums.sha512Hex)
+	plan.ContentBase64sha512 = types.StringValue(checksums.sha512Base64)
 
-	plan.ID = types.StringValue(hex.EncodeToString(checksum[:]))
+	plan.ID = types.StringValue(checksums.sha1Hex)
 	diags = resp.State.Set(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 }
@@ -259,4 +289,10 @@ type localSensitiveFileResourceModelV0 struct {
 	FilePermission      types.String `tfsdk:"file_permission"`
 	DirectoryPermission types.String `tfsdk:"directory_permission"`
 	ID                  types.String `tfsdk:"id"`
+	ContentMd5          types.String `tfsdk:"content_md5"`
+	ContentSha1         types.String `tfsdk:"content_sha1"`
+	ContentSha256       types.String `tfsdk:"content_sha256"`
+	ContentBase64sha256 types.String `tfsdk:"content_base64sha256"`
+	ContentSha512       types.String `tfsdk:"content_sha512"`
+	ContentBase64sha512 types.String `tfsdk:"content_base64sha512"`
 }

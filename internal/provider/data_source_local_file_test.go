@@ -9,6 +9,7 @@ import (
 
 func TestLocalFileDataSource(t *testing.T) {
 	content := "This is some content"
+	checkSums := genFileChecksums([]byte(content))
 
 	config := `
 		data "local_file" "file" {
@@ -24,6 +25,12 @@ func TestLocalFileDataSource(t *testing.T) {
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.local_file.file", "content", content),
 					resource.TestCheckResourceAttr("data.local_file.file", "content_base64", base64.StdEncoding.EncodeToString([]byte(content))),
+					resource.TestCheckResourceAttr("data.local_file.file", "content_md5", checkSums.md5Hex),
+					resource.TestCheckResourceAttr("data.local_file.file", "content_sha1", checkSums.sha1Hex),
+					resource.TestCheckResourceAttr("data.local_file.file", "content_sha256", checkSums.sha256Hex),
+					resource.TestCheckResourceAttr("data.local_file.file", "content_base64sha256", checkSums.sha256Base64),
+					resource.TestCheckResourceAttr("data.local_file.file", "content_sha512", checkSums.sha512Hex),
+					resource.TestCheckResourceAttr("data.local_file.file", "content_base64sha512", checkSums.sha512Base64),
 				),
 			},
 		},

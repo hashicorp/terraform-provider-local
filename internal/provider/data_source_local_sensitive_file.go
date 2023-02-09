@@ -45,7 +45,31 @@ func (n *localSensitiveFileDataSource) Schema(ctx context.Context, req datasourc
 				Computed:    true,
 			},
 			"id": schema.StringAttribute{
-				Description: "The hexadecimal encoding of the checksum of the file content",
+				Description: "The hexadecimal encoding of the SHA1 checksum of the file content.",
+				Computed:    true,
+			},
+			"content_md5": schema.StringAttribute{
+				Description: "MD5 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha1": schema.StringAttribute{
+				Description: "SHA1 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha256": schema.StringAttribute{
+				Description: "SHA256 checksum of file content.",
+				Computed:    true,
+			},
+			"content_base64sha256": schema.StringAttribute{
+				Description: "Base64 encoded SHA256 checksum of file content.",
+				Computed:    true,
+			},
+			"content_sha512": schema.StringAttribute{
+				Description: "SHA512 checksum of file content.",
+				Computed:    true,
+			},
+			"content_base64sha512": schema.StringAttribute{
+				Description: "Base64 encoded SHA512 checksum of file content.",
 				Computed:    true,
 			},
 		},
