@@ -1,6 +1,0 @@
-kind: FEATURES
-body: 'resource/local_file: added support for `MD5`, `SHA1`, `SHA256`, and `SHA512`
-  checksum outputs.'
-time: 2023-02-09T11:07:55.67622-05:00
-custom:
-  Issue: "142"

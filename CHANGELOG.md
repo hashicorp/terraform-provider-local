@@ -1,3 +1,16 @@
+## 2.4.0 (March 08, 2023)
+
+NOTES:
+
+* This Go module has been updated to Go 1.19 per the [Go support policy](https://golang.org/doc/devel/release.html#policy). Any consumers building on earlier Go versions may experience errors. ([#184](https://github.com/hashicorp/terraform-provider-local/issues/184))
+
+FEATURES:
+
+* resource/local_file: added support for `MD5`, `SHA1`, `SHA256`, and `SHA512` checksum outputs. ([#142](https://github.com/hashicorp/terraform-provider-local/issues/142))
+* resource/local_sensitive_file: added support for `MD5`, `SHA1`, `SHA256`, and `SHA512` checksum outputs. ([#142](https://github.com/hashicorp/terraform-provider-local/issues/142))
+* data-source/local_file: added support for `MD5`, `SHA1`, `SHA256`, and `SHA512` checksum outputs. ([#142](https://github.com/hashicorp/terraform-provider-local/issues/142))
+* data-source/local_sensitive-file: added support for `MD5`, `SHA1`, `SHA256`, and `SHA512` checksum outputs. ([#142](https://github.com/hashicorp/terraform-provider-local/issues/142))
+
 ## 2.3.0 (January 11, 2023)
 
 NOTES:

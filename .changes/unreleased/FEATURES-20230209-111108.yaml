@@ -1,6 +1,0 @@
-kind: FEATURES
-body: 'data-source/local_sensitive-file: added support for `MD5`, `SHA1`, `SHA256`,
-  and `SHA512` checksum outputs.'
-time: 2023-02-09T11:11:08.992066-05:00
-custom:
-  Issue: "142"
