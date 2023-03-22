@@ -15,12 +15,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	"github.com/terraform-providers/terraform-provider-local/internal/localtypes"
-	"github.com/terraform-providers/terraform-provider-local/internal/modifiers/stringmodifier"
 )
 
 var (
@@ -97,9 +97,9 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 					"Default value is `\"0700\"`.",
 				Optional: true,
 				Computed: true,
+				Default:  stringdefault.StaticString("0700"),
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
-					stringmodifier.StringDefault("0700"),
 				},
 			},
 			"directory_permission": schema.StringAttribute{
@@ -109,9 +109,9 @@ func (n *localSensitiveFileResource) Schema(ctx context.Context, req resource.Sc
 					"Default value is `\"0700\"`.",
 				Optional: true,
 				Computed: true,
+				Default:  stringdefault.StaticString("0700"),
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.RequiresReplace(),
-					stringmodifier.StringDefault("0700"),
 				},
 			},
 			"id": schema.StringAttribute{
