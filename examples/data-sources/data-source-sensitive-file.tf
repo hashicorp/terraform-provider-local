@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 data "local_sensitive_file" "foo" {
   filename = "${path.module}/foo.bar"
 }
