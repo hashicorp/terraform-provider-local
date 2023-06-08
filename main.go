@@ -1,3 +1,6 @@
+// Copyright (c) HashiCorp, Inc.
+// SPDX-License-Identifier: MPL-2.0
+
 package main
 
 import (
@@ -9,9 +12,6 @@ import (
 
 	"github.com/terraform-providers/terraform-provider-local/internal/provider"
 )
-
-// Generate the Terraform provider documentation using `tfplugindocs`:
-//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
 
 func main() {
 	var debug bool
