@@ -1,6 +1,6 @@
 module github.com/terraform-providers/terraform-provider-local
 
-go 1.19
+go 1.20
 
 require (
 	github.com/hashicorp/terraform-plugin-framework v1.4.0

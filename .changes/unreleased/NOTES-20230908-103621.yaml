@@ -1,0 +1,6 @@
+kind: NOTES
+body: 'all: This Go module has been updated to Go 1.20 per the [Go support policy](https://golang.org/doc/devel/release.html#policy).
+  Any consumers building on earlier Go versions may experience errors.'
+time: 2023-09-08T10:36:21.499838+01:00
+custom:
+  Issue: "251"
