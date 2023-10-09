@@ -3,7 +3,7 @@ module github.com/terraform-providers/terraform-provider-local
 go 1.20
 
 require (
-	github.com/hashicorp/terraform-plugin-framework v1.4.0
+	github.com/hashicorp/terraform-plugin-framework v1.4.1
 	github.com/hashicorp/terraform-plugin-framework-validators v0.12.0
 	github.com/hashicorp/terraform-plugin-go v0.19.0
 	github.com/hashicorp/terraform-plugin-testing v1.5.1
