@@ -60,7 +60,7 @@ class MyConvertedCode extends TerraformStack {
 ### Optional
 
 - `content` (String, Sensitive) Sensitive Content to store in the file, expected to be a UTF-8 encoded string.
- Conflicts with `contentBase64` and `source`.
+ Conflicts with `content_base64` and `source`.
  Exactly one of these three arguments must be specified.
 - `contentBase64` (String, Sensitive) Sensitive Content to store in the file, expected to be binary encoded as base64 string.
  Conflicts with `content` and `source`.
@@ -72,7 +72,7 @@ class MyConvertedCode extends TerraformStack {
  [numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).
  Default value is `"0700"`.
 - `source` (String) Path to file to use as source for the one we are creating.
- Conflicts with `content` and `contentBase64`.
+ Conflicts with `content` and `content_base64`.
  Exactly one of these three arguments must be specified.
 
 ### Read-Only
@@ -84,4 +84,4 @@ class MyConvertedCode extends TerraformStack {
 - `contentSha256` (String) SHA256 checksum of file content.
 - `contentSha512` (String) SHA512 checksum of file content.
 - `id` (String) The hexadecimal encoding of the SHA1 checksum of the file content.
-<!-- cache-key: cdktf-0.18.0 input-7bb75dc158cfada4bb631b2df7be8efc625955008a732af3f0752e8d4cc306fb 556251879b8ed0dc4c87a76b568667e0ab5e2c46efdd14a05c556daf05678783-->
+<!-- cache-key: cdktf-0.19.0 input-7bb75dc158cfada4bb631b2df7be8efc625955008a732af3f0752e8d4cc306fb 556251879b8ed0dc4c87a76b568667e0ab5e2c46efdd14a05c556daf05678783-->

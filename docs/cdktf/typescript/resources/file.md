@@ -60,10 +60,10 @@ class MyConvertedCode extends TerraformStack {
 ### Optional
 
 - `content` (String) Content to store in the file, expected to be a UTF-8 encoded string.
- Conflicts with `sensitiveContent`, `contentBase64` and `source`.
+ Conflicts with `sensitive_content`, `content_base64` and `source`.
  Exactly one of these four arguments must be specified.
 - `contentBase64` (String) Content to store in the file, expected to be binary encoded as base64 string.
- Conflicts with `content`, `sensitiveContent` and `source`.
+ Conflicts with `content`, `sensitive_content` and `source`.
  Exactly one of these four arguments must be specified.
 - `directoryPermission` (String) Permissions to set for directories created (before umask), expressed as string in
  [numeric notation](https://en.wikipedia.org/wiki/File-system_permissions#Numeric_notation).
@@ -73,12 +73,12 @@ class MyConvertedCode extends TerraformStack {
  Default value is `"0777"`.
 - `sensitiveContent` (String, Sensitive, Deprecated) Sensitive content to store in the file, expected to be an UTF-8 encoded string.
  Will not be displayed in diffs.
- Conflicts with `content`, `contentBase64` and `source`.
+ Conflicts with `content`, `content_base64` and `source`.
  Exactly one of these four arguments must be specified.
- If in need to use _sensitive_ content, please use the [`localSensitiveFile`](./sensitive_file.html)
+ If in need to use _sensitive_ content, please use the [`local_sensitive_file`](./sensitive_file.html)
  resource instead.
 - `source` (String) Path to file to use as source for the one we are creating.
- Conflicts with `content`, `sensitiveContent` and `contentBase64`.
+ Conflicts with `content`, `sensitive_content` and `content_base64`.
  Exactly one of these four arguments must be specified.
 
 ### Read-Only
@@ -90,4 +90,4 @@ class MyConvertedCode extends TerraformStack {
 - `contentSha256` (String) SHA256 checksum of file content.
 - `contentSha512` (String) SHA512 checksum of file content.
 - `id` (String) The hexadecimal encoding of the SHA1 checksum of the file content.
-<!-- cache-key: cdktf-0.18.0 input-c00971f3974a95322b857b196ceb51dd0a0d43df77870f8acdaed566bf74c9e0 556251879b8ed0dc4c87a76b568667e0ab5e2c46efdd14a05c556daf05678783-->
+<!-- cache-key: cdktf-0.19.0 input-c00971f3974a95322b857b196ceb51dd0a0d43df77870f8acdaed566bf74c9e0 556251879b8ed0dc4c87a76b568667e0ab5e2c46efdd14a05c556daf05678783-->
