@@ -40,6 +40,8 @@ checksum:
     - glob: 'terraform-registry-manifest.json'
       name_template: '{{ .ProjectName }}_{{ .Version }}_manifest.json'
   name_template: '{{ .ProjectName }}_{{ .Version }}_SHA256SUMS'
+milestones:
+  - close: true
 publishers:
   - checksum: true
     # Terraform CLI 0.10 - 0.11 perform discovery via HTTP headers on releases.hashicorp.com
