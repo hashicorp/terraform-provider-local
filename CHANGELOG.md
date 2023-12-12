@@ -1,3 +1,9 @@
+## 2.4.1 (December 12, 2023)
+
+NOTES:
+
+* This release introduces no functional changes. It does however include dependency updates which address upstream CVEs. ([#273](https://github.com/hashicorp/terraform-provider-local/issues/273))
+
 ## 2.4.0 (March 08, 2023)
 
 NOTES:
