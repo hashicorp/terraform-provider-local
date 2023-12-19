@@ -1,6 +1,8 @@
 dependencies:
-  - .github/dependabot.yml
-  - go.mod
-  - go.sum
+  - changed-files:
+      - any-glob-to-any-file: .github/dependabot.yml
+      - any-glob-to-any-file: go.mod
+      - any-glob-to-any-file: go.sum
 documentation:
-  - website/**/*
+  - changed-files:
+      - any-glob-to-any-file: website/**/*
