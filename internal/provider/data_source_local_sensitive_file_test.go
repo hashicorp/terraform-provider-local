@@ -9,24 +9,19 @@ import (
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
 func TestLocalFileSensitiveDataSource(t *testing.T) {
-	testFileContent := "This is some content"
+	testFileContent := "This is some sensitive content"
 	checkSums := genFileChecksums([]byte(testFileContent))
-
-	config := `
-		data "local_sensitive_file" "file" {
-		  filename = "./testdata/local_file"
-		}
-	`
 
 	resource.UnitTest(t, resource.TestCase{
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
-				Config: config,
+				ConfigDirectory: config.TestNameDirectory(),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("data.local_sensitive_file.file", "content", testFileContent),
 					resource.TestCheckResourceAttr("data.local_sensitive_file.file", "content_base64", base64.StdEncoding.EncodeToString([]byte(testFileContent))),
