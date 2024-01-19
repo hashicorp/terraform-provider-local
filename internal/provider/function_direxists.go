@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -42,12 +43,24 @@ func (f *DirectoryExistsFunction) Definition(ctx context.Context, req function.D
 }
 
 func (f *DirectoryExistsFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
-	var directoryPath string
+	var inputPath string
 
-	resp.Diagnostics.Append(req.Arguments.Get(ctx, &directoryPath)...)
+	resp.Diagnostics.Append(req.Arguments.Get(ctx, &inputPath)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
+
+	directoryPath := inputPath
+	if !filepath.IsAbs(directoryPath) {
+		var err error
+		directoryPath, err = filepath.Abs(directoryPath)
+		if err != nil {
+			resp.Diagnostics.AddArgumentError(0, "Error expanding relative path to absolute path", err.Error())
+			return
+		}
+	}
+
+	directoryPath = filepath.Clean(directoryPath)
 
 	fi, err := os.Stat(directoryPath)
 	if err != nil {
@@ -65,5 +78,5 @@ func (f *DirectoryExistsFunction) Run(ctx context.Context, req function.RunReque
 		return
 	}
 
-	resp.Diagnostics.AddArgumentError(0, "Invalid file mode detected", fmt.Sprintf("%q was found, but is not a directory", directoryPath))
+	resp.Diagnostics.AddArgumentError(0, "Invalid file mode detected", fmt.Sprintf("%q was found, but is not a directory", inputPath))
 }
