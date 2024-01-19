@@ -65,7 +65,5 @@ func (f *DirectoryExistsFunction) Run(ctx context.Context, req function.RunReque
 		return
 	}
 
-	// TODO: Should we mimic the terraform core logic for printing a nice message of what the underlying file mode is?
-	// https://github.com/hashicorp/terraform/blob/8da1c006f9d7f381e644a5f0e2c25094ea29571d/internal/lang/funcs/filesystem.go#L234-L257
 	resp.Diagnostics.AddArgumentError(0, "Invalid file mode detected", fmt.Sprintf("%q was found, but is not a directory", directoryPath))
 }

@@ -12,5 +12,5 @@ terraform {
 output "test_not_a_dir" {
   # Known issue where relative path is based on where the test working directory is located:
   # https://github.com/hashicorp/terraform-plugin-testing/issues/277
-  value = provider::local::direxists("${path.module}/testdata/TestDirectoryExists_invalid/not_a_dir")
+  value = provider::local::direxists("${path.module}/testdata/TestDirectoryExists_invalid_file/not_a_dir.txt")
 }
