@@ -25,8 +25,8 @@ func TestDirectoryExists_basic(t *testing.T) {
 				ConfigDirectory: config.TestNameDirectory(),
 				ConfigPlanChecks: resource.ConfigPlanChecks{
 					PreApply: []plancheck.PlanCheck{
-						plancheck.ExpectKnownOutputValue("test_dir_exists", knownvalue.BoolExact(true)),
-						plancheck.ExpectKnownOutputValue("test_dir_doesnt_exist", knownvalue.BoolExact(false)),
+						plancheck.ExpectKnownOutputValue("test_dir_exists", knownvalue.Bool(true)),
+						plancheck.ExpectKnownOutputValue("test_dir_doesnt_exist", knownvalue.Bool(false)),
 					},
 				},
 			},
@@ -43,7 +43,7 @@ func TestDirectoryExists_invalid_file(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				ConfigDirectory: config.TestNameDirectory(),
-				ExpectError:     regexp.MustCompile("\"./testdata/TestDirectoryExists_invalid_file/not_a_dir.txt\" was\nfound, but is not a directory."),
+				ExpectError:     regexp.MustCompile("\"./testdata/TestDirectoryExists_invalid_file/not_a_dir.txt\" was found, but is\nnot a directory."),
 			},
 		},
 	})
@@ -58,7 +58,7 @@ func TestDirectoryExists_invalid_symlink(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				ConfigDirectory: config.TestNameDirectory(),
-				ExpectError:     regexp.MustCompile("\"./testdata/TestDirectoryExists_invalid_symlink/not_a_dir_symlink\"\nwas found, but is not a directory."),
+				ExpectError:     regexp.MustCompile("\"./testdata/TestDirectoryExists_invalid_symlink/not_a_dir_symlink\" was found,\nbut is not a directory."),
 			},
 		},
 	})

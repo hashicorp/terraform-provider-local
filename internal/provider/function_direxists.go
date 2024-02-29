@@ -45,8 +45,8 @@ func (f *DirectoryExistsFunction) Definition(ctx context.Context, req function.D
 func (f *DirectoryExistsFunction) Run(ctx context.Context, req function.RunRequest, resp *function.RunResponse) {
 	var inputPath string
 
-	resp.Diagnostics.Append(req.Arguments.Get(ctx, &inputPath)...)
-	if resp.Diagnostics.HasError() {
+	resp.Error = req.Arguments.Get(ctx, &inputPath)
+	if resp.Error != nil {
 		return
 	}
 
@@ -55,7 +55,7 @@ func (f *DirectoryExistsFunction) Run(ctx context.Context, req function.RunReque
 		var err error
 		directoryPath, err = filepath.Abs(directoryPath)
 		if err != nil {
-			resp.Diagnostics.AddArgumentError(0, "Error expanding relative path to absolute path", err.Error())
+			resp.Error = function.NewArgumentFuncError(0, fmt.Sprintf("Error expanding relative path to absolute path: %s", err))
 			return
 		}
 	}
@@ -65,18 +65,17 @@ func (f *DirectoryExistsFunction) Run(ctx context.Context, req function.RunReque
 	fi, err := os.Stat(directoryPath)
 	if err != nil {
 		if os.IsNotExist(err) {
-			resp.Diagnostics.Append(resp.Result.Set(ctx, types.BoolValue(false))...)
+			resp.Error = resp.Result.Set(ctx, types.BoolValue(false))
 			return
 		} else {
-			resp.Diagnostics.AddArgumentError(0, "Error checking for directory", err.Error())
+			resp.Error = function.NewArgumentFuncError(0, fmt.Sprintf("Error checking for directory: %s", err))
 			return
 		}
 	}
 
 	if fi.IsDir() {
-		resp.Diagnostics.Append(resp.Result.Set(ctx, types.BoolValue(true))...)
+		resp.Error = resp.Result.Set(ctx, types.BoolValue(true))
 		return
 	}
-
-	resp.Diagnostics.AddArgumentError(0, "Invalid file mode detected", fmt.Sprintf("%q was found, but is not a directory", inputPath))
+	resp.Error = function.NewArgumentFuncError(0, fmt.Sprintf("Invalid file mode detected: %q was found, but is not a directory", inputPath))
 }
