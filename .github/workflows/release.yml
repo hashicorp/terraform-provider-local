@@ -89,7 +89,7 @@ jobs:
           cd .changes
           sed -e "1{/# /d;}" -e "2{/^$/d;}" ${{ needs.changelog-version.outputs.version }}.md > release-notes.txt
 
-      - uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
         with:
           name: release-notes
           path: ./.changes/release-notes.txt
@@ -101,7 +101,7 @@ jobs:
     permissions:
       contents: write # Needed for goreleaser to create GitHub release
       issues: write # Needed for goreleaser to close associated milestone
-    uses: hashicorp/ghaction-terraform-provider-release/.github/workflows/hashicorp.yml@01981baad5d35ce2342924e60ae91cf69fe31fd0 # v2.3.0
+    uses: hashicorp/ghaction-terraform-provider-release/.github/workflows/hashicorp.yml@9b5d2ca4b85f3a54d5c4d12e7690ddad1526ff6c # v3.0.1
     secrets:
       hc-releases-key-prod: '${{ secrets.HC_RELEASES_KEY_PROD }}'
       hc-releases-key-staging: '${{ secrets.HC_RELEASES_KEY_STAGING }}'
