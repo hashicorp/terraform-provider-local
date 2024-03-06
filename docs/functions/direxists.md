@@ -27,7 +27,7 @@ terraform {
 }
 
 output "example_output" {
-  value = provider :: local :: direxists("${path.module}/example-directory")
+  value = provider::local::direxists("${path.module}/example-directory")
 }
 ```
 
