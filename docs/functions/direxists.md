@@ -10,7 +10,26 @@ description: |-
 
 Given a path string, will return true if the directory exists. This function works only with directories. If used with a regular file, FIFO, or other special mode, it will return an error.
 
+## Example Usage
 
+```terraform
+# Configuration using provider functions must include required_providers configuration.
+terraform {
+  required_providers {
+    local = {
+      source = "hashicorp/local"
+      # Setting the provider version is a strongly recommended practice
+      # version = "..."
+    }
+  }
+  # Provider functions require Terraform 1.8 and later.
+  required_version = ">= 1.8.0"
+}
+
+output "example_output" {
+  value = provider :: local :: direxists("${path.module}/example-directory")
+}
+```
 
 ## Signature
 
