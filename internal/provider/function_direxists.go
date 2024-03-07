@@ -29,8 +29,10 @@ func (f *DirectoryExistsFunction) Definition(ctx context.Context, req function.D
 	resp.Definition = function.Definition{
 		Summary: "Determines whether a directory exists at a given path.",
 		Description: "Given a path string, will return true if the directory exists. " +
-			"This function works only with directories. If used with a regular file, FIFO, or other " +
-			"special mode, it will return an error.",
+			"This function works only with directories. If used with a regular file, FIFO, or other special mode, it will return an error.\n\n" +
+			"This function behaves similar to the built-in [`fileexists`](https://developer.hashicorp.com/terraform/language/functions/fileexists) function, " +
+			"however, `direxists` will not replace filesystem paths including `~` with the current user's home directory path. This functionality can be achieved by using the built-in " +
+			"[`pathexpand`](https://developer.hashicorp.com/terraform/language/functions/pathexpand) function with `direxists`, see example below.",
 
 		Parameters: []function.Parameter{
 			function.StringParameter{
