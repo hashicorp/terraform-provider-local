@@ -1,3 +1,9 @@
+## 2.5.1 (March 11, 2024)
+
+NOTES:
+
+* No functional changes from v2.5.0. Minor documentation fixes. ([#303](https://github.com/hashicorp/terraform-provider-local/issues/303))
+
 ## 2.5.0 (March 11, 2024)
 
 FEATURES:
