@@ -1,6 +1,0 @@
-kind: FEATURES
-body: 'functions/direxists: Added a new `direxists` function that checks for the existence
-  of a directory, similar to the built-in `fileexists` function.'
-time: 2024-01-16T18:06:27.665639-05:00
-custom:
-  Issue: "285"
