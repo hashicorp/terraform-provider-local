@@ -13,13 +13,14 @@ import (
 	"encoding/hex"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
 var (
-	_ provider.Provider = (*localProvider)(nil)
+	_ provider.ProviderWithFunctions = (*localProvider)(nil)
 )
 
 func New() provider.Provider {
@@ -47,6 +48,12 @@ func (p *localProvider) Resources(ctx context.Context) []func() resource.Resourc
 	return []func() resource.Resource{
 		NewLocalFileResource,
 		NewLocalSensitiveFileResource,
+	}
+}
+
+func (p *localProvider) Functions(ctx context.Context) []func() function.Function {
+	return []func() function.Function{
+		NewDirectoryExistsFunction,
 	}
 }
 
