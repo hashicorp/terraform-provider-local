@@ -1,3 +1,4 @@
+---
 page_title: "direxists function - terraform-provider-local"
 subcategory: ""
 description: |-
