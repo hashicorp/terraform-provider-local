@@ -56,7 +56,7 @@ jobs:
         run: make build
 
   test:
-    name: 'Acc. Tests (OS: ${{ matrix.os }} / TF: ${{ matrix.terraform }})'
+    name: 'Acc. Tests (OS: ${{ matrix.os }} / TF: ${{ matrix.terraform }}
     needs: build
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
@@ -82,7 +82,7 @@ jobs:
         with:
           # TODO: Temporary change has been made to `vars.TF_VERSIONS_PROTOCOL_V5` to include the `.*` to enable us
           # to utilize the v1.8.0-beta1 of Terraform. This should be reverted once Terraform v1.8.0 is released.
-          # terraform_version: ${{ matrix.terraform }}.*
+          # terraform_version: ${{ matrix.terraform }}
           terraform_version: ${{ matrix.terraform }}
           terraform_wrapper: false
 
