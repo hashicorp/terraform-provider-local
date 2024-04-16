@@ -37,13 +37,6 @@ jobs:
         with:
           version: latest
 
-      # TODO: Temporary addition to ensure plugin-docs uses the v1.8.0-beta1 version of Terraform. This should be reverted once Terraform v1.8.0 is released.
-      - name: Setup Terraform (supporting provider functions)
-        uses: hashicorp/setup-terraform@a1502cd9e758c50496cc9ac5308c4843bcd56d36 # v3.0.0
-        with:
-          terraform_version: v1.8.0-beta1
-          terraform_wrapper: false
-
       - name: Generate
         run: make generate
 
@@ -56,7 +49,7 @@ jobs:
         run: make build
 
   test:
-    name: 'Acc. Tests (OS: ${{ matrix.os }} / TF: ${{ matrix.terraform }}
+    name: 'Acc. Tests (OS: ${{ matrix.os }} / TF: ${{ matrix.terraform }}'
     needs: build
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
@@ -80,9 +73,6 @@ jobs:
       - name: Setup Terraform ${{ matrix.terraform }}
         uses: hashicorp/setup-terraform@a1502cd9e758c50496cc9ac5308c4843bcd56d36 # v3.0.0
         with:
-          # TODO: Temporary change has been made to `vars.TF_VERSIONS_PROTOCOL_V5` to include the `.*` to enable us
-          # to utilize the v1.8.0-beta1 of Terraform. This should be reverted once Terraform v1.8.0 is released.
-          # terraform_version: ${{ matrix.terraform }}
           terraform_version: ${{ matrix.terraform }}
           terraform_wrapper: false
 
