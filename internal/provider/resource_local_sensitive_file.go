@@ -285,17 +285,17 @@ func parseLocalSensitiveFileContent(plan localSensitiveFileResourceModelV0) ([]b
 }
 
 type localSensitiveFileResourceModelV0 struct {
-	Filename            types.String `tfsdk:"filename"`
-	Content             types.String `tfsdk:"content"`
-	ContentBase64       types.String `tfsdk:"content_base64"`
-	Source              types.String `tfsdk:"source"`
-	FilePermission      types.String `tfsdk:"file_permission"`
-	DirectoryPermission types.String `tfsdk:"directory_permission"`
-	ID                  types.String `tfsdk:"id"`
-	ContentMd5          types.String `tfsdk:"content_md5"`
-	ContentSha1         types.String `tfsdk:"content_sha1"`
-	ContentSha256       types.String `tfsdk:"content_sha256"`
-	ContentBase64sha256 types.String `tfsdk:"content_base64sha256"`
-	ContentSha512       types.String `tfsdk:"content_sha512"`
-	ContentBase64sha512 types.String `tfsdk:"content_base64sha512"`
+	Filename            types.String                   `tfsdk:"filename"`
+	Content             types.String                   `tfsdk:"content"`
+	ContentBase64       types.String                   `tfsdk:"content_base64"`
+	Source              types.String                   `tfsdk:"source"`
+	FilePermission      localtypes.FilePermissionValue `tfsdk:"file_permission"`
+	DirectoryPermission localtypes.FilePermissionValue `tfsdk:"directory_permission"`
+	ID                  types.String                   `tfsdk:"id"`
+	ContentMd5          types.String                   `tfsdk:"content_md5"`
+	ContentSha1         types.String                   `tfsdk:"content_sha1"`
+	ContentSha256       types.String                   `tfsdk:"content_sha256"`
+	ContentBase64sha256 types.String                   `tfsdk:"content_base64sha256"`
+	ContentSha512       types.String                   `tfsdk:"content_sha512"`
+	ContentBase64sha512 types.String                   `tfsdk:"content_base64sha512"`
 }
