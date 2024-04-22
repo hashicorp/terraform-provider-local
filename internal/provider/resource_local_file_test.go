@@ -77,6 +77,16 @@ func TestLocalFile_Permissions(t *testing.T) {
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []r.TestStep{
 			{
+				Config: fmt.Sprintf(`
+					resource "local_file" "file" {
+						content              = "This is some content"
+						filename             = "%s"
+						file_permission      = "9999"
+					}`, destinationFilePath,
+				),
+				ExpectError: regexp.MustCompile(`bad mode permission`),
+			},
+			{
 				PreConfig: checkDirExists(destinationDirPath, &isDirExist),
 				SkipFunc:  skipTestsWindows(),
 				Config: fmt.Sprintf(`

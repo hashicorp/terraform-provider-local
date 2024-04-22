@@ -5,69 +5,110 @@ package localtypes
 
 import (
 	"context"
-	"regexp"
 	"testing"
 
+	"github.com/google/go-cmp/cmp"
+	"github.com/hashicorp/terraform-plugin-framework/attr/xattr"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
-	"github.com/hashicorp/terraform-plugin-go/tftypes"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
-func TestFilePermissionTypeValidator(t *testing.T) {
+func TestFilePermissionValueValidateAttribute(t *testing.T) {
 	t.Parallel()
 
-	testCases := []struct {
-		val         string
-		expectedErr *regexp.Regexp
+	testCases := map[string]struct {
+		value    FilePermissionValue
+		request  xattr.ValidateAttributeRequest
+		expected xattr.ValidateAttributeResponse
 	}{
-		{
-			val: "0777",
+		"0777": {
+			value: FilePermissionValue{basetypes.NewStringValue("0777")},
+			request: xattr.ValidateAttributeRequest{
+				Path: path.Root("test"),
+			},
+			expected: xattr.ValidateAttributeResponse{},
 		},
-		{
-			val: "0644",
+		"0644": {
+			value: FilePermissionValue{basetypes.NewStringValue("0644")},
+			request: xattr.ValidateAttributeRequest{
+				Path: path.Root("test"),
+			},
+			expected: xattr.ValidateAttributeResponse{},
 		},
-		{
-			val:         "9999",
-			expectedErr: regexp.MustCompile(`bad mode permission: string must be expressed in octal numeric notation: 9999`),
+		"9999": {
+			value: FilePermissionValue{basetypes.NewStringValue("9999")},
+			request: xattr.ValidateAttributeRequest{
+				Path: path.Root("test"),
+			},
+			expected: xattr.ValidateAttributeResponse{
+				Diagnostics: diag.Diagnostics{
+					diag.NewAttributeErrorDiagnostic(
+						path.Root("test"),
+						"Invalid File Permission String Value",
+						"bad mode permission: string must be expressed in octal numeric notation: 9999",
+					),
+				},
+			},
 		},
-		{
-			val:         "7",
-			expectedErr: regexp.MustCompile(`bad mode permission: string length should be 3 or 4 digits: 7`),
+		"7": {
+			value: FilePermissionValue{basetypes.NewStringValue("7")},
+			request: xattr.ValidateAttributeRequest{
+				Path: path.Root("test"),
+			},
+			expected: xattr.ValidateAttributeResponse{
+				Diagnostics: diag.Diagnostics{
+					diag.NewAttributeErrorDiagnostic(
+						path.Root("test"),
+						"Invalid File Permission String Value",
+						"bad mode permission: string length should be 3 or 4 digits: 7",
+					),
+				},
+			},
 		},
-		{
-			val:         "00700",
-			expectedErr: regexp.MustCompile(`bad mode permission: string length should be 3 or 4 digits: 00700`),
+		"00700": {
+			value: FilePermissionValue{basetypes.NewStringValue("00700")},
+			request: xattr.ValidateAttributeRequest{
+				Path: path.Root("test"),
+			},
+			expected: xattr.ValidateAttributeResponse{
+				Diagnostics: diag.Diagnostics{
+					diag.NewAttributeErrorDiagnostic(
+						path.Root("test"),
+						"Invalid File Permission String Value",
+						"bad mode permission: string length should be 3 or 4 digits: 00700",
+					),
+				},
+			},
 		},
-		{
-			val:         "-1",
-			expectedErr: regexp.MustCompile(`bad mode permission: string length should be 3 or 4 digits: -1`),
+		"-1": {
+			value: FilePermissionValue{basetypes.NewStringValue("-1")},
+			request: xattr.ValidateAttributeRequest{
+				Path: path.Root("test"),
+			},
+			expected: xattr.ValidateAttributeResponse{
+				Diagnostics: diag.Diagnostics{
+					diag.NewAttributeErrorDiagnostic(
+						path.Root("test"),
+						"Invalid File Permission String Value",
+						"bad mode permission: string length should be 3 or 4 digits: -1",
+					),
+				},
+			},
 		},
 	}
 
-	matchErr := func(diags diag.Diagnostics, r *regexp.Regexp) bool {
-		// err must match one provided
-		for _, err := range diags {
-			if r.MatchString(err.Detail()) {
-				return true
+	for name, testCase := range testCases {
+		name, testCase := name, testCase
+
+		t.Run(name, func(t *testing.T) {
+			got := xattr.ValidateAttributeResponse{}
+
+			testCase.value.ValidateAttribute(context.Background(), testCase.request, &got)
+
+			if diff := cmp.Diff(testCase.expected, got); diff != "" {
+				t.Errorf("unexpected response: %s", diff)
 			}
-		}
-
-		return false
-	}
-
-	for i, tc := range testCases {
-		diags := NewFilePermissionType().Validate(context.Background(), tftypes.NewValue(tftypes.String, tc.val), path.Empty())
-
-		if !diags.HasError() && tc.expectedErr == nil {
-			continue
-		}
-
-		if diags.HasError() && tc.expectedErr == nil {
-			t.Fatalf("expected test case %d to produce no errors, got %v", i, diags.Errors())
-		}
-
-		if !matchErr(diags, tc.expectedErr) {
-			t.Fatalf("expected test case %d to produce error matching \"%s\", got %v", i, tc.expectedErr, diags.Errors())
-		}
+		})
 	}
 }
