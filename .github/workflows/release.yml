@@ -101,7 +101,7 @@ jobs:
     permissions:
       contents: write # Needed for goreleaser to create GitHub release
       issues: write # Needed for goreleaser to close associated milestone
-    uses: hashicorp/ghaction-terraform-provider-release/.github/workflows/hashicorp.yml@9b5d2ca4b85f3a54d5c4d12e7690ddad1526ff6c # v3.0.1
+    uses: hashicorp/ghaction-terraform-provider-release/.github/workflows/hashicorp.yml@4da314a3b2789f660c8258072d835c371f84c3e7 # v4.0.0
     secrets:
       hc-releases-key-prod: '${{ secrets.HC_RELEASES_KEY_PROD }}'
       hc-releases-key-staging: '${{ secrets.HC_RELEASES_KEY_STAGING }}'
