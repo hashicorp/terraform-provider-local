@@ -71,7 +71,7 @@ jobs:
           go-version-file: 'go.mod'
 
       - name: Setup Terraform ${{ matrix.terraform }}
-        uses: hashicorp/setup-terraform@651471c36a6092792c552e8b1bef71e592b462d8 # v3.1.1
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
         with:
           terraform_version: ${{ matrix.terraform }}
           terraform_wrapper: false
