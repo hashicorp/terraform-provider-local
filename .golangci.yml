@@ -12,6 +12,7 @@ linters:
     - godot
     - gofmt
     - gosimple
+    - govet
     - ineffassign
     - makezero
     - misspell
@@ -22,7 +23,6 @@ linters:
     - unconvert
     - unparam
     - unused
-    - vet
 
 run:
   # Prevent false positive timeouts in CI
