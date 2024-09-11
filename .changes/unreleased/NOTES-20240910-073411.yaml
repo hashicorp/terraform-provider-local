@@ -1,6 +1,0 @@
-kind: NOTES
-body: 'all: This release introduces no functional changes. It does however include
-  dependency updates which address upstream CVEs.'
-time: 2024-09-10T07:34:11.755263-04:00
-custom:
-  Issue: "348"
