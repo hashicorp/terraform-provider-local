@@ -33,6 +33,12 @@ jobs:
         with:
           version: latest
 
+      # We need the latest version of Terraform for our documentation generation tool to use
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
+        with:
+          terraform_wrapper: false
+
       - name: Generate
         run: make generate
 
