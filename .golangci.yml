@@ -1,17 +1,12 @@
-issues:
-  max-issues-per-linter: 0
-  max-same-issues: 0
-
+version: "2"
 linters:
-  disable-all: true
+  default: none
   enable:
     - copyloopvar
     - durationcheck
     - errcheck
     - forcetypeassert
     - godot
-    - gofmt
-    - gosimple
     - govet
     - ineffassign
     - makezero
@@ -23,7 +18,26 @@ linters:
     - unparam
     - unused
     - usetesting
-
-run:
-  # Prevent false positive timeouts in CI
-  timeout: 5m
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+formatters:
+  enable:
+    - gofmt
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
