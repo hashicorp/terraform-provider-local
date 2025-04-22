@@ -19,7 +19,7 @@ name: build
 on: [workflow_dispatch, push]
 
 env:
-  PKG_NAME: "terraform-provider-local" #
+  PKG_NAME: "terraform-provider-local"
 
 jobs:
   # Detects the Go toolchain version to use for product builds.
