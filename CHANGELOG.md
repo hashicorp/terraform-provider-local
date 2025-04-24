@@ -1,3 +1,9 @@
+## v2.5.3-alpha1 (April 24, 2025)
+
+NOTES:
+
+* This release is being used to test new build and release actions. ([#405](https://github.com/hashicorp/terraform-provider-local/issues/405))
+
 ## 2.5.2 (September 11, 2024)
 
 NOTES:
