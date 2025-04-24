@@ -1,4 +1,4 @@
-## v2.5.3-alpha1 (April 24, 2025)
+## 2.5.3-alpha1 (April 24, 2025)
 
 NOTES:
 
