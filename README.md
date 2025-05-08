@@ -112,10 +112,13 @@ $ act pull_request
 
 ## Releasing
 
-The release process is automated via GitHub Actions, and it's defined in the Workflow
-[release.yml](./.github/workflows/release.yml).
+The releasable builds are generated from the [build GH workflow](./.github/workflows/build.yml) and the release/promotion process
+is completed via internal HashiCorp deployment tooling. Prior to release, the changelog should be updated in `main` with
+the changie tool, example:
 
-Each release is cut by pushing a [semantically versioned](https://semver.org/) tag to the default branch.
+```sh
+changie batch 2.5.3 && changie merge
+```
 
 ## License
 
