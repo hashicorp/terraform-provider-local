@@ -14,6 +14,7 @@ import (
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
@@ -322,4 +323,23 @@ type localFileResourceModelV0 struct {
 	ContentBase64sha256 types.String                   `tfsdk:"content_base64sha256"`
 	ContentSha512       types.String                   `tfsdk:"content_sha512"`
 	ContentBase64sha512 types.String                   `tfsdk:"content_base64sha512"`
+}
+
+func (m localFileResourceModelV0) AttributeTypes() map[string]attr.Type {
+	return map[string]attr.Type{
+		"filename":             types.StringType,
+		"content":              types.StringType,
+		"content_base64":       types.StringType,
+		"source":               types.StringType,
+		"file_permission":      types.StringType,
+		"directory_permission": types.StringType,
+		"id":                   types.StringType,
+		"sensitive_content":    types.StringType,
+		"content_md5":          types.StringType,
+		"content_sha1":         types.StringType,
+		"content_sha256":       types.StringType,
+		"content_base64sha256": types.StringType,
+		"content_sha512":       types.StringType,
+		"content_base64sha512": types.StringType,
+	}
 }

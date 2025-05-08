@@ -12,6 +12,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 
+	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -21,6 +22,7 @@ import (
 
 var (
 	_ provider.ProviderWithFunctions = (*localProvider)(nil)
+	_ provider.ProviderWithActions   = (*localProvider)(nil)
 )
 
 func New() provider.Provider {
@@ -28,6 +30,12 @@ func New() provider.Provider {
 }
 
 type localProvider struct{}
+
+func (p *localProvider) Actions(ctx context.Context) []func() action.Action {
+	return []func() action.Action{
+		NewLocalAppendFile,
+	}
+}
 
 func (p *localProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "local"

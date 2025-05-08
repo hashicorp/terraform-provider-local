@@ -197,7 +197,7 @@ func TestLocalFile_Source_Upgrade(t *testing.T) {
 	if err := os.WriteFile("./testdata/source_file", []byte("sourceContent"), 0644); err != nil {
 		t.Fatal(err)
 	}
-	defer os.Remove("./testdata/source_file")
+	defer os.RemoveAll("./testdata/source_file")
 
 	r.Test(t, r.TestCase{
 		Steps: []r.TestStep{

@@ -22,7 +22,7 @@ func main() {
 	err := providerserver.Serve(context.Background(), provider.New, providerserver.ServeOpts{
 		Address:         "registry.terraform.io/hashicorp/local",
 		Debug:           debug,
-		ProtocolVersion: 5,
+		ProtocolVersion: 6,
 	})
 	if err != nil {
 		log.Fatal(err)
