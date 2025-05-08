@@ -1,3 +1,9 @@
+## 2.5.3 (May 08, 2025)
+
+NOTES:
+
+* Update dependencies ([#404](https://github.com/hashicorp/terraform-provider-local/issues/404))
+
 ## 2.5.3-alpha1 (April 24, 2025)
 
 NOTES:
