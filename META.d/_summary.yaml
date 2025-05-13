@@ -1,0 +1,10 @@
+---
+schema: 1.1
+
+partition: tf-ecosystem
+
+summary:
+  owner: team-tf-core-plugins
+  description: |
+    Utility provider used to manage local resources, such as creating files.
+  visibility: public
