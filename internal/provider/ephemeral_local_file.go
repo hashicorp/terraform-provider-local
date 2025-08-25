@@ -18,6 +18,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/terraform-providers/terraform-provider-local/internal/localtypes"
 )
 
@@ -81,6 +83,7 @@ func (e *localFileEphemeralResource) Schema(_ context.Context, _ ephemeral.Schem
 					"Default value is `\"0777\"`.",
 				Optional: true,
 				Computed: true,
+				// Can't set a default value for ephemeral resources, this is here as a fingers-crossed placeholder.
 				// Default:  stringdefault.StaticString("0777"),
 			},
 			"directory_permission": schema.StringAttribute{
@@ -90,6 +93,7 @@ func (e *localFileEphemeralResource) Schema(_ context.Context, _ ephemeral.Schem
 					"Default value is `\"0777\"`.",
 				Optional: true,
 				Computed: true,
+				// Can't set a default value for ephemeral resources, this is here as a fingers-crossed placeholder.
 				// Default:  stringdefault.StaticString("0777"),
 			},
 			"id": schema.StringAttribute{
@@ -133,7 +137,6 @@ func (e *localFileEphemeralResource) Metadata(ctx context.Context, req ephemeral
 }
 
 func (e *localFileEphemeralResource) Open(ctx context.Context, req ephemeral.OpenRequest, resp *ephemeral.OpenResponse) {
-	fmt.Println("Start Open()")
 	var data localFileEphemeralResourceModelV0
 	var filePerm, dirPerm string
 
@@ -153,10 +156,7 @@ func (e *localFileEphemeralResource) Open(ctx context.Context, req ephemeral.Ope
 	}
 
 	destination := data.Filename.ValueString()
-	// providerData["filename"] = []byte(destination)
-	// resp.Private.SetKey(ctx, "filename", []byte(destination))
 	privateData, _ := json.Marshal(localFilePrivateData{Filename: destination})
-	//resp.Private.SetKey(ctx, "file", []byte(fmt.Sprintf(`{"Filename": "%s"}`, destination)))
 	resp.Private.SetKey(ctx, "local_file_data", privateData)
 
 	destinationDir := filepath.Dir(destination)
@@ -165,6 +165,8 @@ func (e *localFileEphemeralResource) Open(ctx context.Context, req ephemeral.Ope
 		if dirPerm == "" {
 			dirPerm = "0777"
 		}
+		dirPermData := localtypes.FilePermissionValue{StringValue: basetypes.NewStringValue(dirPerm)}
+		data.DirectoryPermission = dirPermData
 		dirMode, _ := strconv.ParseInt(dirPerm, 8, 64)
 		if err := os.MkdirAll(destinationDir, os.FileMode(dirMode)); err != nil {
 			resp.Diagnostics.AddError(
@@ -180,6 +182,8 @@ func (e *localFileEphemeralResource) Open(ctx context.Context, req ephemeral.Ope
 	if filePerm == "" {
 		filePerm = "0777"
 	}
+	filePermData := localtypes.FilePermissionValue{StringValue: basetypes.NewStringValue(filePerm)}
+	data.FilePermission = filePermData
 
 	fileMode, _ := strconv.ParseInt(filePerm, 8, 64)
 
@@ -192,7 +196,7 @@ func (e *localFileEphemeralResource) Open(ctx context.Context, req ephemeral.Ope
 		return
 	}
 
-	fmt.Printf(" Created file: %s\n", destination)
+	tflog.Debug(ctx, fmt.Sprintf("Created ephemeral file with name: %s", destination))
 
 	checksums := genFileChecksums(content)
 	data.ContentMd5 = types.StringValue(checksums.md5Hex)
@@ -204,42 +208,30 @@ func (e *localFileEphemeralResource) Open(ctx context.Context, req ephemeral.Ope
 
 	data.ID = types.StringValue(checksums.sha1Hex)
 	resp.Diagnostics.Append(resp.Result.Set(ctx, &data)...)
-	fmt.Println("End Open()")
 }
 
 func (e *localFileEphemeralResource) Close(ctx context.Context, req ephemeral.CloseRequest, resp *ephemeral.CloseResponse) {
-	fmt.Println("Start Close()")
 	// Destroy the file
-	file, err := req.Private.GetKey(ctx, "local_file_data")
-
-	if err != nil {
-		fmt.Println("err", err)
+	privateBytes, diags := req.Private.GetKey(ctx, "local_file_data")
+	resp.Diagnostics.Append(diags...)
+	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	var config localFilePrivateData
-	if err := json.Unmarshal(file, &config); err != nil {
-		fmt.Println("unmarshal err", err)
+	var privateData localFilePrivateData
+	if err := json.Unmarshal(privateBytes, &privateData); err != nil {
+		resp.Diagnostics.AddError(
+			"Private data unmarshal error",
+			"An unexpected error occurred while unmarshaling private data\n\n+"+
+				fmt.Sprintf("Original Error: %s", err),
+		)
 		return
 	}
 
-	fmt.Printf("file config: %+v\n", config)
-
-	if config.Filename != "" {
-		stat, err := os.Stat(config.Filename)
-
-		if err != nil {
-			fmt.Println("stat err", err)
-		}
-		fmt.Printf("File exists: %t\n", !os.IsNotExist(err))
-		if stat != nil {
-			fmt.Printf("File size: %d bytes\n", stat.Size())
-		}
-		fmt.Printf("Deleting file: %s\n", config.Filename)
-		os.Remove(config.Filename)
+	if privateData.Filename != "" {
+		tflog.Debug(ctx, fmt.Sprintf("Deleting ephemeral file: %s", privateData.Filename))
+		os.Remove(privateData.Filename)
 	}
-	fmt.Println("End Close()")
-	fmt.Println("============")
 }
 
 func parseEphemeralLocalFileContent(data localFileEphemeralResourceModelV0) ([]byte, error) {
