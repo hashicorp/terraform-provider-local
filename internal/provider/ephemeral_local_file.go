@@ -128,10 +128,6 @@ func (e *localFileEphemeralResource) Schema(_ context.Context, _ ephemeral.Schem
 	}
 }
 
-func (e *localFileEphemeralResource) Configure(_ context.Context, req ephemeral.ConfigureRequest, resp *ephemeral.ConfigureResponse) {
-	//
-}
-
 func (e *localFileEphemeralResource) Metadata(ctx context.Context, req ephemeral.MetadataRequest, resp *ephemeral.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_file" // local_file
 }
