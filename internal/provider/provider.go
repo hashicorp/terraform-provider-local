@@ -14,6 +14,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -21,7 +22,9 @@ import (
 )
 
 var (
-	_ provider.Provider = (*localProvider)(nil)
+	_ provider.Provider                       = (*localProvider)(nil)
+	_ provider.ProviderWithFunctions          = (*localProvider)(nil)
+	_ provider.ProviderWithEphemeralResources = (*localProvider)(nil)
 )
 
 func New() provider.Provider {
@@ -50,6 +53,12 @@ func (p *localProvider) Resources(ctx context.Context) []func() resource.Resourc
 	return []func() resource.Resource{
 		NewLocalFileResource,
 		NewLocalSensitiveFileResource,
+	}
+}
+
+func (p *localProvider) EphemeralResources(_ context.Context) []func() ephemeral.EphemeralResource {
+	return []func() ephemeral.EphemeralResource{
+		NewLocalFileEphemeralResource,
 	}
 }
 
