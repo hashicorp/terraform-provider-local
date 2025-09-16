@@ -1,6 +1,6 @@
 module github.com/terraform-providers/terraform-provider-local
 
-go 1.23.7
+go 1.23.12
 
 require (
 	github.com/google/go-cmp v0.7.0
