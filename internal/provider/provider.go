@@ -12,6 +12,7 @@ import (
 	"encoding/base64"
 	"encoding/hex"
 
+	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
@@ -20,7 +21,7 @@ import (
 )
 
 var (
-	_ provider.ProviderWithFunctions = (*localProvider)(nil)
+	_ provider.Provider = (*localProvider)(nil)
 )
 
 func New() provider.Provider {
@@ -54,6 +55,12 @@ func (p *localProvider) Resources(ctx context.Context) []func() resource.Resourc
 func (p *localProvider) Functions(ctx context.Context) []func() function.Function {
 	return []func() function.Function{
 		NewDirectoryExistsFunction,
+	}
+}
+
+func (p *localProvider) Actions(ctx context.Context) []func() action.Action {
+	return []func() action.Action{
+		NewLocalCommandAction,
 	}
 }
 
