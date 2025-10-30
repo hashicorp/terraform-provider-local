@@ -36,6 +36,7 @@ func TestLocalCommandAction(t *testing.T) {
 				},
 				ConfigDirectory: config.TestNameDirectory(),
 				ActionChecks: []actioncheck.ActionCheck{
+					actioncheck.ExpectProgressCount("local_command", 1),
 					actioncheck.ExpectProgressMessageContains("local_command", "Hello Austin!"),
 				},
 				PostApplyFunc: func() {
