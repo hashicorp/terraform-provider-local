@@ -1,3 +1,8 @@
+variable "scripts_folder_path" {
+  type    = string
+  default = null
+}
+
 resource "terraform_data" "test" {
   lifecycle {
     action_trigger {
@@ -20,10 +25,7 @@ locals {
 
 action "local_command" "bash_test" {
   config {
-    command   = var.bash_path
-    arguments = concat([local.test_script], var.arguments)
-    stdin     = var.stdin
-
-    working_directory = var.working_directory
+    command   = "bash"
+    arguments = [local.test_script]
   }
 }
