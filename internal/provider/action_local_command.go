@@ -123,7 +123,7 @@ func (a *localCommandAction) Invoke(ctx context.Context, req action.InvokeReques
 					"\n\n"+
 					fmt.Sprintf("Commmand: %s\n", cmd.String())+
 					fmt.Sprintf("Command Error: %s\n", stderrStr)+
-					fmt.Sprintf("Error Message: %s", err),
+					fmt.Sprintf("State: %s", err),
 			)
 			return
 		}
@@ -136,7 +136,7 @@ func (a *localCommandAction) Invoke(ctx context.Context, req action.InvokeReques
 
 	// Send the STDOUT to Terraform to display to the practitioner. The underlying action protocol supports streaming the
 	// STDOUT line-by-line in real-time, although each progress message gets a prefix per line, so it'd be difficult
-	// to read without batching lines together with an arbitrary time interval. (we can do this later if needed)
+	// to read without batching lines together with an arbitrary time interval (this can be improved later if needed).
 	resp.SendProgress(action.InvokeProgressEvent{
 		Message: fmt.Sprintf("\n\n%s\n", stdoutStr),
 	})
@@ -164,7 +164,7 @@ func findCommand(command string) diag.Diagnostic {
 				"\n\n"+
 				fmt.Sprintf("Platform: %s\n", runtime.GOOS)+
 				fmt.Sprintf("Command: %s\n", command)+
-				fmt.Sprintf("Error Message: %s", err),
+				fmt.Sprintf("Error: %s", err),
 		)
 	}
 
@@ -178,6 +178,6 @@ func genericCommandDiag(cmd *exec.Cmd, err error) diag.Diagnostic {
 		"The action received an unexpected error while attempting to execute the command."+
 			"\n\n"+
 			fmt.Sprintf("Commmand: %s\n", cmd.Path)+
-			fmt.Sprintf("Error Message: %s", err),
+			fmt.Sprintf("Error: %s", err),
 	)
 }
