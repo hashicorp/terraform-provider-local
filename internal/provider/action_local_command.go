@@ -35,24 +35,26 @@ func (a *localCommandAction) Metadata(ctx context.Context, req action.MetadataRe
 
 func (a *localCommandAction) Schema(ctx context.Context, req action.SchemaRequest, resp *action.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		Description: "", // TODO: Describe action, mention that actions don't have output, this is meant to execute local commands, they can be non-idempotent as they are only executed during apply.
-		// If the external command is idempotent/you need the output, use data source (coming soon).
+		// TODO: Once we have a local_command data source, reference that to be used if the user needs to the consume the output of the command (and it's idempotent)
+		MarkdownDescription: "Invokes an executable on the local machine. All environment variables visible to the Terraform process are passed through " +
+			"to the child process. After the child process successfully executes, the `stdout` will be returned for Terraform to display to the user.\n\n" +
+			"Any non-zero exit code will be treated as an error and will return a diagnostic to Terraform containing the `stderr` message if available.",
 		Attributes: map[string]schema.Attribute{
 			"command": schema.StringAttribute{
 				Description: "Executable name to be discovered on the PATH or absolute path to executable.",
 				Required:    true,
 			},
 			"arguments": schema.ListAttribute{
-				Description: "Arguments to be passed to the given command.",
-				ElementType: types.StringType,
-				Optional:    true,
+				MarkdownDescription: "Arguments to be passed to the given command. Any `null` arguments will be removed from the list.",
+				ElementType:         types.StringType,
+				Optional:            true,
 			},
 			"stdin": schema.StringAttribute{
 				Description: "Data to be passed to the given command's standard input.",
 				Optional:    true,
 			},
 			"working_directory": schema.StringAttribute{
-				Description: "The directory where the command should be executed. Defaults to the current working directory.",
+				Description: "The directory where the command should be executed. Defaults to the Terraform working directory.",
 				Optional:    true,
 			},
 		},
