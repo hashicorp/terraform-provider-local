@@ -13,7 +13,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/terraform-plugin-testing/actioncheck"
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/tfversion"
@@ -46,10 +45,12 @@ func TestLocalCommandAction_bash(t *testing.T) {
 					"scripts_folder_path": config.StringVariable(testScriptsDir),
 				},
 				ConfigDirectory: config.StaticDirectory(bashTestDirectory),
-				ActionChecks: []actioncheck.ActionCheck{
-					actioncheck.ExpectProgressCount("local_command", 1),
-					actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
-				},
+				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
+				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
+				// ActionChecks: []actioncheck.ActionCheck{
+				// 	actioncheck.ExpectProgressCount("local_command", 1),
+				// 	actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
+				// },
 				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
@@ -81,10 +82,12 @@ func TestLocalCommandAction_bash_stdin(t *testing.T) {
 					"scripts_folder_path": config.StringVariable(testScriptsDir),
 				},
 				ConfigDirectory: config.StaticDirectory(bashTestDirectory),
-				ActionChecks: []actioncheck.ActionCheck{
-					actioncheck.ExpectProgressCount("local_command", 1),
-					actioncheck.ExpectProgressMessageContains("local_command", fmt.Sprintf("Hello %s!", stdin)),
-				},
+				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
+				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
+				// ActionChecks: []actioncheck.ActionCheck{
+				// 	actioncheck.ExpectProgressCount("local_command", 1),
+				// 	actioncheck.ExpectProgressMessageContains("local_command", fmt.Sprintf("Hello %s!", stdin)),
+				// },
 				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
@@ -124,10 +127,12 @@ func TestLocalCommandAction_bash_all(t *testing.T) {
 					),
 				},
 				ConfigDirectory: config.StaticDirectory(bashTestDirectory),
-				ActionChecks: []actioncheck.ActionCheck{
-					actioncheck.ExpectProgressCount("local_command", 1),
-					actioncheck.ExpectProgressMessageContains("local_command", fmt.Sprintf("Hello %s!", stdin)),
-				},
+				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
+				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
+				// ActionChecks: []actioncheck.ActionCheck{
+				// 	actioncheck.ExpectProgressCount("local_command", 1),
+				// 	actioncheck.ExpectProgressMessageContains("local_command", fmt.Sprintf("Hello %s!", stdin)),
+				// },
 				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
@@ -165,10 +170,12 @@ func TestLocalCommandAction_bash_null_args(t *testing.T) {
 					),
 				},
 				ConfigDirectory: config.TestNameDirectory(),
-				ActionChecks: []actioncheck.ActionCheck{
-					actioncheck.ExpectProgressCount("local_command", 1),
-					actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
-				},
+				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
+				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
+				// ActionChecks: []actioncheck.ActionCheck{
+				// 	actioncheck.ExpectProgressCount("local_command", 1),
+				// 	actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
+				// },
 				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
@@ -204,10 +211,12 @@ func TestLocalCommandAction_absolute_path_bash(t *testing.T) {
 					"scripts_folder_path": config.StringVariable(testScriptsDir),
 				},
 				ConfigDirectory: config.StaticDirectory(bashTestDirectory),
-				ActionChecks: []actioncheck.ActionCheck{
-					actioncheck.ExpectProgressCount("local_command", 1),
-					actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
-				},
+				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
+				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
+				// ActionChecks: []actioncheck.ActionCheck{
+				// 	actioncheck.ExpectProgressCount("local_command", 1),
+				// 	actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
+				// },
 				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
