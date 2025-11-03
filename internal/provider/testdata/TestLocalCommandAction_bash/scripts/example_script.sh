@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: MPL-2.0
 
 
-NAME=$(</dev/stdin)
+NAME=$(cat)
 echo "Hello $NAME!"
 
 echo "stdin: $NAME, args: $@" >> test_file.txt
