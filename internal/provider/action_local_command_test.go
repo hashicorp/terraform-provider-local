@@ -248,7 +248,7 @@ action "local_command" "test" {
     command   = "notarealcommand"
   }
 }`,
-				ExpectError: regexp.MustCompile(`Error: exec: "notarealcommand": executable file not found in \$PATH`),
+				ExpectError: regexp.MustCompile(`Error: exec: "notarealcommand": executable file not found`),
 			},
 		},
 	})
