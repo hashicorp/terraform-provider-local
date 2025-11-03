@@ -134,6 +134,47 @@ func TestLocalCommandAction_bash_all(t *testing.T) {
 	})
 }
 
+func TestLocalCommandAction_bash_null_args(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("Failed to get working directory: %v", err)
+	}
+
+	testScriptsDir := filepath.Join(wd, "testdata", t.Name(), "scripts")
+	tempDir := t.TempDir()
+	randomNumber1 := rand.Intn(100)
+	randomNumber2 := rand.Intn(100)
+	randomNumber3 := rand.Intn(100)
+	expectedFileContent := fmt.Sprintf("stdin: , args: %d %d %d\n", randomNumber1, randomNumber2, randomNumber3)
+
+	resource.UnitTest(t, resource.TestCase{
+		// Actions are only available in 1.14 and later
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBelow(tfversion.Version1_14_0),
+		},
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				ConfigVariables: config.Variables{
+					"working_directory":   config.StringVariable(tempDir),
+					"scripts_folder_path": config.StringVariable(testScriptsDir),
+					"arguments": config.ListVariable( // Null arguments will be appended to this list in the test config, then filtered by the action code.
+						config.IntegerVariable(randomNumber1),
+						config.IntegerVariable(randomNumber2),
+						config.IntegerVariable(randomNumber3),
+					),
+				},
+				ConfigDirectory: config.TestNameDirectory(),
+				ActionChecks: []actioncheck.ActionCheck{
+					actioncheck.ExpectProgressCount("local_command", 1),
+					actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
+				},
+				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
+			},
+		},
+	})
+}
+
 func TestLocalCommandAction_absolute_path_bash(t *testing.T) {
 	wd, err := os.Getwd()
 	if err != nil {

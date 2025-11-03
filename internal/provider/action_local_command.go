@@ -91,9 +91,14 @@ func (a *localCommandAction) Invoke(ctx context.Context, req action.InvokeReques
 	}
 
 	arguments := make([]string, 0)
-	resp.Diagnostics.Append(config.Arguments.ElementsAs(ctx, &arguments, true)...)
-	if resp.Diagnostics.HasError() {
-		return
+	for _, element := range config.Arguments.Elements() {
+		strElement, ok := element.(types.String)
+		// Mirroring the underlying os/exec Command support for args (no nil arguments, but does support empty strings)
+		if element.IsNull() || !ok {
+			continue
+		}
+
+		arguments = append(arguments, strElement.ValueString())
 	}
 
 	cmd := exec.CommandContext(ctx, command, arguments...)
