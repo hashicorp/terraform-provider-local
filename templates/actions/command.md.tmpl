@@ -1,0 +1,45 @@
+page_title: "{{.Name}} {{.Type}} - {{.RenderedProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+## Example Usage
+
+For the following bash script (`example_script.sh`):
+```bash
+#!/bin/bash
+
+DATA=$(</dev/stdin)
+echo "stdin: $DATA, args: $@"
+```
+
+Here is an example configuration that will run the script after a resource is created:
+
+{{ tffile (index .ExampleFiles 0) }}
+
+The `stdout` will be displayed when the action is invoked:
+```bash
+ $ terraform apply -auto-approve
+
+# .. Terraform CLI output truncated for example purposes
+
+Plan: 1 to add, 0 to change, 0 to destroy. Actions: 1 to invoke.
+terraform_data.test: Creating...
+terraform_data.test: Creation complete after 0s [id=4b41b541-5550-590a-9949-657e91baa346]
+Action started: action.local_command.bash_example (triggered by terraform_data.test)
+Action action.local_command.bash_example (triggered by terraform_data.test): 
+
+stdin: {"key1":"value1","key2":"value2"}, args: arg1 arg2
+
+
+Action complete: action.local_command.bash_example (triggered by terraform_data.test)
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+```
+
+{{ .SchemaMarkdown | trimspace }}
