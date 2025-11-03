@@ -85,7 +85,7 @@ func (a *localCommandAction) Invoke(ctx context.Context, req action.InvokeReques
 		return
 	}
 
-	// Prep the commmand
+	// Prep the command
 	command := config.Command.ValueString()
 	resp.Diagnostics.Append(findCommand(command))
 	if resp.Diagnostics.HasError() {
@@ -128,7 +128,7 @@ func (a *localCommandAction) Invoke(ctx context.Context, req action.InvokeReques
 				"Command Execution Failed",
 				"The action received an unexpected error while attempting to execute the command."+
 					"\n\n"+
-					fmt.Sprintf("Commmand: %s\n", cmd.String())+
+					fmt.Sprintf("Command: %s\n", cmd.String())+
 					fmt.Sprintf("Command Error: %s\n", stderrStr)+
 					fmt.Sprintf("State: %s", err),
 			)
@@ -184,7 +184,7 @@ func genericCommandDiag(cmd *exec.Cmd, err error) diag.Diagnostic {
 		"Command Execution Failed",
 		"The action received an unexpected error while attempting to execute the command."+
 			"\n\n"+
-			fmt.Sprintf("Commmand: %s\n", cmd.Path)+
+			fmt.Sprintf("Command: %s\n", cmd.Path)+
 			fmt.Sprintf("Error: %s", err),
 	)
 }
