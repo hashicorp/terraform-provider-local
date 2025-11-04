@@ -42,6 +42,7 @@ func (p *localProvider) DataSources(ctx context.Context) []func() datasource.Dat
 	return []func() datasource.DataSource{
 		NewLocalFileDataSource,
 		NewLocalSensitiveFileDataSource,
+		NewLocalCommandDataSource,
 	}
 }
 
