@@ -135,7 +135,14 @@ func (a *localCommandAction) Invoke(ctx context.Context, req action.InvokeReques
 			return
 		}
 
-		resp.Diagnostics.Append(genericCommandDiag(cmd, err))
+		resp.Diagnostics.AddAttributeError(
+			path.Root("command"),
+			"Command Execution Failed",
+			"The action received an unexpected error while attempting to execute the command."+
+				"\n\n"+
+				fmt.Sprintf("Command: %s\n", cmd.Path)+
+				fmt.Sprintf("Error: %s", err),
+		)
 		return
 	}
 
@@ -176,15 +183,4 @@ func findCommand(command string) diag.Diagnostic {
 	}
 
 	return nil
-}
-
-func genericCommandDiag(cmd *exec.Cmd, err error) diag.Diagnostic {
-	return diag.NewAttributeErrorDiagnostic(
-		path.Root("command"),
-		"Command Execution Failed",
-		"The action received an unexpected error while attempting to execute the command."+
-			"\n\n"+
-			fmt.Sprintf("Command: %s\n", cmd.Path)+
-			fmt.Sprintf("Error: %s", err),
-	)
 }
