@@ -34,7 +34,7 @@ func (a *localCommandDataSource) Metadata(ctx context.Context, req datasource.Me
 
 func (a *localCommandDataSource) Schema(ctx context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "", // TODO: document
+		MarkdownDescription: "", // TODO: document (mention no side-effects, similar to the caveats on the external data source)
 		Attributes: map[string]schema.Attribute{
 			"command": schema.StringAttribute{
 				Description: "Executable name to be discovered on the PATH or absolute path to executable.",
@@ -53,7 +53,7 @@ func (a *localCommandDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "The directory where the command should be executed. Defaults to the Terraform working directory.",
 				Optional:    true,
 			},
-			// TODO: naming
+			// TODO: naming (allow_non_zero_exit_code ?)
 			"skip_error": schema.BoolAttribute{
 				Description: "", // TODO: document what users can expect here and how to use it (when it will be populated, defaults)
 				Optional:    true,
@@ -174,7 +174,7 @@ func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRe
 	// Set all of the data to state
 	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 
-	// If we received an error, we need to check and see if we should explicitly raise a diagnostic (the default behavior)
+	// If we received an error, we need to check and see if we should explicitly raise a diagnostic
 	if err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
 			// We won't return a diagnostic because the command was successfully started, it just
@@ -188,7 +188,7 @@ func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRe
 			resp.Diagnostics.AddAttributeError(
 				path.Root("command"),
 				"Command Execution Failed",
-				"The data source executed the command but received a non-zero exit code. If this exit code was expected and can be handled in configuration, set \"skip_error\" to true."+
+				"The data source executed the command but received a non-zero exit code. If a non-zero exit code is expected and can be handled in configuration, set \"skip_error\" to true."+
 					"\n\n"+
 					fmt.Sprintf("Command: %s\n", cmd.String())+
 					fmt.Sprintf("Command Error: %s\n", stderrStr)+
