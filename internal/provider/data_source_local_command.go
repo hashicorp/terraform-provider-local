@@ -53,8 +53,7 @@ func (a *localCommandDataSource) Schema(ctx context.Context, req datasource.Sche
 				Description: "The directory where the command should be executed. Defaults to the Terraform working directory.",
 				Optional:    true,
 			},
-			// TODO: naming (allow_non_zero_exit_code ?)
-			"skip_error": schema.BoolAttribute{
+			"allow_non_zero_exit_code": schema.BoolAttribute{
 				Description: "", // TODO: document what users can expect here and how to use it (when it will be populated, defaults)
 				Optional:    true,
 			},
@@ -75,14 +74,14 @@ func (a *localCommandDataSource) Schema(ctx context.Context, req datasource.Sche
 }
 
 type localCommandDataSourceModel struct {
-	Command          types.String `tfsdk:"command"`
-	Arguments        types.List   `tfsdk:"arguments"`
-	Stdin            types.String `tfsdk:"stdin"`
-	WorkingDirectory types.String `tfsdk:"working_directory"`
-	SkipError        types.Bool   `tfsdk:"skip_error"`
-	ExitCode         types.Int64  `tfsdk:"exit_code"`
-	Stdout           types.String `tfsdk:"stdout"`
-	Stderr           types.String `tfsdk:"stderr"`
+	Command              types.String `tfsdk:"command"`
+	Arguments            types.List   `tfsdk:"arguments"`
+	Stdin                types.String `tfsdk:"stdin"`
+	WorkingDirectory     types.String `tfsdk:"working_directory"`
+	AllowNonZeroExitCode types.Bool   `tfsdk:"allow_non_zero_exit_code"`
+	ExitCode             types.Int64  `tfsdk:"exit_code"`
+	Stdout               types.String `tfsdk:"stdout"`
+	Stderr               types.String `tfsdk:"stderr"`
 }
 
 func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -181,14 +180,14 @@ func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRe
 			// exited with a non-zero code (which the user has indicated they will handle in configuration).
 			//
 			// All data has already been saved to state, so we just return.
-			if state.SkipError.ValueBool() {
+			if state.AllowNonZeroExitCode.ValueBool() {
 				return
 			}
 
 			resp.Diagnostics.AddAttributeError(
 				path.Root("command"),
 				"Command Execution Failed",
-				"The data source executed the command but received a non-zero exit code. If a non-zero exit code is expected and can be handled in configuration, set \"skip_error\" to true."+
+				"The data source executed the command but received a non-zero exit code. If a non-zero exit code is expected and can be handled in configuration, set \"allow_non_zero_exit_code\" to true."+
 					"\n\n"+
 					fmt.Sprintf("Command: %s\n", cmd.String())+
 					fmt.Sprintf("Command Error: %s\n", stderrStr)+
@@ -197,7 +196,7 @@ func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRe
 			return
 		}
 
-		// We can't skip this error because the command wasn't successfully started.
+		// We need to raise a diagnostic because the command wasn't successfully started and we have no exit code.
 		resp.Diagnostics.AddAttributeError(
 			path.Root("command"),
 			"Command Execution Failed",

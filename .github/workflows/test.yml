@@ -68,6 +68,10 @@ jobs:
         terraform: ${{ fromJSON(vars.TF_VERSIONS_PROTOCOL_V5) }}
 
     steps:
+      # https://github.com/actions/runner-images/issues/7443
+      - name: Install yq (windows only)
+        if: "matrix.os == 'windows-latest'"
+        run: choco install yq
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
