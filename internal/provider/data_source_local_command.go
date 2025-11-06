@@ -151,14 +151,10 @@ func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRe
 	stderrStr := stderr.String()
 
 	if len(stderrStr) > 0 {
-		// TODO: Should we raise an explicit error if this isn't utf8?
-		// https://pkg.go.dev/unicode/utf8#example-Valid
 		state.Stderr = types.StringValue(stderrStr)
 	}
 
 	if len(stdoutStr) > 0 {
-		// TODO: Should we raise an explicit error if this isn't utf8?
-		// https://pkg.go.dev/unicode/utf8#example-Valid
 		state.Stdout = types.StringValue(stdoutStr)
 	}
 
@@ -173,38 +169,40 @@ func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRe
 	// Set all of the data to state
 	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
 
-	// If we received an error, we need to check and see if we should explicitly raise a diagnostic
-	if err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok {
-			// We won't return a diagnostic because the command was successfully started, it just
-			// exited with a non-zero code (which the user has indicated they will handle in configuration).
-			//
-			// All data has already been saved to state, so we just return.
-			if state.AllowNonZeroExitCode.ValueBool() {
-				return
-			}
+	if err == nil {
+		return
+	}
 
-			resp.Diagnostics.AddAttributeError(
-				path.Root("command"),
-				"Command Execution Failed",
-				"The data source executed the command but received a non-zero exit code. If a non-zero exit code is expected and can be handled in configuration, set \"allow_non_zero_exit_code\" to true."+
-					"\n\n"+
-					fmt.Sprintf("Command: %s\n", cmd.String())+
-					fmt.Sprintf("Command Error: %s\n", stderrStr)+
-					fmt.Sprintf("State: %s", exitError),
-			)
+	// If running the command returned an error, we need to check and see if we should explicitly raise a diagnostic
+	if exitError, ok := err.(*exec.ExitError); ok {
+		// We won't return a diagnostic because the command was successfully started and then exited
+		// with a non-zero code (which the user has indicated they will handle in configuration).
+		//
+		// All data has already been saved to state, so we just return.
+		if state.AllowNonZeroExitCode.ValueBool() {
 			return
 		}
 
-		// We need to raise a diagnostic because the command wasn't successfully started and we have no exit code.
 		resp.Diagnostics.AddAttributeError(
 			path.Root("command"),
 			"Command Execution Failed",
-			"The data source received an unexpected error while attempting to execute the command."+
+			"The data source executed the command but received a non-zero exit code. If a non-zero exit code is expected "+
+				"and can be handled in configuration, set \"allow_non_zero_exit_code\" to true."+
 				"\n\n"+
 				fmt.Sprintf("Command: %s\n", cmd.String())+
-				fmt.Sprintf("State: %s", err),
+				fmt.Sprintf("Command Error: %s\n", stderrStr)+
+				fmt.Sprintf("State: %s", exitError),
 		)
 		return
 	}
+
+	// We need to raise a diagnostic because the command wasn't successfully started and we have no exit code.
+	resp.Diagnostics.AddAttributeError(
+		path.Root("command"),
+		"Command Execution Failed",
+		"The data source received an unexpected error while attempting to execute the command."+
+			"\n\n"+
+			fmt.Sprintf("Command: %s\n", cmd.String())+
+			fmt.Sprintf("State: %s", err),
+	)
 }
