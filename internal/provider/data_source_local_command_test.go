@@ -4,6 +4,7 @@
 package provider
 
 import (
+	"regexp"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
@@ -113,7 +114,7 @@ func TestLocalCommandDataSource_stdout_csv(t *testing.T) {
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(0)),
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.Null()),
-					// MAINTAINER NOTE: csvdecode function treats all attributes as strings
+					// MAINTAINER NOTE: csvdecode function converts all attributes as strings
 					// https://github.com/zclconf/go-cty/blob/da4c600729aefcf628d6b042ee439e6927d1104e/cty/function/stdlib/csv.go#L72-L77
 					statecheck.ExpectKnownOutputValue("parse_stdout", knownvalue.ListExact([]knownvalue.Check{
 						knownvalue.ObjectExact(map[string]knownvalue.Check{
@@ -210,6 +211,170 @@ func TestLocalCommandDataSource_stdout_yaml(t *testing.T) {
 						}),
 					})),
 				},
+			},
+		},
+	})
+}
+
+func TestLocalCommandDataSource_stdout_no_format_null_args(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				Config: `resource "local_file" "test_script" {
+				  filename = "${path.module}/test_script.sh"
+				  content  = <<EOT
+#!/bin/bash
+STDIN=$(cat)
+echo "stdin: $STDIN"
+echo "args: $@"
+EOT
+				}
+				
+				data "local_command" "test" {
+					command   = "bash"
+					stdin     = "stdin-string"
+					arguments = [local_file.test_script.filename, "first-arg", null, "second-arg", null]
+				}`,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(0)),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.Null()),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringExact("stdin: stdin-string\nargs: first-arg second-arg\n")),
+				},
+			},
+		},
+	})
+}
+
+func TestLocalCommandDataSource_stderr_zero_exit_code(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				Config: `resource "local_file" "test_script" {
+				  filename = "${path.module}/test_script.sh"
+				  content  = <<EOT
+#!/bin/bash
+STDIN=$(cat)
+echo "stdin: $STDIN" >&2
+echo "args: $@"
+EOT
+				}
+				
+				data "local_command" "test" {
+					command   = "bash"
+					stdin     = "stdin-string"
+					arguments = [local_file.test_script.filename, "first-arg", "second-arg"]
+				}`,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(0)),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.StringExact("stdin: stdin-string\n")),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringExact("args: first-arg second-arg\n")),
+				},
+			},
+		},
+	})
+}
+
+func TestLocalCommandDataSource_stdout_invalid_string(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				Config: `resource "local_file" "test_script" {
+				  filename = "${path.module}/test_script.sh"
+				  content  = <<EOT
+#!/bin/bash
+printf '\xe2'
+EOT
+				}
+				
+				data "local_command" "test" {
+					command   = "bash"
+					arguments = [local_file.test_script.filename]
+				}`,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(0)),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.Null()),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringExact("�")), // Invalid sequence will be represented as a replacement character
+				},
+			},
+		},
+	})
+}
+
+func TestLocalCommandDataSource_non_zero_exit_code_error(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				Config: `resource "local_file" "test_script" {
+				  filename = "${path.module}/test_script.sh"
+				  content  = <<EOT
+#!/bin/bash
+echo -n "😏"
+echo -n "😒" >&2
+exit 1
+EOT
+				}
+				
+				data "local_command" "test" {
+					command   = "bash"
+					arguments = [local_file.test_script.filename]
+				}`,
+				ExpectError: regexp.MustCompile(`The data source executed the command but received a non-zero exit code.`),
+			},
+		},
+	})
+}
+
+func TestLocalCommandDataSource_allow_non_zero_exit_code(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				Config: `resource "local_file" "test_script" {
+				  filename = "${path.module}/test_script.sh"
+				  content  = <<EOT
+#!/bin/bash
+echo -n "😏"
+echo -n "😒" >&2
+exit 1
+EOT
+				}
+				
+				data "local_command" "test" {
+					command   = "bash"
+					allow_non_zero_exit_code = true
+					arguments = [local_file.test_script.filename]
+				}`,
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(1)),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.StringExact("😒")),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringExact("😏")),
+				},
+			},
+		},
+	})
+}
+
+func TestLocalCommandDataSource_not_found(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				Config: `data "local_command" "test" {
+					command   = "notarealcommand"
+				}`,
+				ExpectError: regexp.MustCompile(`Error: exec: "notarealcommand": executable file not found`),
+			},
+			{
+				// You shouldn't be able to skip this error, since it never starts the executable
+				Config: `data "local_command" "test" {
+					command   = "notarealcommand"
+					allow_non_zero_exit_code = true
+				}`,
+				ExpectError: regexp.MustCompile(`Error: exec: "notarealcommand": executable file not found`),
 			},
 		},
 	})

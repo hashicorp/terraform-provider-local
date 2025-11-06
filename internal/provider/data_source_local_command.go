@@ -146,7 +146,7 @@ func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRe
 	tflog.Trace(ctx, "Executing local command", map[string]interface{}{"command": cmd.String()})
 
 	// Run the command
-	err := cmd.Run()
+	commandErr := cmd.Run()
 	stdoutStr := stdout.String()
 	stderrStr := stderr.String()
 
@@ -168,15 +168,14 @@ func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRe
 
 	// Set all of the data to state
 	resp.Diagnostics.Append(resp.State.Set(ctx, state)...)
-
-	if err == nil {
+	if commandErr == nil {
 		return
 	}
 
-	// If running the command returned an error, we need to check and see if we should explicitly raise a diagnostic
-	if exitError, ok := err.(*exec.ExitError); ok {
+	// If running the command returned an exit error, we need to check and see if we should explicitly raise a diagnostic
+	if exitError, ok := commandErr.(*exec.ExitError); ok {
 		// We won't return a diagnostic because the command was successfully started and then exited
-		// with a non-zero code (which the user has indicated they will handle in configuration).
+		// with a non-zero exit code (which the user has indicated they will handle in configuration).
 		//
 		// All data has already been saved to state, so we just return.
 		if state.AllowNonZeroExitCode.ValueBool() {
@@ -203,6 +202,6 @@ func (a *localCommandDataSource) Read(ctx context.Context, req datasource.ReadRe
 		"The data source received an unexpected error while attempting to execute the command."+
 			"\n\n"+
 			fmt.Sprintf("Command: %s\n", cmd.String())+
-			fmt.Sprintf("State: %s", err),
+			fmt.Sprintf("State: %s", commandErr),
 	)
 }
