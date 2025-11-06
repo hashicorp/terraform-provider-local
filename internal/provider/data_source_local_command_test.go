@@ -4,6 +4,8 @@
 package provider
 
 import (
+	"fmt"
+	"os/exec"
 	"regexp"
 	"testing"
 
@@ -352,6 +354,42 @@ EOT
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(1)),
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.StringExact("😒")),
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringExact("😏")),
+				},
+			},
+		},
+	})
+}
+
+func TestLocalCommandDataSource_absolute_path_with_working_directory(t *testing.T) {
+	// Create a temporary testing directory to point to / assert with
+	tempDir := t.TempDir()
+
+	bashAbsPath, err := exec.LookPath("bash")
+	if err != nil {
+		t.Fatalf("Failed to find bash executable: %v", err)
+	}
+
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				Config: fmt.Sprintf(`resource "local_file" "test_script" {
+				  filename = "%[1]s/test_script.sh"
+				  content  = <<EOT
+#!/bin/bash
+echo -n "current working directory: $PWD"
+EOT
+				}
+				
+				data "local_command" "test" {
+					command   = %[2]q
+					working_directory = %[1]q
+					arguments = [local_file.test_script.filename]
+				}`, tempDir, bashAbsPath),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(0)),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.Null()),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringExact(fmt.Sprintf("current working directory: %s", tempDir))),
 				},
 			},
 		},
