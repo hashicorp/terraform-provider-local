@@ -1,26 +1,18 @@
-data "local_command" "example_obj" {
+// A toy example using the JSON utility `jq` to process Terraform data
+// https://jqlang.org/
+data "local_command" "filter_fruit" {
   command   = "jq"
-  arguments = ["-n", "{\"foobaz\":\"hello\"}"]
+  stdin     = jsonencode([{ name = "apple" }, { name = "lemon" }, { name = "apricot" }])
+  arguments = [".[:2] | [.[].name]"] # Grab the first two fruit names from the list
 }
 
-
-data "local_command" "example_arr" {
-  command   = "jq"
-  arguments = ["-n", "[{\"foobaz\":\"hello\"}, {\"foobaz\":\"world\"}]"]
+output "fruit_tf" {
+  value = jsondecode(data.local_command.filter_fruit.stdout)
 }
 
-output "jq_obj" {
-  value = {
-    stdout    = jsondecode(data.local_command.example_obj.stdout)
-    stderr    = data.local_command.example_obj.stderr
-    exit_code = data.local_command.example_obj.exit_code
-  }
-}
-
-output "jq_arr" {
-  value = {
-    stdout    = jsondecode(data.local_command.example_arr.stdout)
-    stderr    = data.local_command.example_arr.stderr
-    exit_code = data.local_command.example_arr.exit_code
-  }
-}
+# Outputs:
+#
+# fruit_tf = [
+#   "apple",
+#   "lemon",
+# ]
