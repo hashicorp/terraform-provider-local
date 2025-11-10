@@ -54,7 +54,7 @@ output "fruit_tf" {
 - `allow_non_zero_exit_code` (Boolean) Indicates that the command returning a non-zero exit code should be treated as a successful execution. Further assertions can be made of the `exit_code` value with the [`check` block](https://developer.hashicorp.com/terraform/language/block/check). Defaults to false.
 - `arguments` (List of String) Arguments to be passed to the given command. Any `null` arguments will be removed from the list.
 - `stdin` (String) Data to be passed to the given command's standard input as a UTF-8 string. [Terraform values](https://developer.hashicorp.com/terraform/language/expressions/types) can be encoded by any Terraform encode function, for example, [`jsonencode`](https://developer.hashicorp.com/terraform/language/functions/jsonencode).
-- `working_directory` (String) The directory where the command should be executed. Defaults to the Terraform working directory.
+- `working_directory` (String) The directory path where the command should be executed, either an absolute path or relative to the Terraform working directory. If not provided, defaults to the Terraform working directory.
 
 ### Read-Only
 
