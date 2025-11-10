@@ -396,6 +396,30 @@ EOT
 	})
 }
 
+func TestLocalCommandDataSource_invalid_working_directory(t *testing.T) {
+	resource.UnitTest(t, resource.TestCase{
+		ProtoV5ProviderFactories: protoV5ProviderFactories(),
+		Steps: []resource.TestStep{
+			{
+				Config: `resource "local_file" "test_script" {
+				  filename = "${path.module}/test_script.sh"
+				  content  = <<EOT
+#!/bin/bash
+echo -n "current working directory: $PWD"
+EOT
+				}
+				
+				data "local_command" "test" {
+					command   = "bash"
+					working_directory = "/definitely/not/a/real/directory"
+					arguments = [local_file.test_script.filename]
+				}`,
+				ExpectError: regexp.MustCompile(`chdir /definitely/not/a/real/directory: no such file or directory`),
+			},
+		},
+	})
+}
+
 func TestLocalCommandDataSource_not_found(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
