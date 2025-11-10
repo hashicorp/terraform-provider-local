@@ -54,7 +54,7 @@ func (a *localCommandAction) Schema(ctx context.Context, req action.SchemaReques
 				Optional:    true,
 			},
 			"working_directory": schema.StringAttribute{
-				Description: "The directory where the command should be executed. Defaults to the Terraform working directory.",
+				Description: "The directory path where the command should be executed, either an absolute path or relative to the Terraform working directory. If not provided, defaults to the Terraform working directory.",
 				Optional:    true,
 			},
 		},

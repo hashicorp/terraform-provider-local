@@ -76,4 +76,4 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
 - `arguments` (List of String) Arguments to be passed to the given command. Any `null` arguments will be removed from the list.
 - `stdin` (String) Data to be passed to the given command's standard input.
-- `working_directory` (String) The directory where the command should be executed. Defaults to the Terraform working directory.
+- `working_directory` (String) The directory path where the command should be executed, either an absolute path or relative to the Terraform working directory. If not provided, defaults to the Terraform working directory.
