@@ -38,7 +38,7 @@ jobs:
         uses: hashicorp/setup-terraform@b9cd54a3c349d3f38e8881555d616ced269862dd # v3.1.2
         with:
           # TODO: Remove once Terraform 1.14 GA is released
-          terraform_version: 1.14.0-rc1
+          terraform_version: 1.14.0-rc2
           terraform_wrapper: false
 
       - name: Generate

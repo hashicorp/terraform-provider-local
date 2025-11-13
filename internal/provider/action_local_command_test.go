@@ -13,8 +13,10 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 )
 
@@ -35,7 +37,7 @@ func TestLocalCommandAction_bash(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(tfversion.Version1_14_0),
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -45,13 +47,12 @@ func TestLocalCommandAction_bash(t *testing.T) {
 					"scripts_folder_path": config.StringVariable(testScriptsDir),
 				},
 				ConfigDirectory: config.StaticDirectory(bashTestDirectory),
-				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
-				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
-				// ActionChecks: []actioncheck.ActionCheck{
-				// 	actioncheck.ExpectProgressCount("local_command", 1),
-				// 	actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
-				// },
-				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
+				Check: func(s *terraform.State) error {
+					return assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent)
+				},
+				// TODO: use this when PostApplyFunc is released in terraform-plugin-testing
+				//
+				// PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
 	})
@@ -71,7 +72,7 @@ func TestLocalCommandAction_bash_stdin(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(tfversion.Version1_14_0),
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -82,13 +83,11 @@ func TestLocalCommandAction_bash_stdin(t *testing.T) {
 					"scripts_folder_path": config.StringVariable(testScriptsDir),
 				},
 				ConfigDirectory: config.StaticDirectory(bashTestDirectory),
-				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
-				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
-				// ActionChecks: []actioncheck.ActionCheck{
-				// 	actioncheck.ExpectProgressCount("local_command", 1),
-				// 	actioncheck.ExpectProgressMessageContains("local_command", fmt.Sprintf("Hello %s!", stdin)),
-				// },
-				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
+				Check: func(s *terraform.State) error {
+					return assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent)
+				},
+				// TODO: use this when PostApplyFunc is released in terraform-plugin-testing
+				// PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
 	})
@@ -111,7 +110,7 @@ func TestLocalCommandAction_bash_all(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(tfversion.Version1_14_0),
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -127,13 +126,11 @@ func TestLocalCommandAction_bash_all(t *testing.T) {
 					),
 				},
 				ConfigDirectory: config.StaticDirectory(bashTestDirectory),
-				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
-				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
-				// ActionChecks: []actioncheck.ActionCheck{
-				// 	actioncheck.ExpectProgressCount("local_command", 1),
-				// 	actioncheck.ExpectProgressMessageContains("local_command", fmt.Sprintf("Hello %s!", stdin)),
-				// },
-				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
+				Check: func(s *terraform.State) error {
+					return assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent)
+				},
+				// TODO: use this when PostApplyFunc is released in terraform-plugin-testing
+				// PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
 	})
@@ -155,7 +152,7 @@ func TestLocalCommandAction_bash_null_args(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(tfversion.Version1_14_0),
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -170,13 +167,11 @@ func TestLocalCommandAction_bash_null_args(t *testing.T) {
 					),
 				},
 				ConfigDirectory: config.TestNameDirectory(),
-				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
-				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
-				// ActionChecks: []actioncheck.ActionCheck{
-				// 	actioncheck.ExpectProgressCount("local_command", 1),
-				// 	actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
-				// },
-				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
+				Check: func(s *terraform.State) error {
+					return assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent)
+				},
+				// TODO: use this when PostApplyFunc is released in terraform-plugin-testing
+				// PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
 	})
@@ -200,7 +195,7 @@ func TestLocalCommandAction_absolute_path_bash(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(tfversion.Version1_14_0),
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -211,13 +206,11 @@ func TestLocalCommandAction_absolute_path_bash(t *testing.T) {
 					"scripts_folder_path": config.StringVariable(testScriptsDir),
 				},
 				ConfigDirectory: config.StaticDirectory(bashTestDirectory),
-				// TODO: Currently action checks don't exist, but eventually we can run these on the progress messages
-				// https://github.com/hashicorp/terraform-plugin-testing/pull/570
-				// ActionChecks: []actioncheck.ActionCheck{
-				// 	actioncheck.ExpectProgressCount("local_command", 1),
-				// 	actioncheck.ExpectProgressMessageContains("local_command", "Hello !"),
-				// },
-				PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
+				Check: func(s *terraform.State) error {
+					return assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent)
+				},
+				// TODO: use this when PostApplyFunc is released in terraform-plugin-testing
+				// PostApplyFunc: assertTestFile(t, filepath.Join(tempDir, "test_file.txt"), expectedFileContent),
 			},
 		},
 	})
@@ -228,7 +221,7 @@ func TestLocalCommandAction_not_found(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(tfversion.Version1_14_0),
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -265,7 +258,7 @@ func TestLocalCommandAction_stderr(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(tfversion.Version1_14_0),
+			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -280,17 +273,34 @@ func TestLocalCommandAction_stderr(t *testing.T) {
 	})
 }
 
-func assertTestFile(t *testing.T, filePath, expectedContent string) func() {
-	return func() {
-		t.Helper()
+// TODO: use this function when PostApplyFunc is released in terraform-plugin-testing
+//
+// func assertTestFile(t *testing.T, filePath, expectedContent string) func() {
+// 	return func() {
+// 		t.Helper()
 
-		testFile, err := os.ReadFile(filePath)
-		if err != nil {
-			t.Fatalf("error trying to read created test file: %s", err)
-		}
+// 		testFile, err := os.ReadFile(filePath)
+// 		if err != nil {
+// 			t.Fatalf("error trying to read created test file: %s", err)
+// 		}
 
-		if diff := cmp.Diff(expectedContent, string(testFile)); diff != "" {
-			t.Fatalf("unexpected file diff (-expected, +got): %s", diff)
-		}
+// 		if diff := cmp.Diff(expectedContent, string(testFile)); diff != "" {
+// 			t.Fatalf("unexpected file diff (-expected, +got): %s", diff)
+// 		}
+// 	}
+// }
+
+func assertTestFile(t *testing.T, filePath, expectedContent string) error {
+	t.Helper()
+
+	testFile, err := os.ReadFile(filePath)
+	if err != nil {
+		return fmt.Errorf("error trying to read created test file: %s", err)
 	}
+
+	if diff := cmp.Diff(expectedContent, string(testFile)); diff != "" {
+		return fmt.Errorf("unexpected file diff (-expected, +got): %s", diff)
+	}
+
+	return nil
 }

@@ -35,7 +35,6 @@ func (a *localCommandAction) Metadata(ctx context.Context, req action.MetadataRe
 
 func (a *localCommandAction) Schema(ctx context.Context, req action.SchemaRequest, resp *action.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		// TODO: Once we have a local_command data source, reference that to be used if the user needs to the consume the output of the command (and it's idempotent)
 		MarkdownDescription: "Invokes an executable on the local machine. All environment variables visible to the Terraform process are passed through " +
 			"to the child process. After the child process successfully executes, the `stdout` will be returned for Terraform to display to the user.\n\n" +
 			"Any non-zero exit code will be treated as an error and will return a diagnostic to Terraform containing the `stderr` message if available.",
