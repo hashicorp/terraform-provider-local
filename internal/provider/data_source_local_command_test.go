@@ -387,6 +387,9 @@ func TestLocalCommandDataSource_absolute_path_with_working_directory(t *testing.
 	tempDir := t.TempDir()
 	testScriptPath := filepath.Join(tempDir, "test_script.sh")
 
+	startOfTempDir := filepath.Base(filepath.Dir(tempDir))
+	relativeTempDir := filepath.Join(startOfTempDir, filepath.Base(tempDir))
+
 	bashAbsPath, err := exec.LookPath("bash")
 	if err != nil {
 		t.Fatalf("Failed to find bash executable: %s", err)
@@ -405,8 +408,7 @@ func TestLocalCommandDataSource_absolute_path_with_working_directory(t *testing.
 				  filename = %[1]q
 				  content  = <<EOT
 #!/bin/bash
-CURRENT_WD=$(pwd)
-echo -n "current working directory: $CURRENT_WD"
+echo -n "current working directory: $PWD"
 EOT
 				}
 				
@@ -418,7 +420,9 @@ EOT
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(0)),
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.Null()),
-					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringExact(fmt.Sprintf("current working directory: %s", tempDir))),
+					// MAINTAINER NOTE: We can't compare with the absolute path `tempDir` here because the Windows GHA runner uses bash in WSL, which will give us a new
+					// absolute path and a failing test :). Comparing with `relativeTempDir` is enough to verify that the working_directory was correctly set.
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringRegexp(regexp.MustCompile(relativeTempDir))),
 				},
 			},
 		},
@@ -434,8 +438,7 @@ func TestLocalCommandDataSource_invalid_working_directory(t *testing.T) {
 				  filename = "${path.module}/test_script.sh"
 				  content  = <<EOT
 #!/bin/bash
-CURRENT_WD=$(pwd)
-echo -n "current working directory: $CURRENT_WD"
+echo -n "current working directory: $PWD"
 EOT
 				}
 				
