@@ -388,7 +388,8 @@ func TestLocalCommandDataSource_absolute_path_with_working_directory(t *testing.
 	testScriptPath := filepath.Join(tempDir, "test_script.sh")
 
 	startOfTempDir := filepath.Base(filepath.Dir(tempDir))
-	relativeTempDir := filepath.Join(startOfTempDir, filepath.Base(tempDir))
+	// Typically, you'd want to use filepath.Join here, but the Windows CI will use bash in WSL, so the test assertion needs to always be Unix format (forward slashes).
+	tempWdRegex := regexp.MustCompile(fmt.Sprintf("%s/%s", startOfTempDir, filepath.Base(tempDir)))
 
 	bashAbsPath, err := exec.LookPath("bash")
 	if err != nil {
@@ -422,7 +423,7 @@ EOT
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.Null()),
 					// MAINTAINER NOTE: We can't compare with the absolute path `tempDir` here because the Windows GHA runner uses bash in WSL, which will give us a new
 					// absolute path and a failing test :). Comparing with `relativeTempDir` is enough to verify that the working_directory was correctly set.
-					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringRegexp(regexp.MustCompile(relativeTempDir))),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringRegexp(tempWdRegex)),
 				},
 			},
 		},
