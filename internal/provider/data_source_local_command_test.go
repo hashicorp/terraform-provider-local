@@ -405,7 +405,8 @@ func TestLocalCommandDataSource_absolute_path_with_working_directory(t *testing.
 				  filename = %[1]q
 				  content  = <<EOT
 #!/bin/bash
-echo -n "current working directory: $PWD"
+CURRENT_WD=$(pwd)
+echo -n "current working directory: $CURRENT_WD"
 EOT
 				}
 				
@@ -433,7 +434,8 @@ func TestLocalCommandDataSource_invalid_working_directory(t *testing.T) {
 				  filename = "${path.module}/test_script.sh"
 				  content  = <<EOT
 #!/bin/bash
-echo -n "current working directory: $PWD"
+CURRENT_WD=$(pwd)
+echo -n "current working directory: $CURRENT_WD"
 EOT
 				}
 				
