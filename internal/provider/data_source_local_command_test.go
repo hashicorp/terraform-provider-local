@@ -14,6 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/knownvalue"
 	"github.com/hashicorp/terraform-plugin-testing/statecheck"
 	"github.com/hashicorp/terraform-plugin-testing/tfjsonpath"
+	"github.com/hashicorp/terraform-plugin-testing/tfversion"
 )
 
 // Test is dependent on: https://github.com/jqlang/jq
@@ -221,6 +222,11 @@ func TestLocalCommandDataSource_stdout_yaml(t *testing.T) {
 
 func TestLocalCommandDataSource_stdout_no_format_null_args(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
+		// Terraform 0.13.x has a bug where data sources are read before dependent managed resources are created, resulting in a "test script not found" error.
+		// https://github.com/hashicorp/terraform/pull/26284
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBetween(tfversion.Version0_13_0, tfversion.Version0_14_0),
+		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
@@ -251,6 +257,11 @@ EOT
 
 func TestLocalCommandDataSource_stderr_zero_exit_code(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
+		// Terraform 0.13.x has a bug where data sources are read before dependent managed resources are created, resulting in a "test script not found" error.
+		// https://github.com/hashicorp/terraform/pull/26284
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBetween(tfversion.Version0_13_0, tfversion.Version0_14_0),
+		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
@@ -281,6 +292,11 @@ EOT
 
 func TestLocalCommandDataSource_stdout_invalid_string(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
+		// Terraform 0.13.x has a bug where data sources are read before dependent managed resources are created, resulting in a "test script not found" error.
+		// https://github.com/hashicorp/terraform/pull/26284
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBetween(tfversion.Version0_13_0, tfversion.Version0_14_0),
+		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
@@ -333,6 +349,11 @@ EOT
 
 func TestLocalCommandDataSource_allow_non_zero_exit_code(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
+		// Terraform 0.13.x has a bug where data sources are read before dependent managed resources are created, resulting in a "test script not found" error.
+		// https://github.com/hashicorp/terraform/pull/26284
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBetween(tfversion.Version0_13_0, tfversion.Version0_14_0),
+		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
@@ -372,6 +393,11 @@ func TestLocalCommandDataSource_absolute_path_with_working_directory(t *testing.
 	}
 
 	resource.UnitTest(t, resource.TestCase{
+		// Terraform 0.13.x has a bug where data sources are read before dependent managed resources are created, resulting in a "test script not found" error.
+		// https://github.com/hashicorp/terraform/pull/26284
+		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
+			tfversion.SkipBetween(tfversion.Version0_13_0, tfversion.Version0_14_0),
+		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
 			{
