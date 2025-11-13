@@ -6,6 +6,7 @@ package provider
 import (
 	"fmt"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"testing"
 
@@ -363,6 +364,7 @@ EOT
 func TestLocalCommandDataSource_absolute_path_with_working_directory(t *testing.T) {
 	// Create a temporary testing directory to point to / assert with
 	tempDir := t.TempDir()
+	testScriptPath := filepath.Join(tempDir, "test_script.sh")
 
 	bashAbsPath, err := exec.LookPath("bash")
 	if err != nil {
@@ -374,7 +376,7 @@ func TestLocalCommandDataSource_absolute_path_with_working_directory(t *testing.
 		Steps: []resource.TestStep{
 			{
 				Config: fmt.Sprintf(`resource "local_file" "test_script" {
-				  filename = "%[1]s/test_script.sh"
+				  filename = %[1]q
 				  content  = <<EOT
 #!/bin/bash
 echo -n "current working directory: $PWD"
@@ -382,10 +384,10 @@ EOT
 				}
 				
 				data "local_command" "test" {
-					command   = %[2]q
-					working_directory = %[1]q
+					command   = %[3]q
+					working_directory = %[2]q
 					arguments = [local_file.test_script.filename]
-				}`, tempDir, bashAbsPath),
+				}`, testScriptPath, tempDir, bashAbsPath),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(0)),
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.Null()),
@@ -414,7 +416,8 @@ EOT
 					working_directory = "/definitely/not/a/real/directory"
 					arguments = [local_file.test_script.filename]
 				}`,
-				ExpectError: regexp.MustCompile(`chdir /definitely/not/a/real/directory: no such file or directory`),
+				// Later parts of the error message are OS specific, but chdir is the Golang prefixed portion of the error.
+				ExpectError: regexp.MustCompile(`chdir /definitely/not/a/real/directory`),
 			},
 		},
 	})
