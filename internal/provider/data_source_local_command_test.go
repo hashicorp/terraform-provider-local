@@ -364,11 +364,16 @@ EOT
 func TestLocalCommandDataSource_absolute_path_with_working_directory(t *testing.T) {
 	// Create a temporary testing directory to point to / assert with
 	tempDir := t.TempDir()
+	absTempDirPath, err := filepath.Abs(tempDir)
+	if err != nil {
+		t.Fatalf("Failed to build absolute path for temp directory: %s", err)
+	}
+
 	testScriptPath := filepath.Join(tempDir, "test_script.sh")
 
 	bashAbsPath, err := exec.LookPath("bash")
 	if err != nil {
-		t.Fatalf("Failed to find bash executable: %v", err)
+		t.Fatalf("Failed to find bash executable: %s", err)
 	}
 
 	resource.UnitTest(t, resource.TestCase{
@@ -387,11 +392,11 @@ EOT
 					command   = %[3]q
 					working_directory = %[2]q
 					arguments = [local_file.test_script.filename]
-				}`, testScriptPath, tempDir, bashAbsPath),
+				}`, testScriptPath, absTempDirPath, bashAbsPath),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("exit_code"), knownvalue.Int64Exact(0)),
 					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stderr"), knownvalue.Null()),
-					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringExact(fmt.Sprintf("current working directory: %s", tempDir))),
+					statecheck.ExpectKnownValue("data.local_command.test", tfjsonpath.New("stdout"), knownvalue.StringExact(fmt.Sprintf("current working directory: %s", absTempDirPath))),
 				},
 			},
 		},
