@@ -1,5 +1,0 @@
-kind: FEATURES
-body: 'action/local_command: New action that invokes an executable on the local machine.'
-time: 2025-11-03T15:39:52.741799-05:00
-custom:
-    Issue: "450"

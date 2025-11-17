@@ -1,5 +1,0 @@
-kind: FEATURES
-body: 'data/local_command: New data source that runs an executable on the local machine and returns the exit code, standard output data, and standard error data.'
-time: 2025-11-06T18:01:54.341138-05:00
-custom:
-    Issue: "452"

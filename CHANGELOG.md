@@ -1,3 +1,10 @@
+## 2.6.0 (November 17, 2025)
+
+FEATURES:
+
+* action/local_command: New action that invokes an executable on the local machine. ([#450](https://github.com/hashicorp/terraform-provider-local/issues/450))
+* data/local_command: New data source that runs an executable on the local machine and returns the exit code, standard output data, and standard error data. ([#452](https://github.com/hashicorp/terraform-provider-local/issues/452))
+
 ## 2.5.3 (May 08, 2025)
 
 NOTES:
