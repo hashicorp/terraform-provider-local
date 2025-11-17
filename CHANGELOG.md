@@ -1,3 +1,9 @@
+## 2.6.1 (November 17, 2025)
+
+BUG FIXES:
+
+* Fixed documentation header for `local_command` action ([#456](https://github.com/hashicorp/terraform-provider-local/issues/456))
+
 ## 2.6.0 (November 17, 2025)
 
 FEATURES:
