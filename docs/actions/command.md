@@ -1,3 +1,4 @@
+---
 page_title: "local_command Action - terraform-provider-local"
 subcategory: ""
 description: |-
