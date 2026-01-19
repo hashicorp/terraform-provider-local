@@ -18,6 +18,7 @@ func NewLocalCommandEphemeral() ephemeral.EphemeralResource {
 type localCommandEphemeral struct{}
 
 func (e *localCommandEphemeral) Metadata(ctx context.Context, req ephemeral.MetadataRequest, resp *ephemeral.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_command"
 }
 
 func (e *localCommandEphemeral) Schema(ctx context.Context, req ephemeral.SchemaRequest, resp *ephemeral.SchemaResponse) {
