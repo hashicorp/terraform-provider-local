@@ -1,3 +1,9 @@
+## 2.6.2 (January 28, 2026)
+
+NOTES:
+
+* all: This release introduces no functional changes. It was built using the latest 1.24 patch version of Go and re-released to address a certificate handshake issue. ([#461](https://github.com/hashicorp/terraform-provider-local/issues/461))
+
 ## 2.6.1 (November 17, 2025)
 
 BUG FIXES:
@@ -15,9 +21,7 @@ FEATURES:
 
 NOTES:
 
-* Update dependencies ([#404](https://github.com/hashicorp/terraform-provider-local/issues/404))
-
-## 2.5.3-alpha1 (April 24, 2025)
+* Update dependencies ([#404](https://github.com/hashicorp/terraform-provider-local/issues/404))## 2.5.3-alpha1 (April 24, 2025)
 
 NOTES:
 
