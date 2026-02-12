@@ -1,0 +1,29 @@
+---
+page_title: "{{.Name}} {{.Type}} - {{.ProviderName}}"
+subcategory: ""
+description: |-
+{{ .Description | plainmarkdown | trimspace | prefixlines "  " }}
+---
+
+# {{.Name}} ({{.Type}})
+
+{{ .Description | trimspace }}
+
+-> **Note**: Ephemeral resources are available in Terraform v1.10 and later.
+
+~> **Note about resource behaviour**
+Ephemeral resources are considered to be sensitive so none of the arguments
+can be displayed in output logs. This means if you use an ephemeral resource
+in a provisioner the output will be suppressed. This cannot be overridden using
+the `nonsensitive` function as while ephemeral values are considered sensitive
+they are not actually sensitive values.
+
+~> **Note about file content**
+File content must be specified with _exactly_ one of the arguments `content`,
+`content_base64`, or `source`.
+
+## Example Usage
+
+{{ tffile "examples/ephemeral-resources/ephemeral-resource-file.tf" }}
+
+{{ .SchemaMarkdown | trimspace }}
