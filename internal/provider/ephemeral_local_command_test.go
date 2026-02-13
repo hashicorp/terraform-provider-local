@@ -492,11 +492,12 @@ echo -n "current working directory: $PWD"
 `)
 	tempDir := filepath.Dir(testScriptPath)
 
+	startOfTempDir := filepath.Base(filepath.Dir(tempDir))
 	// MAINTAINER NOTE: Typically, you'd want to use filepath.Join here, but the Windows GHA runner will use bash in WSL, so the test assertion needs
 	// to always be Unix format (forward slashes). On top of that, since it uses WSL, we can't assert with the absolute path `tempDir` because WSL
 	// will give us a new (UNIX formatted) absolute path and a failing test :). Comparing with the last two directory names is enough to verify that
 	// the working_directory was correctly set.
-	tempWdRegex := regexp.MustCompile(filepath.Dir(testScriptPath))
+	tempWdRegex := regexp.MustCompile(fmt.Sprintf("%s/%s", startOfTempDir, filepath.Base(tempDir)))
 
 	bashAbsPath, err := exec.LookPath("bash")
 	if err != nil {
