@@ -14,6 +14,7 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/action"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
+	"github.com/hashicorp/terraform-plugin-framework/ephemeral"
 	"github.com/hashicorp/terraform-plugin-framework/function"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
@@ -21,7 +22,8 @@ import (
 )
 
 var (
-	_ provider.Provider = (*localProvider)(nil)
+	_ provider.Provider                       = (*localProvider)(nil)
+	_ provider.ProviderWithEphemeralResources = (*localProvider)(nil)
 )
 
 func New() provider.Provider {
@@ -62,6 +64,12 @@ func (p *localProvider) Functions(ctx context.Context) []func() function.Functio
 func (p *localProvider) Actions(ctx context.Context) []func() action.Action {
 	return []func() action.Action{
 		NewLocalCommandAction,
+	}
+}
+
+func (p *localProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
+	return []func() ephemeral.EphemeralResource{
+		NewLocalCommandEphemeral,
 	}
 }
 
