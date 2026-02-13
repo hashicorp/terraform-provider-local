@@ -438,7 +438,7 @@ exit 1
 				}
 
 				resource "echo" "test" {}`, scriptPath),
-				ExpectError: regexp.MustCompile(`The resource executed the command but received a non-zero exit code.`),
+				ExpectError: regexp.MustCompile(`The ephemeral resource executed the command but received a non-zero exit\ncode.`),
 			},
 		},
 	})

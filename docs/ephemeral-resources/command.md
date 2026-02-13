@@ -3,7 +3,7 @@
 page_title: "local_command Ephemeral Resource - terraform-provider-local"
 subcategory: ""
 description: |-
-  Runs an executable on the local machine and returns the exit code, standard output data (stdout), and standard error data (stderr). All environment variables visible to the Terraform process are passed through to the child process. Both stdout and stderr returned by this data source are UTF-8 strings, which can be decoded into Terraform values https://developer.hashicorp.com/terraform/language/expressions/types for use elsewhere in the Terraform configuration. There are built-in decoding functions such as jsondecode https://developer.hashicorp.com/terraform/language/functions/jsondecode or yamldecode https://developer.hashicorp.com/terraform/language/functions/yamldecode, and more specialized decoding functions https://developer.hashicorp.com/terraform/plugin/framework/functions/concepts can be built with a Terraform provider.
+  Runs an executable on the local machine and returns the exit code, standard output data (stdout), and standard error data (stderr). All environment variables visible to the Terraform process are passed through to the child process. Both stdout and stderr returned by this ephemeral resource are UTF-8 strings, which can be decoded into Terraform values https://developer.hashicorp.com/terraform/language/expressions/types for use elsewhere in the Terraform configuration. There are built-in decoding functions such as jsondecode https://developer.hashicorp.com/terraform/language/functions/jsondecode or yamldecode https://developer.hashicorp.com/terraform/language/functions/yamldecode, and more specialized decoding functions https://developer.hashicorp.com/terraform/plugin/framework/functions/concepts can be built with a Terraform provider.
   Any non-zero exit code returned by the command will be treated as an error and will return a diagnostic to Terraform containing the stderr message if available. If a non-zero exit code is expected by the command, set allow_non_zero_exit_code to true.
   ~> Warning This mechanism is provided as an "escape hatch" for exceptional situations where a first-class Terraform provider is not more appropriate. Its capabilities are limited in comparison to a true ephemeral resource, and implementing an ephemeral resource via a local executable is likely to hurt the portability of your Terraform configuration by creating dependencies on external programs and libraries that may not be available (or may need to be used differently) on different operating systems.
   ~> Warning HCP Terraform and Terraform Enterprise do not guarantee availability of any particular language runtimes or external programs beyond standard shell utilities, so it is not recommended to use this ephemeral resource within configurations that are applied within either.
@@ -11,7 +11,7 @@ description: |-
 
 # local_command (Ephemeral Resource)
 
-Runs an executable on the local machine and returns the exit code, standard output data (`stdout`), and standard error data (`stderr`). All environment variables visible to the Terraform process are passed through to the child process. Both `stdout` and `stderr` returned by this data source are UTF-8 strings, which can be decoded into [Terraform values](https://developer.hashicorp.com/terraform/language/expressions/types) for use elsewhere in the Terraform configuration. There are built-in decoding functions such as [`jsondecode`](https://developer.hashicorp.com/terraform/language/functions/jsondecode) or [`yamldecode`](https://developer.hashicorp.com/terraform/language/functions/yamldecode), and more specialized [decoding functions](https://developer.hashicorp.com/terraform/plugin/framework/functions/concepts) can be built with a Terraform provider.
+Runs an executable on the local machine and returns the exit code, standard output data (`stdout`), and standard error data (`stderr`). All environment variables visible to the Terraform process are passed through to the child process. Both `stdout` and `stderr` returned by this ephemeral resource are UTF-8 strings, which can be decoded into [Terraform values](https://developer.hashicorp.com/terraform/language/expressions/types) for use elsewhere in the Terraform configuration. There are built-in decoding functions such as [`jsondecode`](https://developer.hashicorp.com/terraform/language/functions/jsondecode) or [`yamldecode`](https://developer.hashicorp.com/terraform/language/functions/yamldecode), and more specialized [decoding functions](https://developer.hashicorp.com/terraform/plugin/framework/functions/concepts) can be built with a Terraform provider.
 
 Any non-zero exit code returned by the command will be treated as an error and will return a diagnostic to Terraform containing the `stderr` message if available. If a non-zero exit code is expected by the command, set `allow_non_zero_exit_code` to `true`.
 
@@ -22,7 +22,7 @@ Any non-zero exit code returned by the command will be treated as an error and w
 ## Example Usage
 
 ```terraform
-# Retrieve a database password from an encrypted local file
+# Retrieve a database password from an encrypted local file.
 ephemeral "local_command" "db_password" {
   command   = "pass"
   arguments = ["show", "infrastructure/database/password"]
@@ -51,6 +51,6 @@ provider "postgresql" {
 
 ### Read-Only
 
-- `exit_code` (Number) The exit code returned by the command. By default, if the exit code is non-zero, the data source will return a diagnostic to Terraform. If a non-zero exit code is expected by the command, set `allow_non_zero_exit_code` to `true`.
+- `exit_code` (Number) The exit code returned by the command. By default, if the exit code is non-zero, the ephemeral resource will return a diagnostic to Terraform. If a non-zero exit code is expected by the command, set `allow_non_zero_exit_code` to `true`.
 - `stderr` (String) Data returned from the command's standard error stream. The data is returned directly from the command as a UTF-8 string and will be populated regardless of the exit code returned.
 - `stdout` (String) Data returned from the command's standard output stream. The data is returned directly from the command as a UTF-8 string, which can then be decoded by any Terraform decode function, for example, [`jsondecode`](https://developer.hashicorp.com/terraform/language/functions/jsondecode).

@@ -33,7 +33,7 @@ func (e *localCommandEphemeral) Metadata(ctx context.Context, req ephemeral.Meta
 func (e *localCommandEphemeral) Schema(ctx context.Context, req ephemeral.SchemaRequest, resp *ephemeral.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Runs an executable on the local machine and returns the exit code, standard output data (`stdout`), and standard error data (`stderr`). " +
-			"All environment variables visible to the Terraform process are passed through to the child process. Both `stdout` and `stderr` returned by this data source " +
+			"All environment variables visible to the Terraform process are passed through to the child process. Both `stdout` and `stderr` returned by this ephemeral resource " +
 			"are UTF-8 strings, which can be decoded into [Terraform values](https://developer.hashicorp.com/terraform/language/expressions/types) for use elsewhere in the Terraform configuration. " +
 			"There are built-in decoding functions such as [`jsondecode`](https://developer.hashicorp.com/terraform/language/functions/jsondecode) or [`yamldecode`](https://developer.hashicorp.com/terraform/language/functions/yamldecode), " +
 			"and more specialized [decoding functions](https://developer.hashicorp.com/terraform/plugin/framework/functions/concepts) can be built with a Terraform provider." +
@@ -73,7 +73,7 @@ func (e *localCommandEphemeral) Schema(ctx context.Context, req ephemeral.Schema
 				Optional: true,
 			},
 			"exit_code": schema.Int64Attribute{
-				MarkdownDescription: "The exit code returned by the command. By default, if the exit code is non-zero, the data source will return a diagnostic to Terraform. " +
+				MarkdownDescription: "The exit code returned by the command. By default, if the exit code is non-zero, the ephemeral resource will return a diagnostic to Terraform. " +
 					"If a non-zero exit code is expected by the command, set `allow_non_zero_exit_code` to `true`.",
 				Computed: true,
 			},
@@ -203,7 +203,7 @@ func (e *localCommandEphemeral) Open(ctx context.Context, req ephemeral.OpenRequ
 		resp.Diagnostics.AddAttributeError(
 			path.Root("command"),
 			"Command Execution Failed",
-			"The resource executed the command but received a non-zero exit code. If a non-zero exit code is expected "+
+			"The ephemeral resource executed the command but received a non-zero exit code. If a non-zero exit code is expected "+
 				"and can be handled in configuration, set \"allow_non_zero_exit_code\" to true."+
 				"\n\n"+
 				fmt.Sprintf("Command: %s\n", cmd.String())+
