@@ -1,3 +1,9 @@
+## 2.7.0 (February 16, 2026)
+
+FEATURES:
+
+* ephemeral/local_command: New ephemeral resource that runs an executable on the local machine and returns the exit code, standard output data, and standard error data. ([#457](https://github.com/hashicorp/terraform-provider-local/issues/457))
+
 ## 2.6.2 (January 28, 2026)
 
 NOTES:
