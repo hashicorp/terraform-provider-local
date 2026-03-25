@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -56,6 +57,11 @@ func (a *localCommandAction) Schema(ctx context.Context, req action.SchemaReques
 				Description: "The directory path where the command should be executed, either an absolute path or relative to the Terraform working directory. If not provided, defaults to the Terraform working directory.",
 				Optional:    true,
 			},
+			"environment": schema.MapAttribute{
+				Description: "Environment variables to set for the command. These are merged with the environment variables inherited from the Terraform process, with these values taking precedence.",
+				ElementType: types.StringType,
+				Optional:    true,
+			},
 		},
 	}
 }
@@ -65,6 +71,7 @@ type localCommandActionModel struct {
 	Arguments        types.List   `tfsdk:"arguments"`
 	Stdin            types.String `tfsdk:"stdin"`
 	WorkingDirectory types.String `tfsdk:"working_directory"`
+	Environment      types.Map    `tfsdk:"environment"`
 }
 
 func (a *localCommandAction) ModifyPlan(ctx context.Context, req action.ModifyPlanRequest, resp *action.ModifyPlanResponse) {
@@ -105,6 +112,17 @@ func (a *localCommandAction) Invoke(ctx context.Context, req action.InvokeReques
 	cmd := exec.CommandContext(ctx, command, arguments...)
 
 	cmd.Dir = config.WorkingDirectory.ValueString()
+
+	if !config.Environment.IsNull() {
+		cmd.Env = os.Environ()
+		for key, value := range config.Environment.Elements() {
+			strValue, ok := value.(types.String)
+			if !ok {
+				continue
+			}
+			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", key, strValue.ValueString()))
+		}
+	}
 
 	if !config.Stdin.IsNull() {
 		cmd.Stdin = bytes.NewReader([]byte(config.Stdin.ValueString()))

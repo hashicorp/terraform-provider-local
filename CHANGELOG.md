@@ -1,3 +1,9 @@
+## 2.8.0 (Unreleased)
+
+ENHANCEMENTS:
+
+* action/local_command: Added `environment` attribute to the config block, allowing explicit environment variables to be set for the child process. Provided values are merged on top of the inherited Terraform process environment, with the provided values taking precedence.
+
 ## 2.7.0 (February 16, 2026)
 
 FEATURES:
