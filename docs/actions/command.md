@@ -2,7 +2,7 @@
 page_title: "local_command Action - terraform-provider-local"
 subcategory: ""
 description: |-
-  Invokes an executable on the local machine. All environment variables visible to the Terraform process are passed through to the child process. Additional environment variables can be set via the environment attribute. After the child process successfully executes, the stdout will be returned for Terraform to display to the user.
+  Invokes an executable on the local machine. All environment variables visible to the Terraform process are passed through to the child process. Additional environment variables can be explicitly set via the environment attribute; these are merged on top of the inherited environment, with the provided values taking precedence. After the child process successfully executes, the stdout will be returned for Terraform to display to the user.
   Any non-zero exit code will be treated as an error and will return a diagnostic to Terraform containing the stderr message if available.
 ---
 
