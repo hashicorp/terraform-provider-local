@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 	"runtime"
 	"strings"
@@ -36,7 +37,9 @@ func (a *localCommandAction) Metadata(ctx context.Context, req action.MetadataRe
 func (a *localCommandAction) Schema(ctx context.Context, req action.SchemaRequest, resp *action.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		MarkdownDescription: "Invokes an executable on the local machine. All environment variables visible to the Terraform process are passed through " +
-			"to the child process. After the child process successfully executes, the `stdout` will be returned for Terraform to display to the user.\n\n" +
+			"to the child process. Additional environment variables can be explicitly set via the `environment` attribute; these are merged on top of " +
+			"the inherited environment, with the provided values taking precedence. After the child process successfully executes, the `stdout` will be " +
+			"returned for Terraform to display to the user.\n\n" +
 			"Any non-zero exit code will be treated as an error and will return a diagnostic to Terraform containing the `stderr` message if available.",
 		Attributes: map[string]schema.Attribute{
 			"command": schema.StringAttribute{
@@ -56,6 +59,11 @@ func (a *localCommandAction) Schema(ctx context.Context, req action.SchemaReques
 				Description: "The directory path where the command should be executed, either an absolute path or relative to the Terraform working directory. If not provided, defaults to the Terraform working directory.",
 				Optional:    true,
 			},
+			"environment": schema.MapAttribute{
+				Description: "Environment variables to set for the command. These are merged with the environment variables inherited from the Terraform process, with these values taking precedence.",
+				ElementType: types.StringType,
+				Optional:    true,
+			},
 		},
 	}
 }
@@ -65,6 +73,7 @@ type localCommandActionModel struct {
 	Arguments        types.List   `tfsdk:"arguments"`
 	Stdin            types.String `tfsdk:"stdin"`
 	WorkingDirectory types.String `tfsdk:"working_directory"`
+	Environment      types.Map    `tfsdk:"environment"`
 }
 
 func (a *localCommandAction) ModifyPlan(ctx context.Context, req action.ModifyPlanRequest, resp *action.ModifyPlanResponse) {
@@ -105,6 +114,17 @@ func (a *localCommandAction) Invoke(ctx context.Context, req action.InvokeReques
 	cmd := exec.CommandContext(ctx, command, arguments...)
 
 	cmd.Dir = config.WorkingDirectory.ValueString()
+
+	if !config.Environment.IsNull() {
+		cmd.Env = os.Environ()
+		for key, value := range config.Environment.Elements() {
+			strValue, ok := value.(types.String)
+			if !ok {
+				continue
+			}
+			cmd.Env = append(cmd.Env, fmt.Sprintf("%s=%s", key, strValue.ValueString()))
+		}
+	}
 
 	if !config.Stdin.IsNull() {
 		cmd.Stdin = bytes.NewReader([]byte(config.Stdin.ValueString()))

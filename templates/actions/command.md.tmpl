@@ -43,4 +43,10 @@ Action complete: action.local_command.bash_example (triggered by terraform_data.
 Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 ```
 
+### Environment Variables
+
+The `environment` attribute allows specific environment variables to be set for the child process without modifying the surrounding shell environment. The provided key/value pairs are merged on top of the variables inherited from the Terraform process, so existing variables such as `PATH` remain available.
+
+{{ tffile (index .ExampleFiles 1) }}
+
 {{ .SchemaMarkdown | trimspace }}
