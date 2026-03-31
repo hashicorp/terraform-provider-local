@@ -13,7 +13,6 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform-plugin-testing/config"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
@@ -37,7 +36,7 @@ func TestLocalCommandAction_bash(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
+			tfversion.SkipBelow(tfversion.Version1_14_0),
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -72,7 +71,7 @@ func TestLocalCommandAction_bash_stdin(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
+			tfversion.SkipBelow(tfversion.Version1_14_0),
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -110,7 +109,7 @@ func TestLocalCommandAction_bash_all(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
+			tfversion.SkipBelow(tfversion.Version1_14_0),
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -152,7 +151,7 @@ func TestLocalCommandAction_bash_null_args(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
+			tfversion.SkipBelow(tfversion.Version1_14_0),
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -195,7 +194,7 @@ func TestLocalCommandAction_absolute_path_bash(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
+			tfversion.SkipBelow(tfversion.Version1_14_0),
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -221,7 +220,7 @@ func TestLocalCommandAction_not_found(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
+			tfversion.SkipBelow(tfversion.Version1_14_0),
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -262,7 +261,7 @@ func TestLocalCommandAction_bash_environment(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
+			tfversion.SkipBelow(tfversion.Version1_14_0),
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
@@ -293,7 +292,7 @@ func TestLocalCommandAction_stderr(t *testing.T) {
 	resource.UnitTest(t, resource.TestCase{
 		// Actions are only available in 1.14 and later
 		TerraformVersionChecks: []tfversion.TerraformVersionCheck{
-			tfversion.SkipBelow(version.Must(version.NewVersion("1.14.0"))), // TODO: replace with tfversion.Version1_14_0 when new plugin-testing version is released
+			tfversion.SkipBelow(tfversion.Version1_14_0),
 		},
 		ProtoV5ProviderFactories: protoV5ProviderFactories(),
 		Steps: []resource.TestStep{
