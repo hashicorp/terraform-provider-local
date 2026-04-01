@@ -31,7 +31,7 @@ The remainder of this document will focus on the development aspects of the prov
 Compatibility table between this provider, the [Terraform Plugin Protocol](https://www.terraform.io/plugin/how-terraform-works#terraform-plugin-protocol)
 version it implements, and Terraform:
 
-| TLS Provider | Terraform Plugin Protocol | Terraform |
+| Local Provider | Terraform Plugin Protocol | Terraform |
 |:------------:|:-------------------------:|:---------:|
 |   `>= 2.x`   |            `5`            | `>= 0.12` |
 |  `>= 1.1.x`  |        `4` and `5`        | `<= 0.12` |
