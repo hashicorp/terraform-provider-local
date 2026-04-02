@@ -1,5 +1,0 @@
-kind: ENHANCEMENTS
-body: Added optional `environment` map attribute to `action/local_command` resource
-time: 2026-03-31T09:42:32.722668-05:00
-custom:
-    Issue: "493"
