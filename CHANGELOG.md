@@ -1,3 +1,13 @@
+## 2.8.0 (April 02, 2026)
+
+NOTES:
+
+* Update dependencies ([#404](https://github.com/hashicorp/terraform-provider-local/issues/404))
+
+ENHANCEMENTS:
+
+* Added optional `environment` map attribute to `action/local_command` resource ([#493](https://github.com/hashicorp/terraform-provider-local/issues/493))
+
 ## 2.7.0 (February 16, 2026)
 
 FEATURES:
