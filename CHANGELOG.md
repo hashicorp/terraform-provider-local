@@ -1,3 +1,9 @@
+## 2.9.0 (May 12, 2026)
+
+ENHANCEMENTS:
+
+* Added linux/s390x build target for IBM Z platform support ([#504](https://github.com/hashicorp/terraform-provider-local/issues/504))
+
 ## 2.8.0 (April 02, 2026)
 
 NOTES:
