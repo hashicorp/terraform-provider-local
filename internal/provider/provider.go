@@ -23,6 +23,7 @@ import (
 
 var (
 	_ provider.Provider                       = (*localProvider)(nil)
+	_ provider.ProviderWithFunctions          = (*localProvider)(nil)
 	_ provider.ProviderWithEphemeralResources = (*localProvider)(nil)
 )
 
@@ -70,6 +71,7 @@ func (p *localProvider) Actions(ctx context.Context) []func() action.Action {
 func (p *localProvider) EphemeralResources(ctx context.Context) []func() ephemeral.EphemeralResource {
 	return []func() ephemeral.EphemeralResource{
 		NewLocalCommandEphemeral,
+		NewLocalFileEphemeralResource,
 	}
 }
 
