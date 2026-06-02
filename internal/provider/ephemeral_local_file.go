@@ -83,8 +83,6 @@ func (e *localFileEphemeralResource) Schema(_ context.Context, _ ephemeral.Schem
 					"Default value is `\"0777\"`.",
 				Optional: true,
 				Computed: true,
-				// Can't set a default value for ephemeral resources, this is here as a fingers-crossed placeholder.
-				// Default:  stringdefault.StaticString("0777"),
 			},
 			"directory_permission": schema.StringAttribute{
 				CustomType: localtypes.NewFilePermissionType(),
@@ -93,8 +91,6 @@ func (e *localFileEphemeralResource) Schema(_ context.Context, _ ephemeral.Schem
 					"Default value is `\"0777\"`.",
 				Optional: true,
 				Computed: true,
-				// Can't set a default value for ephemeral resources, this is here as a fingers-crossed placeholder.
-				// Default:  stringdefault.StaticString("0777"),
 			},
 			"id": schema.StringAttribute{
 				Description: "The hexadecimal encoding of the SHA1 checksum of the file content.",
