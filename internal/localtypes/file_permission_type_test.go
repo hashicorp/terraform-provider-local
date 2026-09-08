@@ -5,6 +5,7 @@ package localtypes
 
 import (
 	"context"
+	"os"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -31,6 +32,13 @@ func TestFilePermissionValueValidateAttribute(t *testing.T) {
 		},
 		"0644": {
 			value: FilePermissionValue{basetypes.NewStringValue("0644")},
+			request: xattr.ValidateAttributeRequest{
+				Path: path.Root("test"),
+			},
+			expected: xattr.ValidateAttributeResponse{},
+		},
+		"2775": {
+			value: FilePermissionValue{basetypes.NewStringValue("2775")},
 			request: xattr.ValidateAttributeRequest{
 				Path: path.Root("test"),
 			},
@@ -106,6 +114,42 @@ func TestFilePermissionValueValidateAttribute(t *testing.T) {
 
 			if diff := cmp.Diff(testCase.expected, got); diff != "" {
 				t.Errorf("unexpected response: %s", diff)
+			}
+		})
+	}
+}
+
+func TestFilePermissionValueFileMode(t *testing.T) {
+	t.Parallel()
+
+	testCases := map[string]struct {
+		value    string
+		expected os.FileMode
+	}{
+		"0777": {
+			value:    "0777",
+			expected: 0777,
+		},
+		"2775": {
+			value:    "2775",
+			expected: os.ModeSetgid | 0775,
+		},
+		"4755": {
+			value:    "4755",
+			expected: os.ModeSetuid | 0755,
+		},
+		"1777": {
+			value:    "1777",
+			expected: os.ModeSticky | 0777,
+		},
+	}
+
+	for name, testCase := range testCases {
+		t.Run(name, func(t *testing.T) {
+			got := (FilePermissionValue{basetypes.NewStringValue(testCase.value)}).FileMode()
+
+			if diff := cmp.Diff(testCase.expected, got); diff != "" {
+				t.Errorf("unexpected file mode: %s", diff)
 			}
 		})
 	}
