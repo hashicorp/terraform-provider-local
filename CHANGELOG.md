@@ -1,3 +1,9 @@
+## 2.9.1 (September 10, 2026)
+
+NOTES:
+
+* Upgrade the Go toolchain to 1.26.8. ([#526](https://github.com/hashicorp/terraform-provider-local/issues/526))
+
 ## 2.9.0 (May 12, 2026)
 
 ENHANCEMENTS:
