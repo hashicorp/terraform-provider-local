@@ -6,6 +6,7 @@ package localtypes
 import (
 	"context"
 	"fmt"
+	"os"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -118,10 +119,30 @@ func (v FilePermissionValue) ValidateAttribute(ctx context.Context, req xattr.Va
 	}
 
 	fileMode, err := strconv.ParseInt(fp, 8, 64)
-	if err != nil || fileMode > 0777 || fileMode < 0 {
+	if err != nil || fileMode > 07777 || fileMode < 0 {
 		resp.Diagnostics.Append(diag.NewAttributeErrorDiagnostic(req.Path,
 			"Invalid File Permission String Value",
 			"bad mode permission: string must be expressed in octal numeric notation: "+fp))
 		return
 	}
+}
+
+// FileMode converts the numeric permission string to an os.FileMode,
+// preserving the setuid, setgid, and sticky bits that are not part of the
+// portable permission mask.
+func (v FilePermissionValue) FileMode() os.FileMode {
+	fileMode, _ := strconv.ParseInt(v.ValueString(), 8, 64)
+	mode := os.FileMode(fileMode & 0777)
+
+	if fileMode&04000 != 0 {
+		mode |= os.ModeSetuid
+	}
+	if fileMode&02000 != 0 {
+		mode |= os.ModeSetgid
+	}
+	if fileMode&01000 != 0 {
+		mode |= os.ModeSticky
+	}
+
+	return mode
 }

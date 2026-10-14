@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/path"
@@ -156,8 +155,6 @@ func (n *localSensitiveFileResource) Metadata(ctx context.Context, req resource.
 func (n *localSensitiveFileResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var plan localSensitiveFileResourceModelV0
 
-	var filePerm, dirPerm string
-
 	diags := req.Plan.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {
@@ -178,9 +175,7 @@ func (n *localSensitiveFileResource) Create(ctx context.Context, req resource.Cr
 
 	destinationDir := filepath.Dir(destination)
 	if _, err := os.Stat(destinationDir); err != nil {
-		dirPerm = plan.DirectoryPermission.ValueString()
-		dirMode, _ := strconv.ParseInt(dirPerm, 8, 64)
-		if err := os.MkdirAll(destinationDir, os.FileMode(dirMode)); err != nil {
+		if err := os.MkdirAll(destinationDir, plan.DirectoryPermission.FileMode()); err != nil {
 			resp.Diagnostics.AddError(
 				"Create local sensitive file error",
 				"An unexpected error occurred while creating file directory\n\n+"+
@@ -190,11 +185,7 @@ func (n *localSensitiveFileResource) Create(ctx context.Context, req resource.Cr
 		}
 	}
 
-	filePerm = plan.FilePermission.ValueString()
-
-	fileMode, _ := strconv.ParseInt(filePerm, 8, 64)
-
-	if err := os.WriteFile(destination, content, os.FileMode(fileMode)); err != nil {
+	if err := os.WriteFile(destination, content, plan.FilePermission.FileMode()); err != nil {
 		resp.Diagnostics.AddError(
 			"Create local sensitive file error",
 			"An unexpected error occurred while writing the file\n\n+"+

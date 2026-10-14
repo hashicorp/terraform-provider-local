@@ -1,0 +1,5 @@
+kind: BUG FIXES
+body: 'resource/file: Allow special permission bits in file and directory permissions'
+time: 2026-09-08T16:11:47-04:00
+custom:
+    Issue: "366"
