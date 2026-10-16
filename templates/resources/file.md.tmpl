@@ -16,6 +16,16 @@ where the file is not present and will generate a diff to re-create it. This
 may cause "noise" in diffs in environments where configurations are routinely
 applied by many different users or within automation systems.
 
+~> **Note about changes made outside of Terraform**
+Terraform also detects the resource as having been deleted when the content of
+the file was changed outside of Terraform. The provider compares the checksum of
+the file with the one recorded in the state and, if they differ, reports the
+resource as deleted. The next apply re-creates the file with the configured
+content and overwrites the external changes. `lifecycle { ignore_changes = [...] }`
+does not prevent this, because the resource is planned for creation rather than
+for an update. Changes to the file permissions made outside of Terraform are not
+detected.
+
 ~> **Note about file content**
 File content must be specified with _exactly_ one of the arguments `content`,
 `sensitive_content` (Deprecated), `content_base64`, or `source`.
